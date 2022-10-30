@@ -1,0 +1,10 @@
+scripts
+test
+node_modules
+build
+cache
+.openzeppelin
+secrets**
+.env**
+.ganacheDB
+.snapshot**
