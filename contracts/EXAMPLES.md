@@ -11,7 +11,7 @@ automate complex market making strategies involving multi-order execution.
   A simple limit swap of TokenA to TokenB. This is one order composed of 3 primatives
 
   Order_0:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     useBit(1)
     swap(<tokenA_data>, <tokenB_data>)
 
@@ -21,7 +21,7 @@ automate complex market making strategies involving multi-order execution.
   A simple stop-loss order for a TokenA -> TokenB swap when a price lower bound is met. This is one order composed of 4 primatives
 
   Order_0:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requirePriceLowerBound(<priceOracle>, TokenA, TokenB, <value>)
     useBit(1)
     swap(<tokenA_data>, <tokenB_data>)
@@ -33,7 +33,7 @@ automate complex market making strategies involving multi-order execution.
   as a separate contract.
 
   Order_0:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requirePriceLowerBound(<priceOracle>, TokenA, TokenB, <value>)
     useBit(1)
     dutchAuction(
@@ -52,7 +52,7 @@ automate complex market making strategies involving multi-order execution.
   beforeCalls:
     requireBitNotUsed(1)
   Order_0:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requirePriceLowerBound(<priceOracle>, TokenA, TokenB, <value>)
     dutchAuction(
       <id: hash_0>,
@@ -64,7 +64,7 @@ automate complex market making strategies involving multi-order execution.
       [...unsignedDataForInitializerReward]
     )
   Order_1:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requireDutchAuctionOpen(hash_0)
     createSeaportListing(
       <id: hash_1>
@@ -88,7 +88,7 @@ automate complex market making strategies involving multi-order execution.
   This sells 1 A -> B at market price, if the price of A/B drops 10% or more in 1 hour (3600s)
 
   Order_0:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requirePriceDecrease(<priceDeltaOracleForAB>, TokenA, TokenB, <startTime: timestampWhenSigned>, <duration: 3600>, <value: 10.00>)
     useBit(1)
     marketSwap(
@@ -105,7 +105,7 @@ automate complex market making strategies involving multi-order execution.
   bound. In other words, this strategy attempts to buy B at a low price and sell B at a high price, to capture profit in A.
 
   beforeCalls:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requireBitNotUsed(1)
   Order_0:
     limitSwap(
@@ -131,7 +131,7 @@ automate complex market making strategies involving multi-order execution.
     MEV arb reward of 50 A max.
 
   beforeCalls:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
   Order_0:
     swap(
       0,
@@ -165,7 +165,7 @@ automate complex market making strategies involving multi-order execution.
   amount of B obtained -> 1.05 A. This would lock in a profit of 0.05 A (+5%).
 
   beforeCalls:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
   Order_0:
     requirePriceIncrease(<priceDeltaOracleForAB>, TokenA, TokenB, <startTime: timestampWhenSigned>, <duration: 3600>, <value: 10.00>)
     useBit(1)
@@ -196,7 +196,7 @@ automate complex market making strategies involving multi-order execution.
   Each time Order_1 executes, it captures 5.00 A in profit.
 
   beforeCalls:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requireBitNotUsed(1)
   Order_0:
     limitSwap(
@@ -225,7 +225,7 @@ automate complex market making strategies involving multi-order execution.
   Order_3 is a stop-loss for A->B @ 1 A = 1,300 B, valid when the B->A swap (Order_1) has filled last, so user is holding A
 
   beforeCalls:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requireBitNotUsed(1)
   Order_0:
     useBit(2)
@@ -263,7 +263,7 @@ automate complex market making strategies involving multi-order execution.
   this will set Order_2 to 75% filled. When no state has been set, it defaults Order_0 to be 0% filled and Order_1 to be 100% filled.
 
   beforeCalls:
-    requireNotExpired(<blockNumber>)
+    requireBlockNotMined(<blockNumber>)
     requireBitNotUsed(1)
     invertLimitSwaps(hash_0, hash_1)
   Order_0:
