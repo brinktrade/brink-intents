@@ -83,6 +83,11 @@ contract Primatives01 is TokenHelper {
 
   }
 
+  // requires tx sent by an executor that can prove ownership of one of the executor addresses
+  function requireStake (UnsignedStakeProofData data) external {
+
+  }
+
   function transfer (
     Token token,
     address owner,
@@ -203,31 +208,31 @@ contract Primatives01 is TokenHelper {
     
   }
 
-  // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
-  // incentivizes initialization of the auction with initializerFee
-  function dutchAuction (bytes32 id, Token tokenA, Token tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) external {
+  // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
+  // // incentivizes initialization of the auction with initializerFee
+  // function dutchAuction (bytes32 id, Token tokenA, Token tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) external {
 
-  }
+  // }
 
-  // revert if dutch auction is not started
-  function requireDutchAuctionNotStarted (bytes32 id) external {
+  // // revert if dutch auction is not started
+  // function requireDutchAuctionNotStarted (bytes32 id) external {
 
-  }
+  // }
 
-  // revert if dutch auction is not open
-  function requireDutchAuctionOpen (bytes32 id) external {
+  // // revert if dutch auction is not open
+  // function requireDutchAuctionOpen (bytes32 id) external {
 
-  }
+  // }
 
-  // revert if dutch auction is not complete
-  function requireDutchAuctionComplete (bytes32 id) external {
+  // // revert if dutch auction is not complete
+  // function requireDutchAuctionComplete (bytes32 id) external {
 
-  }
+  // }
 
-  // execute a dutch auction buy order
-  function dutchAuctionBuy (bytes32 id, uint inputAmount) external {
+  // // execute a dutch auction buy order
+  // function dutchAuctionBuy (bytes32 id, uint inputAmount) external {
 
-  }
+  // }
 
   // create a seaport listing
   function createSeaportListing (bytes32 id) external {
