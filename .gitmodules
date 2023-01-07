@@ -9,3 +9,4 @@
 [submodule "lib/brink-core"]
 	path = lib/brink-core
 	url = https://github.com/brinktrade/brink-core
+	branch = v1.0.0
