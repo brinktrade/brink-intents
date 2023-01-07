@@ -6,3 +6,6 @@
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
 	branch = v1.2.0
+[submodule "lib/brink-core"]
+	path = lib/brink-core
+	url = https://github.com/brinktrade/brink-core
