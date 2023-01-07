@@ -10,3 +10,7 @@
 	path = lib/brink-core
 	url = https://github.com/brinktrade/brink-core
 	branch = v1.0.0
+[submodule "lib/brink-verifiers"]
+	path = lib/brink-verifiers
+	url = https://github.com/brinktrade/brink-verifiers
+	branch = v1.2.0
