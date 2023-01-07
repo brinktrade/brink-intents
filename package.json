@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "dependencies": { },
   "scripts": {
-    "compile": "hardhat compile",
-    "test": "rm -rf __snapshots__/ApprovalSwapsV1.test.js && hardhat test",
+    "build": "forge build",
     "docgen": "rm -rf docs && solidity-docgen --solc-module solc-0.8.10",
     "exports-gen": "node ./generateExports.js"
   },
