@@ -2,11 +2,11 @@
 pragma solidity ^0.8.13;
 pragma abicoder v1;
 
-import "@brinkninja/core/contracts/Account/Account.sol";
-import "@brinkninja/core/contracts/Account/AccountFactory.sol";
-import "@brinkninja/core/contracts/Deployers/SaltedDeployer.sol";
-import "@brinkninja/core/contracts/Test/AccountWithTestCalls.sol";
-import "@brinkninja/core/contracts/Test/TestERC20.sol";
+import "brink-core/Account/Account.sol";
+import "brink-core/Account/AccountFactory.sol";
+import "brink-core/Deployers/SaltedDeployer.sol";
+import "brink-core/Test/AccountWithTestCalls.sol";
+import "brink-core/Test/TestERC20.sol";
 import "@brinkninja/verifiers/contracts/External/CallExecutor.sol";
 
 contract Imports { }

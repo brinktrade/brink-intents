@@ -1,1 +1,2 @@
 openzeppelin/=lib/openzeppelin-contracts/contracts
+brink-core/=lib/brink-core/contracts
