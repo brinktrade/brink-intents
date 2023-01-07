@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 pragma abicoder v1;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "openzeppelin/token/ERC1155/ERC1155.sol";
 
 contract TestERC1155 is ERC1155 {
   uint256 public constant GOLD = 0;

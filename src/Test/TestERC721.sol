@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 pragma abicoder v1;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "openzeppelin/token/ERC721/ERC721.sol";
 
 contract TestERC721 is ERC721 {
   constructor(string memory name_, string memory symbol_) ERC721(name_, symbol_) { }
