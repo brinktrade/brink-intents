@@ -1,0 +1,349 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalTokenInAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "basePrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "outputFilled",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenInAmountRequired",
+          "type": "uint256"
+        }
+      ],
+      "name": "getOutput",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenOutAmountRequired",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "getOutput(uint256,uint256,uint256,uint256)": "1b958e5c"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"totalTokenInAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"basePrice\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"outputFilled\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tokenInAmountRequired\",\"type\":\"uint256\"}],\"name\":\"getOutput\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenOutAmountRequired\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/IPriceCurve.sol\":\"IPriceCurve\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/IPriceCurve.sol\":{\"keccak256\":\"0x9063ca09de1597f770c9ebb6893984f7d51c15e5280c9910787c20c62b9d79d5\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://fdcc118d4326244a4c53c983db860c3a28b6485b83787f879b76d358c99a47e5\",\"dweb:/ipfs/QmXeY2bY1FL8AdwXR8kr5TRqjrBHiefB5e2bomtYvk5PME\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "totalTokenInAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "basePrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputFilled",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenInAmountRequired",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "getOutput",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenOutAmountRequired",
+              "type": "uint256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":brink-core/=lib/brink-core/contracts/",
+        ":brink-verifiers/=lib/brink-verifiers/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/Interfaces/IPriceCurve.sol": "IPriceCurve"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/Interfaces/IPriceCurve.sol": {
+        "keccak256": "0x9063ca09de1597f770c9ebb6893984f7d51c15e5280c9910787c20c62b9d79d5",
+        "urls": [
+          "bzz-raw://fdcc118d4326244a4c53c983db860c3a28b6485b83787f879b76d358c99a47e5",
+          "dweb:/ipfs/QmXeY2bY1FL8AdwXR8kr5TRqjrBHiefB5e2bomtYvk5PME"
+        ],
+        "license": "GPL-3.0-or-later"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/Interfaces/IPriceCurve.sol",
+    "id": 29656,
+    "exportedSymbols": {
+      "IPriceCurve": [
+        29655
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "45:230:34",
+    "nodes": [
+      {
+        "id": 29641,
+        "nodeType": "PragmaDirective",
+        "src": "45:24:34",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 29655,
+        "nodeType": "ContractDefinition",
+        "src": "71:203:34",
+        "nodes": [
+          {
+            "id": 29654,
+            "nodeType": "FunctionDefinition",
+            "src": "97:175:34",
+            "nodes": [],
+            "functionSelector": "1b958e5c",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getOutput",
+            "nameLocation": "106:9:34",
+            "parameters": {
+              "id": 29650,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29643,
+                  "mutability": "mutable",
+                  "name": "totalTokenInAmount",
+                  "nameLocation": "127:18:34",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29654,
+                  "src": "122:23:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29642,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "122:4:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 29645,
+                  "mutability": "mutable",
+                  "name": "basePrice",
+                  "nameLocation": "156:9:34",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29654,
+                  "src": "151:14:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29644,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "151:4:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 29647,
+                  "mutability": "mutable",
+                  "name": "outputFilled",
+                  "nameLocation": "176:12:34",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29654,
+                  "src": "171:17:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29646,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "171:4:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 29649,
+                  "mutability": "mutable",
+                  "name": "tokenInAmountRequired",
+                  "nameLocation": "199:21:34",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29654,
+                  "src": "194:26:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29648,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "194:4:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "116:108:34"
+            },
+            "returnParameters": {
+              "id": 29653,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29652,
+                  "mutability": "mutable",
+                  "name": "tokenOutAmountRequired",
+                  "nameLocation": "248:22:34",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29654,
+                  "src": "243:27:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29651,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "243:4:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "242:29:34"
+            },
+            "scope": 29655,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IPriceCurve",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          29655
+        ],
+        "name": "IPriceCurve",
+        "nameLocation": "81:11:34",
+        "scope": 29656,
+        "usedErrors": []
+      }
+    ],
+    "license": "GPL-3.0-or-later"
+  },
+  "id": 34
+}

@@ -1,0 +1,198 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "price",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "price()": "a035b1fe"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"price\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/IPriceOracle.sol\":\"IPriceOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/IPriceOracle.sol\":{\"keccak256\":\"0xc7714e7401400be8c2a5be8ae7bd64cb2d1a1271f648d93c3ca8d1f1bbca8240\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://f3e97e402f09afeb53c313c9fa26c158990d9a07593e01625346f7927dc955bc\",\"dweb:/ipfs/QmaQ5HpR9Txzid4M8mbJJU2WX8ce9nqCQ8km8DChPCt9y1\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "price",
+          "outputs": [
+            {
+              "internalType": "int256",
+              "name": "",
+              "type": "int256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":brink-core/=lib/brink-core/contracts/",
+        ":brink-verifiers/=lib/brink-verifiers/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/Interfaces/IPriceOracle.sol": "IPriceOracle"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/Interfaces/IPriceOracle.sol": {
+        "keccak256": "0xc7714e7401400be8c2a5be8ae7bd64cb2d1a1271f648d93c3ca8d1f1bbca8240",
+        "urls": [
+          "bzz-raw://f3e97e402f09afeb53c313c9fa26c158990d9a07593e01625346f7927dc955bc",
+          "dweb:/ipfs/QmaQ5HpR9Txzid4M8mbJJU2WX8ce9nqCQ8km8DChPCt9y1"
+        ],
+        "license": "GPL-3.0-or-later"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/Interfaces/IPriceOracle.sol",
+    "id": 29672,
+    "exportedSymbols": {
+      "IPriceOracle": [
+        29671
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "45:101:36",
+    "nodes": [
+      {
+        "id": 29665,
+        "nodeType": "PragmaDirective",
+        "src": "45:24:36",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 29671,
+        "nodeType": "ContractDefinition",
+        "src": "71:74:36",
+        "nodes": [
+          {
+            "id": 29670,
+            "nodeType": "FunctionDefinition",
+            "src": "98:45:36",
+            "nodes": [],
+            "functionSelector": "a035b1fe",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "price",
+            "nameLocation": "107:5:36",
+            "parameters": {
+              "id": 29666,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "112:2:36"
+            },
+            "returnParameters": {
+              "id": 29669,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29668,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29670,
+                  "src": "138:3:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_int256",
+                    "typeString": "int256"
+                  },
+                  "typeName": {
+                    "id": 29667,
+                    "name": "int",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "138:3:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_int256",
+                      "typeString": "int256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "137:5:36"
+            },
+            "scope": 29671,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IPriceOracle",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          29671
+        ],
+        "name": "IPriceOracle",
+        "nameLocation": "81:12:36",
+        "scope": 29672,
+        "usedErrors": []
+      }
+    ],
+    "license": "GPL-3.0-or-later"
+  },
+  "id": 36
+}

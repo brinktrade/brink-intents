@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
-pragma abicoder v1;
 
 contract StrategyTarget01 {
   
@@ -13,7 +12,7 @@ contract StrategyTarget01 {
   /// @param orderIndex Index of the order to execute [unsigned]
   /// @param unsignedCalls Array of bytes data provided for the order's primitive functions that require unsigned calls [unsigned]
   function execute(
-    Strategy strategy,
+    Strategy calldata strategy,
     uint8 orderIndex,
     bytes[] calldata unsignedCalls
   ) external {
@@ -25,35 +24,38 @@ contract StrategyTarget01 {
 
     uint8 nextUnsignedCall = 0;
     for (uint8 i = 0; i < strategy.orders[orderIndex].primitives.length; i++) {
-      Primitive primitive = strategy.orders[orderIndex].primitives[i]
+      Primitive calldata primitive = strategy.orders[orderIndex].primitives[i];
       bytes memory primitiveCallData;
       if (primitive.requiresUnsignedCall) {
-        bytes memory unsignedCall = unsignedCalls[nextUnsignedCall];
-        if (unsignedCall == bytes(0)) {
-          BadUnsignedCallForPrimitive(i);
+        bytes calldata unsignedCall = unsignedCalls[nextUnsignedCall];
+        if (unsignedCall.length == 0) {
+          revert BadUnsignedCallForPrimitive(i);
         }
         primitiveCallData = abi.encodePacked(primitive.data, unsignedCall);
       } else {
         primitiveCallData = primitive.data;
       }
-      _delegateCallWithRevert(Call(strategy.primitiveTarget, primitiveCallData));
+      _delegateCallWithRevert(Call({
+        targetContract: strategy.primitiveTarget,
+        data: primitiveCallData
+      }));
     }
 
     _delegateCallsWithRevert(strategy.afterCalls);
   }
 
-  function _delegateCallsWithRevert (Call[] calls) {
+  function _delegateCallsWithRevert (Call[] calldata calls) internal {
     for (uint8 i = 0; i < calls.length; i++) {
       _delegateCallWithRevert(calls[i]);
     }
   }
 
-  function _delegateCallWithRevert (Call call) internal {
+  function _delegateCallWithRevert (Call memory call) internal {
     address targetContract = call.targetContract;
-    bytes data = call.data;
+    bytes memory data = call.data;
     assembly {
       let result := delegatecall(gas(), targetContract, add(data, 0x20), mload(data), 0, 0)
-      if (result, 0) {
+      if eq(result, 0) {
         returndatacopy(0, 0, returndatasize())
         revert(0, returndatasize())
       }
@@ -76,12 +78,12 @@ contract StrategyTarget01 {
   }
 
   struct Primitive {
-    bytes calldata data;
+    bytes data;
     bool requiresUnsignedCall;
   }
 
   struct Call {
     address targetContract;
-    bytes calldata data;
+    bytes data;
   }
 }

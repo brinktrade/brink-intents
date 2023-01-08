@@ -1,0 +1,198 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "priceDelta",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "priceDelta()": "5bfa896a"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"priceDelta\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/IPriceDeltaOracle.sol\":\"IPriceDeltaOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/IPriceDeltaOracle.sol\":{\"keccak256\":\"0x845b060718c518189ec326b5eedbf2d4376ac983b274ae7b9161526141fcb7ef\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://60578d5a214e46666a50d49837a0a249d88daf7443ea637e75c7ffaacc6a02d5\",\"dweb:/ipfs/QmVTFR1Hv7fY416qzVKaFYPvXD8ibRddhELk4rUt5Bh47d\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "priceDelta",
+          "outputs": [
+            {
+              "internalType": "int256",
+              "name": "",
+              "type": "int256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":brink-core/=lib/brink-core/contracts/",
+        ":brink-verifiers/=lib/brink-verifiers/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/Interfaces/IPriceDeltaOracle.sol": "IPriceDeltaOracle"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/Interfaces/IPriceDeltaOracle.sol": {
+        "keccak256": "0x845b060718c518189ec326b5eedbf2d4376ac983b274ae7b9161526141fcb7ef",
+        "urls": [
+          "bzz-raw://60578d5a214e46666a50d49837a0a249d88daf7443ea637e75c7ffaacc6a02d5",
+          "dweb:/ipfs/QmVTFR1Hv7fY416qzVKaFYPvXD8ibRddhELk4rUt5Bh47d"
+        ],
+        "license": "GPL-3.0-or-later"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/Interfaces/IPriceDeltaOracle.sol",
+    "id": 29664,
+    "exportedSymbols": {
+      "IPriceDeltaOracle": [
+        29663
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "45:111:35",
+    "nodes": [
+      {
+        "id": 29657,
+        "nodeType": "PragmaDirective",
+        "src": "45:24:35",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 29663,
+        "nodeType": "ContractDefinition",
+        "src": "71:84:35",
+        "nodes": [
+          {
+            "id": 29662,
+            "nodeType": "FunctionDefinition",
+            "src": "103:50:35",
+            "nodes": [],
+            "functionSelector": "5bfa896a",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "priceDelta",
+            "nameLocation": "112:10:35",
+            "parameters": {
+              "id": 29658,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "122:2:35"
+            },
+            "returnParameters": {
+              "id": 29661,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29660,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29662,
+                  "src": "148:3:35",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_int256",
+                    "typeString": "int256"
+                  },
+                  "typeName": {
+                    "id": 29659,
+                    "name": "int",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "148:3:35",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_int256",
+                      "typeString": "int256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "147:5:35"
+            },
+            "scope": 29663,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IPriceDeltaOracle",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          29663
+        ],
+        "name": "IPriceDeltaOracle",
+        "nameLocation": "81:17:35",
+        "scope": 29664,
+        "usedErrors": []
+      }
+    ],
+    "license": "GPL-3.0-or-later"
+  },
+  "id": 35
+}

@@ -1,0 +1,235 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "proxyCall",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "proxyCall(address,bytes)": "2a31f6b4"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"proxyCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/ICallExecutor.sol\":\"ICallExecutor\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/ICallExecutor.sol\":{\"keccak256\":\"0x8330730889b5974571981232458f574522298c8fc1a9490b9a9d3ea88b1b72ad\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://7579e934b5e7fb43c0e5af573fc94fa0d91b82ee68d60619ad7bf3a6d46fbf85\",\"dweb:/ipfs/QmUhyDX2xUSfwa8vkj6nJLpNYpqtwcRYe9cGGkHj3Sup7c\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "function",
+          "name": "proxyCall"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":brink-core/=lib/brink-core/contracts/",
+        ":brink-verifiers/=lib/brink-verifiers/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/Interfaces/ICallExecutor.sol": "ICallExecutor"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/Interfaces/ICallExecutor.sol": {
+        "keccak256": "0x8330730889b5974571981232458f574522298c8fc1a9490b9a9d3ea88b1b72ad",
+        "urls": [
+          "bzz-raw://7579e934b5e7fb43c0e5af573fc94fa0d91b82ee68d60619ad7bf3a6d46fbf85",
+          "dweb:/ipfs/QmUhyDX2xUSfwa8vkj6nJLpNYpqtwcRYe9cGGkHj3Sup7c"
+        ],
+        "license": "GPL-3.0-or-later"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/Interfaces/ICallExecutor.sol",
+    "id": 29640,
+    "exportedSymbols": {
+      "ICallExecutor": [
+        29639
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "45:124:33",
+    "nodes": [
+      {
+        "id": 29631,
+        "nodeType": "PragmaDirective",
+        "src": "45:24:33",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 29639,
+        "nodeType": "ContractDefinition",
+        "src": "71:97:33",
+        "nodes": [
+          {
+            "id": 29638,
+            "nodeType": "FunctionDefinition",
+            "src": "99:67:33",
+            "nodes": [],
+            "functionSelector": "2a31f6b4",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "proxyCall",
+            "nameLocation": "108:9:33",
+            "parameters": {
+              "id": 29636,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29633,
+                  "mutability": "mutable",
+                  "name": "to",
+                  "nameLocation": "126:2:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29638,
+                  "src": "118:10:33",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 29632,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "118:7:33",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 29635,
+                  "mutability": "mutable",
+                  "name": "data",
+                  "nameLocation": "143:4:33",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29638,
+                  "src": "130:17:33",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 29634,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "130:5:33",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "117:31:33"
+            },
+            "returnParameters": {
+              "id": 29637,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "165:0:33"
+            },
+            "scope": 29639,
+            "stateMutability": "payable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "ICallExecutor",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          29639
+        ],
+        "name": "ICallExecutor",
+        "nameLocation": "81:13:33",
+        "scope": 29640,
+        "usedErrors": []
+      }
+    ],
+    "license": "GPL-3.0-or-later"
+  },
+  "id": 33
+}

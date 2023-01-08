@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
-pragma abicoder v1;
 
 import "openzeppelin/token/ERC1155/ERC1155.sol";
 

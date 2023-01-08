@@ -1,0 +1,111 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea264697066735822122024b77732f3f314d554d86f7024be52144e23add7ef2a4c3c1f8bd9dbac014ac464736f6c63430008110033",
+    "sourceMap": "71:20:38:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604052600080fdfea264697066735822122024b77732f3f314d554d86f7024be52144e23add7ef2a4c3c1f8bd9dbac014ac464736f6c63430008110033",
+    "sourceMap": "71:20:38:-:0;;;;;",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {},
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Test/Imports.sol\":\"Imports\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Test/Imports.sol\":{\"keccak256\":\"0xcf964cbb155ba59cbcc2a33603d35ad39d6cb69f9c690bc7115f13ba9b59660e\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://46c17eccec819e3024bca453b80b44eee47482b34422db49d16ac44eee759c73\",\"dweb:/ipfs/QmU2F2sYKBjtD4mNVEVygZEMYBFWDe7MNzK6AvJA28BmeX\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":brink-core/=lib/brink-core/contracts/",
+        ":brink-verifiers/=lib/brink-verifiers/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/Test/Imports.sol": "Imports"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/Test/Imports.sol": {
+        "keccak256": "0xcf964cbb155ba59cbcc2a33603d35ad39d6cb69f9c690bc7115f13ba9b59660e",
+        "urls": [
+          "bzz-raw://46c17eccec819e3024bca453b80b44eee47482b34422db49d16ac44eee759c73",
+          "dweb:/ipfs/QmU2F2sYKBjtD4mNVEVygZEMYBFWDe7MNzK6AvJA28BmeX"
+        ],
+        "license": "GPL-3.0-or-later"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/Test/Imports.sol",
+    "id": 30393,
+    "exportedSymbols": {
+      "Imports": [
+        30392
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "45:47:38",
+    "nodes": [
+      {
+        "id": 30391,
+        "nodeType": "PragmaDirective",
+        "src": "45:24:38",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 30392,
+        "nodeType": "ContractDefinition",
+        "src": "71:20:38",
+        "nodes": [],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "Imports",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          30392
+        ],
+        "name": "Imports",
+        "nameLocation": "80:7:38",
+        "scope": 30393,
+        "usedErrors": []
+      }
+    ],
+    "license": "GPL-3.0-or-later"
+  },
+  "id": 38
+}
