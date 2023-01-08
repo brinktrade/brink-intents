@@ -32,7 +32,7 @@
   "methodIdentifiers": {
     "proxyCall(address,bytes)": "2a31f6b4"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"proxyCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/ICallExecutor.sol\":\"ICallExecutor\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/ICallExecutor.sol\":{\"keccak256\":\"0x8330730889b5974571981232458f574522298c8fc1a9490b9a9d3ea88b1b72ad\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://7579e934b5e7fb43c0e5af573fc94fa0d91b82ee68d60619ad7bf3a6d46fbf85\",\"dweb:/ipfs/QmUhyDX2xUSfwa8vkj6nJLpNYpqtwcRYe9cGGkHj3Sup7c\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"proxyCall\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/ICallExecutor.sol\":\"ICallExecutor\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/ICallExecutor.sol\":{\"keccak256\":\"0x8330730889b5974571981232458f574522298c8fc1a9490b9a9d3ea88b1b72ad\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://7579e934b5e7fb43c0e5af573fc94fa0d91b82ee68d60619ad7bf3a6d46fbf85\",\"dweb:/ipfs/QmUhyDX2xUSfwa8vkj6nJLpNYpqtwcRYe9cGGkHj3Sup7c\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
       "version": "0.8.17+commit.8df45f5f"
@@ -72,7 +72,6 @@
     "settings": {
       "remappings": [
         ":brink-core/=lib/brink-core/contracts/",
-        ":brink-verifiers/=lib/brink-verifiers/contracts/",
         ":ds-test/=lib/forge-std/lib/ds-test/src/",
         ":forge-std/=lib/forge-std/src/",
         ":openzeppelin/=lib/openzeppelin-contracts/contracts/"

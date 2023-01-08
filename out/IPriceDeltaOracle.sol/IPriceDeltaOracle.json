@@ -27,7 +27,7 @@
   "methodIdentifiers": {
     "priceDelta()": "5bfa896a"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"priceDelta\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/IPriceDeltaOracle.sol\":\"IPriceDeltaOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":brink-verifiers/=lib/brink-verifiers/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/IPriceDeltaOracle.sol\":{\"keccak256\":\"0x845b060718c518189ec326b5eedbf2d4376ac983b274ae7b9161526141fcb7ef\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://60578d5a214e46666a50d49837a0a249d88daf7443ea637e75c7ffaacc6a02d5\",\"dweb:/ipfs/QmVTFR1Hv7fY416qzVKaFYPvXD8ibRddhELk4rUt5Bh47d\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"priceDelta\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Interfaces/IPriceDeltaOracle.sol\":\"IPriceDeltaOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/IPriceDeltaOracle.sol\":{\"keccak256\":\"0x845b060718c518189ec326b5eedbf2d4376ac983b274ae7b9161526141fcb7ef\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://60578d5a214e46666a50d49837a0a249d88daf7443ea637e75c7ffaacc6a02d5\",\"dweb:/ipfs/QmVTFR1Hv7fY416qzVKaFYPvXD8ibRddhELk4rUt5Bh47d\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
       "version": "0.8.17+commit.8df45f5f"
@@ -63,7 +63,6 @@
     "settings": {
       "remappings": [
         ":brink-core/=lib/brink-core/contracts/",
-        ":brink-verifiers/=lib/brink-verifiers/contracts/",
         ":ds-test/=lib/forge-std/lib/ds-test/src/",
         ":forge-std/=lib/forge-std/src/",
         ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
