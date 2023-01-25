@@ -15,6 +15,8 @@ contract Primatives01 is TokenHelper {
   error NftIdNotReceived();
   error NotEnoughTokenReceived(uint amountReceived);
   error MerkleProofAndAmountMismatch();
+  error BlockMined();
+  error BlockNotMined();
 
   struct UnsignedTransferData {
     address recipient;
@@ -63,13 +65,17 @@ contract Primatives01 is TokenHelper {
   }
 
   // require block <= current block
-  function requireBlockMined (uint blockNumber) external {
-
+  function requireBlockMined (uint blockNumber) external view {
+    if (blockNumber <= block.number) {
+      revert BlockNotMined();
+    }
   }
 
   // require block > current block
-  function requireBlockNotMined (uint blockNumber) external {
-
+  function requireBlockNotMined (uint blockNumber) external view {
+    if (blockNumber > block.number) {
+      revert BlockMined();
+    }
   }
 
   // increment on each successful run, revert when maxRuns exceeded
