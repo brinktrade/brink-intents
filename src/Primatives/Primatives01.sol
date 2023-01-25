@@ -7,17 +7,16 @@ import "../Interfaces/IPriceDeltaOracle.sol";
 import "../Interfaces/IPriceCurve.sol";
 import "../TokenHelper/TokenHelper.sol";
 
+error NftIdAlreadyOwned();
+error NftIdNotReceived();
+error NotEnoughTokenReceived(uint amountReceived);
+error MerkleProofAndAmountMismatch();
 error BlockMined();
 error BlockNotMined();
 
 contract Primatives01 is TokenHelper {
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
-
-  error NftIdAlreadyOwned();
-  error NftIdNotReceived();
-  error NotEnoughTokenReceived(uint amountReceived);
-  error MerkleProofAndAmountMismatch();
 
   struct UnsignedTransferData {
     address recipient;
