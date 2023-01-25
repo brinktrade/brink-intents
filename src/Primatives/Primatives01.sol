@@ -7,6 +7,9 @@ import "../Interfaces/IPriceDeltaOracle.sol";
 import "../Interfaces/IPriceCurve.sol";
 import "../TokenHelper/TokenHelper.sol";
 
+error BlockMined();
+error BlockNotMined();
+
 contract Primatives01 is TokenHelper {
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
@@ -15,8 +18,6 @@ contract Primatives01 is TokenHelper {
   error NftIdNotReceived();
   error NotEnoughTokenReceived(uint amountReceived);
   error MerkleProofAndAmountMismatch();
-  error BlockMined();
-  error BlockNotMined();
 
   struct UnsignedTransferData {
     address recipient;
@@ -50,66 +51,65 @@ contract Primatives01 is TokenHelper {
   }
 
   // require bitmapIndex/bit not to be used
-  function requireBitNotUsed (uint bitmapIndex, uint bit) external {
+  function requireBitNotUsed (uint bitmapIndex, uint bit) public {
 
   }
 
   // require bitmapIndex/bit to be used
-  function requireBitUsed (uint bitmapIndex, uint bit) external {
+  function requireBitUsed (uint bitmapIndex, uint bit) public {
 
   }
 
   // set bitmapIndex/bit to used. Requires bit not to be used
-  function useBit (uint bitmapIndex, uint bit) external {
+  function useBit (uint bitmapIndex, uint bit) public {
     
   }
 
   // require block <= current block
-  function requireBlockMined (uint blockNumber) external view {
-    if (blockNumber <= block.number) {
+  function requireBlockMined (uint blockNumber) public view {
+    if (blockNumber > block.number) {
       revert BlockNotMined();
     }
   }
 
-  // require block > current block
-  function requireBlockNotMined (uint blockNumber) external view {
-    if (blockNumber > block.number) {
+  function requireBlockNotMined (uint blockNumber) public view {
+    if (blockNumber <= block.number) {
       revert BlockMined();
     }
   }
 
   // increment on each successful run, revert when maxRuns exceeded
-  function maxRuns (bytes32 id, uint numberOfRuns) external {
+  function maxRuns (bytes32 id, uint numberOfRuns) public {
 
   }
 
   // allows a run every n blocks, revert if last run was less than n blocks ago
-  function requireBlocksElapsed (bytes32 id, uint numberOfBlocksElapsed) external {
+  function requireBlocksElapsed (bytes32 id, uint numberOfBlocksElapsed) public {
 
   }
 
   // require priceOracle.price(A, B) <= value
-  function requirePriceLowerBound (IPriceOracle priceOracle, Token calldata tokenA, Token calldata tokenB, uint value) external {
+  function requirePriceLowerBound (IPriceOracle priceOracle, Token calldata tokenA, Token calldata tokenB, uint value) public {
 
   }
 
   // require priceOracle.price(A, B) >= value
-  function requirePriceUpperBound (IPriceOracle priceOracle, Token calldata tokenA, Token calldata tokenB, uint value) external {
+  function requirePriceUpperBound (IPriceOracle priceOracle, Token calldata tokenA, Token calldata tokenB, uint value) public {
 
   }
 
   // require priceDeltaOracle.priceDelta(A, B, duration) <= value * -1 AND require currentTime - startTime >= duration
-  function requirePriceDecrease (IPriceDeltaOracle priceDeltaOracle, Token calldata tokenA, Token calldata tokenB, uint startTime, uint duration, uint value) external {
+  function requirePriceDecrease (IPriceDeltaOracle priceDeltaOracle, Token calldata tokenA, Token calldata tokenB, uint startTime, uint duration, uint value) public {
 
   }
 
   // require priceDeltaOracle.priceDelta(A, B, duration) >= value AND require currentTime - startTime >= duration
-  function requirePriceIncrease (IPriceDeltaOracle priceDeltaOracle, Token calldata tokenA, Token calldata tokenB, uint startTime, uint duration, uint value) external {
+  function requirePriceIncrease (IPriceDeltaOracle priceDeltaOracle, Token calldata tokenA, Token calldata tokenB, uint startTime, uint duration, uint value) public {
 
   }
 
   // requires tx sent by an executor that can prove ownership of one of the executor addresses
-  function requireStake (UnsignedStakeProofData calldata data) external {
+  function requireStake (UnsignedStakeProofData calldata data) public {
 
   }
 
@@ -120,7 +120,7 @@ contract Primatives01 is TokenHelper {
     uint amount,
     uint id,
     UnsignedTransferData calldata data
-  ) external {
+  ) public {
     _checkUnsignedTransferData(token, amount, data);
     address _recipient = recipient != address(0) ? recipient : data.recipient;
     transferFrom(token, owner, _recipient, amount, id, data.idMerkleProofs);
@@ -134,7 +134,7 @@ contract Primatives01 is TokenHelper {
     Token calldata tokenOut,
     uint tokenInAmount,
     UnsignedMarketSwapData calldata data
-  ) external {
+  ) public {
     uint tokenOutAmountRequired = _getMarketOutput(priceOracle, tokenIn, tokenOut, tokenInAmount);
     _fillSwap(
       tokenIn,
@@ -158,7 +158,7 @@ contract Primatives01 is TokenHelper {
     Token calldata tokenOut,
     uint tokenOutAmount,
     UnsignedMarketSwapData calldata data
-  ) external {
+  ) public {
     uint tokenInAmountRequired = _getMarketInput(priceOracle, tokenIn, tokenOut, tokenOutAmount);
     _fillSwap(
       tokenIn,
@@ -184,7 +184,7 @@ contract Primatives01 is TokenHelper {
     uint basePrice,
     IPriceCurve priceCurve,
     UnsignedLimitSwapData calldata data
-  ) external {
+  ) public {
     _checkUnsignedLimitSwapData(tokenIn, data);
 
     // TODO: state resolution for tokenInAmount and basePrice modification
@@ -212,56 +212,56 @@ contract Primatives01 is TokenHelper {
   }
 
   // revert if limit swap is not open
-  function requireLimitSwapOpen(bytes32 id) external {
+  function requireLimitSwapOpen(bytes32 id) public {
 
   }
 
   // revert if limit swap is not filled
-  function requireLimitSwapFilled(bytes32 id) external {
+  function requireLimitSwapFilled(bytes32 id) public {
 
   }
 
   // invert the allowed swap amount states between two limit swaps.
   // if swap0 fill amount decreases, increase fill amount for swap1 by the same amount.
   // Should be used for swaps with opposite pairs, i.e. A->B and B->A
-  function invertLimitSwapFills (bytes32 swap0, bytes32 swap1) external {
+  function invertLimitSwapFills (bytes32 swap0, bytes32 swap1) public {
     
   }
 
   // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
   // Should be used for swaps with the same pairs, i.e. A->B and A->B
-  function bindLimitSwapFills (bytes32[] calldata swapsIds) external {
+  function bindLimitSwapFills (bytes32[] calldata swapsIds) public {
     
   }
 
   // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
   // // incentivizes initialization of the auction with initializerFee
-  // function dutchAuction (bytes32 id, Token calldata tokenA, Token calldata tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) external {
+  // function dutchAuction (bytes32 id, Token calldata tokenA, Token calldata tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) public {
 
   // }
 
   // // revert if dutch auction is not started
-  // function requireDutchAuctionNotStarted (bytes32 id) external {
+  // function requireDutchAuctionNotStarted (bytes32 id) public {
 
   // }
 
   // // revert if dutch auction is not open
-  // function requireDutchAuctionOpen (bytes32 id) external {
+  // function requireDutchAuctionOpen (bytes32 id) public {
 
   // }
 
   // // revert if dutch auction is not complete
-  // function requireDutchAuctionComplete (bytes32 id) external {
+  // function requireDutchAuctionComplete (bytes32 id) public {
 
   // }
 
   // // execute a dutch auction buy order
-  // function dutchAuctionBuy (bytes32 id, uint inputAmount) external {
+  // function dutchAuctionBuy (bytes32 id, uint inputAmount) public {
 
   // }
 
   // create a seaport listing
-  function createSeaportListing (bytes32 id) external {
+  function createSeaportListing (bytes32 id) public {
 
   }
 
