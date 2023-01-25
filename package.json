@@ -4,6 +4,7 @@
   "dependencies": { },
   "scripts": {
     "build": "forge build",
+    "test": "forge test",
     "docgen": "rm -rf docs && solidity-docgen --solc-module solc-0.8.10",
     "exports-gen": "node ./generateExports.js"
   },
