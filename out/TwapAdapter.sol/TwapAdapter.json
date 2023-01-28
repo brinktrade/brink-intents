@@ -1,0 +1,350 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tokenA",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenB",
+          "type": "address"
+        }
+      ],
+      "name": "price",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b5060d18061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80632b00490d14602d575b600080fd5b60406038366004606d565b607b92915050565b60405190815260200160405180910390f35b80356001600160a01b0381168114606857600080fd5b919050565b60008060408385031215607f57600080fd5b6086836052565b91506092602084016052565b9050925092905056fea264697066735822122033e738ef1770060ba89f8f85efe3e85bf9789300b382c7bce214e48ac951e78564736f6c63430008110033",
+    "sourceMap": "113:139:15:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c80632b00490d14602d575b600080fd5b60406038366004606d565b607b92915050565b60405190815260200160405180910390f35b80356001600160a01b0381168114606857600080fd5b919050565b60008060408385031215607f57600080fd5b6086836052565b91506092602084016052565b9050925092905056fea264697066735822122033e738ef1770060ba89f8f85efe3e85bf9789300b382c7bce214e48ac951e78564736f6c63430008110033",
+    "sourceMap": "113:139:15:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;155:95;;;;;;:::i;:::-;242:3;155:95;;;;;;;;603:25:18;;;591:2;576:18;155:95:15;;;;;;;14:173:18;82:20;;-1:-1:-1;;;;;131:31:18;;121:42;;111:70;;177:1;174;167:12;111:70;14:173;;;:::o;192:260::-;260:6;268;321:2;309:9;300:7;296:23;292:32;289:52;;;337:1;334;327:12;289:52;360:29;379:9;360:29;:::i;:::-;350:39;;408:38;442:2;431:9;427:18;408:38;:::i;:::-;398:48;;192:260;;;;;:::o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "price(address,address)": "2b00490d"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"}],\"name\":\"price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Oracles/TwapAdapter.sol\":\"TwapAdapter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"src/Interfaces/IPriceOracle.sol\":{\"keccak256\":\"0x7d20e9d9824ab1622170b3839d3080c19119ed80884f74b78fc8ee27df54879f\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://995379b96ffc1e22521918f7b3319f6ef02be468000d50075b80ced7ea5ee197\",\"dweb:/ipfs/QmYX1VFfXe6Tdv6d4svE5X7b5f4BShmwXBYHXtM9aWhrGo\"]},\"src/Oracles/TwapAdapter.sol\":{\"keccak256\":\"0xcbce2a9ce0e3fbc0d9fe3007c9636bacedd263e909cfe00760c22424f8e7297f\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://0a5815ddeec78ecbc34da192940032f6b78bc057b61686120ea1bb3337dfc0eb\",\"dweb:/ipfs/QmbBDxsHd4hyFPx9oznCsVz2bs17C9Re4aicC9o1c2SB6P\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "tokenA",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenB",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "price",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":brink-core/=lib/brink-core/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/Oracles/TwapAdapter.sol": "TwapAdapter"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/Interfaces/IPriceOracle.sol": {
+        "keccak256": "0x7d20e9d9824ab1622170b3839d3080c19119ed80884f74b78fc8ee27df54879f",
+        "urls": [
+          "bzz-raw://995379b96ffc1e22521918f7b3319f6ef02be468000d50075b80ced7ea5ee197",
+          "dweb:/ipfs/QmYX1VFfXe6Tdv6d4svE5X7b5f4BShmwXBYHXtM9aWhrGo"
+        ],
+        "license": "GPL-3.0-or-later"
+      },
+      "src/Oracles/TwapAdapter.sol": {
+        "keccak256": "0xcbce2a9ce0e3fbc0d9fe3007c9636bacedd263e909cfe00760c22424f8e7297f",
+        "urls": [
+          "bzz-raw://0a5815ddeec78ecbc34da192940032f6b78bc057b61686120ea1bb3337dfc0eb",
+          "dweb:/ipfs/QmbBDxsHd4hyFPx9oznCsVz2bs17C9Re4aicC9o1c2SB6P"
+        ],
+        "license": "GPL-3.0-or-later"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/Oracles/TwapAdapter.sol",
+    "id": 25506,
+    "exportedSymbols": {
+      "IPriceOracle": [
+        25487
+      ],
+      "TwapAdapter": [
+        25505
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "45:208:15",
+    "nodes": [
+      {
+        "id": 25489,
+        "nodeType": "PragmaDirective",
+        "src": "45:24:15",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ]
+      },
+      {
+        "id": 25490,
+        "nodeType": "ImportDirective",
+        "src": "71:40:15",
+        "nodes": [],
+        "absolutePath": "src/Interfaces/IPriceOracle.sol",
+        "file": "../Interfaces/IPriceOracle.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 25506,
+        "sourceUnit": 25488,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 25505,
+        "nodeType": "ContractDefinition",
+        "src": "113:139:15",
+        "nodes": [
+          {
+            "id": 25504,
+            "nodeType": "FunctionDefinition",
+            "src": "155:95:15",
+            "nodes": [],
+            "body": {
+              "id": 25503,
+              "nodeType": "Block",
+              "src": "229:21:15",
+              "nodes": [],
+              "statements": [
+                {
+                  "expression": {
+                    "hexValue": "313233",
+                    "id": 25501,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "242:3:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_rational_123_by_1",
+                      "typeString": "int_const 123"
+                    },
+                    "value": "123"
+                  },
+                  "functionReturnParameters": 25500,
+                  "id": 25502,
+                  "nodeType": "Return",
+                  "src": "235:10:15"
+                }
+              ]
+            },
+            "baseFunctions": [
+              25486
+            ],
+            "functionSelector": "2b00490d",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "price",
+            "nameLocation": "164:5:15",
+            "parameters": {
+              "id": 25497,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 25494,
+                  "mutability": "mutable",
+                  "name": "tokenA",
+                  "nameLocation": "178:6:15",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 25504,
+                  "src": "170:14:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 25493,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "170:7:15",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 25496,
+                  "mutability": "mutable",
+                  "name": "tokenB",
+                  "nameLocation": "194:6:15",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 25504,
+                  "src": "186:14:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 25495,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "186:7:15",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "169:32:15"
+            },
+            "returnParameters": {
+              "id": 25500,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 25499,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 25504,
+                  "src": "223:4:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 25498,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "223:4:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "222:6:15"
+            },
+            "scope": 25505,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 25491,
+              "name": "IPriceOracle",
+              "nameLocations": [
+                "137:12:15"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 25487,
+              "src": "137:12:15"
+            },
+            "id": 25492,
+            "nodeType": "InheritanceSpecifier",
+            "src": "137:12:15"
+          }
+        ],
+        "canonicalName": "TwapAdapter",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          25505,
+          25487
+        ],
+        "name": "TwapAdapter",
+        "nameLocation": "122:11:15",
+        "scope": 25506,
+        "usedErrors": []
+      }
+    ],
+    "license": "GPL-3.0-or-later"
+  },
+  "id": 15
+}

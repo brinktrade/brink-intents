@@ -2,5 +2,5 @@
 pragma solidity ^0.8.13;
 
 interface IPriceOracle {
-  function price() external view returns (int);
+  function price(address tokenA, address tokenB) external view returns (uint);
 }

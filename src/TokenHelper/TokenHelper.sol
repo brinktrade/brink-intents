@@ -5,8 +5,6 @@ import 'openzeppelin/token/ERC20/IERC20.sol';
 import 'openzeppelin/token/ERC721/IERC721.sol';
 import 'openzeppelin/token/ERC1155/IERC1155.sol';
 
-contract TokenHelper {
-
   enum TokenStandard { ERC20, ERC721, ERC1155, ETH }
 
   struct Token {
@@ -27,7 +25,9 @@ contract TokenHelper {
   error ERC1155IdNotProvided();
   error OwnerHasNft();
 
-  function transferFrom (Token calldata token, address from, address to, uint amount, uint id, IdMerkleProof[] calldata idMerkleProofs) internal {
+contract TokenHelper {
+
+  function transferFrom (Token memory token, address from, address to, uint amount, uint id, IdMerkleProof[] memory idMerkleProofs) internal {
     if (token.standard == TokenStandard.ERC20) {
       IERC20(token.addr).transferFrom(from, to, amount);
       return;
@@ -62,7 +62,7 @@ contract TokenHelper {
     revert UnsupportedTokenStandard();
   }
 
-  function balanceOf(Token calldata token, address owner, IdMerkleProof[] calldata idMerkleProofs) internal view returns (uint) {
+  function balanceOf(Token memory token, address owner, IdMerkleProof[] memory idMerkleProofs) internal view returns (uint) {
     if (token.standard == TokenStandard.ETH) {
       return owner.balance;
     }
@@ -93,8 +93,8 @@ contract TokenHelper {
   // returns total balance and number of NFT ids owned
   function checkTokenOwnership (
     address owner,
-    Token calldata token,
-    IdMerkleProof[] calldata idMerkleProofs
+    Token memory token,
+    IdMerkleProof[] memory idMerkleProofs
   ) internal view returns (uint balance, uint ownedIdCount) {
     if (token.standard == TokenStandard.ERC721) {
       if (token.id > 0 && IERC721(token.addr).ownerOf(token.id) == owner) {
@@ -116,7 +116,7 @@ contract TokenHelper {
     }
   }
 
-  function _merkleProofCheck (bytes32 root, bytes32[] calldata proof, uint id) internal {
+  function _merkleProofCheck (bytes32 root, bytes32[] memory proof, uint id) internal {
     // TODO: Merkle proof check here
     // check proof that root contains id
   }
