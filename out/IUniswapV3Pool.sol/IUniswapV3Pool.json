@@ -2374,22 +2374,22 @@
         25825
       ],
       "IUniswapV3PoolActions": [
-        27768
+        28188
       ],
       "IUniswapV3PoolDerivedState": [
-        27799
+        28219
       ],
       "IUniswapV3PoolEvents": [
-        27918
+        28338
       ],
       "IUniswapV3PoolImmutables": [
-        27958
+        28378
       ],
       "IUniswapV3PoolOwnerActions": [
-        27984
+        28404
       ],
       "IUniswapV3PoolState": [
-        28092
+        28512
       ]
     },
     "nodeType": "SourceUnit",
@@ -2416,7 +2416,7 @@
         "file": "./pool/IUniswapV3PoolImmutables.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 25826,
-        "sourceUnit": 27959,
+        "sourceUnit": 28379,
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -2429,7 +2429,7 @@
         "file": "./pool/IUniswapV3PoolState.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 25826,
-        "sourceUnit": 28093,
+        "sourceUnit": 28513,
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -2442,7 +2442,7 @@
         "file": "./pool/IUniswapV3PoolDerivedState.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 25826,
-        "sourceUnit": 27800,
+        "sourceUnit": 28220,
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -2455,7 +2455,7 @@
         "file": "./pool/IUniswapV3PoolActions.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 25826,
-        "sourceUnit": 27769,
+        "sourceUnit": 28189,
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -2468,7 +2468,7 @@
         "file": "./pool/IUniswapV3PoolOwnerActions.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 25826,
-        "sourceUnit": 27985,
+        "sourceUnit": 28405,
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -2481,7 +2481,7 @@
         "file": "./pool/IUniswapV3PoolEvents.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 25826,
-        "sourceUnit": 27919,
+        "sourceUnit": 28339,
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -2500,7 +2500,7 @@
                 "637:24:18"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 27958,
+              "referencedDeclaration": 28378,
               "src": "637:24:18"
             },
             "id": 25814,
@@ -2515,7 +2515,7 @@
                 "667:19:18"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 28092,
+              "referencedDeclaration": 28512,
               "src": "667:19:18"
             },
             "id": 25816,
@@ -2530,7 +2530,7 @@
                 "692:26:18"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 27799,
+              "referencedDeclaration": 28219,
               "src": "692:26:18"
             },
             "id": 25818,
@@ -2545,7 +2545,7 @@
                 "724:21:18"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 27768,
+              "referencedDeclaration": 28188,
               "src": "724:21:18"
             },
             "id": 25820,
@@ -2560,7 +2560,7 @@
                 "751:26:18"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 27984,
+              "referencedDeclaration": 28404,
               "src": "751:26:18"
             },
             "id": 25822,
@@ -2575,7 +2575,7 @@
                 "783:20:18"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 27918,
+              "referencedDeclaration": 28338,
               "src": "783:20:18"
             },
             "id": 25824,
@@ -2595,12 +2595,12 @@
         "fullyImplemented": false,
         "linearizedBaseContracts": [
           25825,
-          27918,
-          27984,
-          27768,
-          27799,
-          28092,
-          27958
+          28338,
+          28404,
+          28188,
+          28219,
+          28512,
+          28378
         ],
         "name": "IUniswapV3Pool",
         "nameLocation": "615:14:18",

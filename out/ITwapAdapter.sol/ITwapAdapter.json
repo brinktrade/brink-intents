@@ -264,19 +264,19 @@
   },
   "ast": {
     "absolutePath": "src/Interfaces/ITwapAdapter.sol",
-    "id": 25912,
+    "id": 26332,
     "exportedSymbols": {
       "ITwapAdapter": [
-        25911
+        26331
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "45:527:29",
+    "src": "45:527:35",
     "nodes": [
       {
-        "id": 25873,
+        "id": 26293,
         "nodeType": "PragmaDirective",
-        "src": "45:24:29",
+        "src": "45:24:35",
         "nodes": [],
         "literals": [
           "solidity",
@@ -286,34 +286,34 @@
         ]
       },
       {
-        "id": 25911,
+        "id": 26331,
         "nodeType": "ContractDefinition",
-        "src": "71:500:29",
+        "src": "71:500:35",
         "nodes": [
           {
-            "id": 25882,
+            "id": 26302,
             "nodeType": "FunctionDefinition",
-            "src": "98:109:29",
+            "src": "98:109:35",
             "nodes": [],
             "functionSelector": "8c363ec2",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getTwapX96",
-            "nameLocation": "107:10:29",
+            "nameLocation": "107:10:35",
             "parameters": {
-              "id": 25878,
+              "id": 26298,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25875,
+                  "id": 26295,
                   "mutability": "mutable",
                   "name": "uniswapV3Pool",
-                  "nameLocation": "126:13:29",
+                  "nameLocation": "126:13:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25882,
-                  "src": "118:21:29",
+                  "scope": 26302,
+                  "src": "118:21:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -321,10 +321,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 25874,
+                    "id": 26294,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "118:7:29",
+                    "src": "118:7:35",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -335,13 +335,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 25877,
+                  "id": 26297,
                   "mutability": "mutable",
                   "name": "twapInterval",
-                  "nameLocation": "148:12:29",
+                  "nameLocation": "148:12:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25882,
-                  "src": "141:19:29",
+                  "scope": 26302,
+                  "src": "141:19:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -349,10 +349,10 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 25876,
+                    "id": 26296,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "141:6:29",
+                    "src": "141:6:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint32",
                       "typeString": "uint32"
@@ -361,21 +361,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "117:44:29"
+              "src": "117:44:35"
             },
             "returnParameters": {
-              "id": 25881,
+              "id": 26301,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25880,
+                  "id": 26300,
                   "mutability": "mutable",
                   "name": "sqrtPriceX96",
-                  "nameLocation": "193:12:29",
+                  "nameLocation": "193:12:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25882,
-                  "src": "185:20:29",
+                  "scope": 26302,
+                  "src": "185:20:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -383,10 +383,10 @@
                     "typeString": "uint160"
                   },
                   "typeName": {
-                    "id": 25879,
+                    "id": 26299,
                     "name": "uint160",
                     "nodeType": "ElementaryTypeName",
-                    "src": "185:7:29",
+                    "src": "185:7:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint160",
                       "typeString": "uint160"
@@ -395,37 +395,37 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "184:22:29"
+              "src": "184:22:35"
             },
-            "scope": 25911,
+            "scope": 26331,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 25893,
+            "id": 26313,
             "nodeType": "FunctionDefinition",
-            "src": "210:136:29",
+            "src": "210:136:35",
             "nodes": [],
             "functionSelector": "f718aef9",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getTwapX96",
-            "nameLocation": "219:10:29",
+            "nameLocation": "219:10:35",
             "parameters": {
-              "id": 25889,
+              "id": 26309,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25884,
+                  "id": 26304,
                   "mutability": "mutable",
                   "name": "uniswapV3Pool",
-                  "nameLocation": "238:13:29",
+                  "nameLocation": "238:13:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25893,
-                  "src": "230:21:29",
+                  "scope": 26313,
+                  "src": "230:21:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -433,10 +433,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 25883,
+                    "id": 26303,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "230:7:29",
+                    "src": "230:7:35",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -447,13 +447,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 25886,
+                  "id": 26306,
                   "mutability": "mutable",
                   "name": "twapIntervalFrom",
-                  "nameLocation": "260:16:29",
+                  "nameLocation": "260:16:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25893,
-                  "src": "253:23:29",
+                  "scope": 26313,
+                  "src": "253:23:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -461,10 +461,10 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 25885,
+                    "id": 26305,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "253:6:29",
+                    "src": "253:6:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint32",
                       "typeString": "uint32"
@@ -474,13 +474,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 25888,
+                  "id": 26308,
                   "mutability": "mutable",
                   "name": "twapIntervalTo",
-                  "nameLocation": "285:14:29",
+                  "nameLocation": "285:14:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25893,
-                  "src": "278:21:29",
+                  "scope": 26313,
+                  "src": "278:21:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -488,10 +488,10 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 25887,
+                    "id": 26307,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "278:6:29",
+                    "src": "278:6:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint32",
                       "typeString": "uint32"
@@ -500,21 +500,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "229:71:29"
+              "src": "229:71:35"
             },
             "returnParameters": {
-              "id": 25892,
+              "id": 26312,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25891,
+                  "id": 26311,
                   "mutability": "mutable",
                   "name": "sqrtPriceX96",
-                  "nameLocation": "332:12:29",
+                  "nameLocation": "332:12:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25893,
-                  "src": "324:20:29",
+                  "scope": 26313,
+                  "src": "324:20:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -522,10 +522,10 @@
                     "typeString": "uint160"
                   },
                   "typeName": {
-                    "id": 25890,
+                    "id": 26310,
                     "name": "uint160",
                     "nodeType": "ElementaryTypeName",
-                    "src": "324:7:29",
+                    "src": "324:7:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint160",
                       "typeString": "uint160"
@@ -534,37 +534,37 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "323:22:29"
+              "src": "323:22:35"
             },
-            "scope": 25911,
+            "scope": 26331,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 25903,
+            "id": 26323,
             "nodeType": "FunctionDefinition",
-            "src": "349:117:29",
+            "src": "349:117:35",
             "nodes": [],
             "functionSelector": "48b9d655",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getTwapX96",
-            "nameLocation": "358:10:29",
+            "nameLocation": "358:10:35",
             "parameters": {
-              "id": 25899,
+              "id": 26319,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25895,
+                  "id": 26315,
                   "mutability": "mutable",
                   "name": "uniswapV3Pool",
-                  "nameLocation": "377:13:29",
+                  "nameLocation": "377:13:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25903,
-                  "src": "369:21:29",
+                  "scope": 26323,
+                  "src": "369:21:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -572,10 +572,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 25894,
+                    "id": 26314,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "369:7:29",
+                    "src": "369:7:35",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -586,13 +586,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 25898,
+                  "id": 26318,
                   "mutability": "mutable",
                   "name": "secondsAgos",
-                  "nameLocation": "408:11:29",
+                  "nameLocation": "408:11:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25903,
-                  "src": "392:27:29",
+                  "scope": 26323,
+                  "src": "392:27:35",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -601,18 +601,18 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 25896,
+                      "id": 26316,
                       "name": "uint32",
                       "nodeType": "ElementaryTypeName",
-                      "src": "392:6:29",
+                      "src": "392:6:35",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint32",
                         "typeString": "uint32"
                       }
                     },
-                    "id": 25897,
+                    "id": 26317,
                     "nodeType": "ArrayTypeName",
-                    "src": "392:8:29",
+                    "src": "392:8:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint32_$dyn_storage_ptr",
                       "typeString": "uint32[]"
@@ -621,21 +621,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "368:52:29"
+              "src": "368:52:35"
             },
             "returnParameters": {
-              "id": 25902,
+              "id": 26322,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25901,
+                  "id": 26321,
                   "mutability": "mutable",
                   "name": "sqrtPriceX96",
-                  "nameLocation": "452:12:29",
+                  "nameLocation": "452:12:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25903,
-                  "src": "444:20:29",
+                  "scope": 26323,
+                  "src": "444:20:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -643,10 +643,10 @@
                     "typeString": "uint160"
                   },
                   "typeName": {
-                    "id": 25900,
+                    "id": 26320,
                     "name": "uint160",
                     "nodeType": "ElementaryTypeName",
-                    "src": "444:7:29",
+                    "src": "444:7:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint160",
                       "typeString": "uint160"
@@ -655,37 +655,37 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "443:22:29"
+              "src": "443:22:35"
             },
-            "scope": 25911,
+            "scope": 26331,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 25910,
+            "id": 26330,
             "nodeType": "FunctionDefinition",
-            "src": "469:100:29",
+            "src": "469:100:35",
             "nodes": [],
             "functionSelector": "4e09a610",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPriceX96FromSqrtPriceX96",
-            "nameLocation": "478:27:29",
+            "nameLocation": "478:27:35",
             "parameters": {
-              "id": 25906,
+              "id": 26326,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25905,
+                  "id": 26325,
                   "mutability": "mutable",
                   "name": "sqrtPriceX96",
-                  "nameLocation": "514:12:29",
+                  "nameLocation": "514:12:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25910,
-                  "src": "506:20:29",
+                  "scope": 26330,
+                  "src": "506:20:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -693,10 +693,10 @@
                     "typeString": "uint160"
                   },
                   "typeName": {
-                    "id": 25904,
+                    "id": 26324,
                     "name": "uint160",
                     "nodeType": "ElementaryTypeName",
-                    "src": "506:7:29",
+                    "src": "506:7:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint160",
                       "typeString": "uint160"
@@ -705,21 +705,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "505:22:29"
+              "src": "505:22:35"
             },
             "returnParameters": {
-              "id": 25909,
+              "id": 26329,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25908,
+                  "id": 26328,
                   "mutability": "mutable",
                   "name": "priceX96",
-                  "nameLocation": "559:8:29",
+                  "nameLocation": "559:8:35",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25910,
-                  "src": "551:16:29",
+                  "scope": 26330,
+                  "src": "551:16:35",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -727,10 +727,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 25907,
+                    "id": 26327,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "551:7:29",
+                    "src": "551:7:35",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -739,9 +739,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "550:18:29"
+              "src": "550:18:35"
             },
-            "scope": 25911,
+            "scope": 26331,
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "external"
@@ -754,15 +754,15 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          25911
+          26331
         ],
         "name": "ITwapAdapter",
-        "nameLocation": "81:12:29",
-        "scope": 25912,
+        "nameLocation": "81:12:35",
+        "scope": 26332,
         "usedErrors": []
       }
     ],
     "license": "GPL-3.0-or-later"
   },
-  "id": 29
+  "id": 35
 }

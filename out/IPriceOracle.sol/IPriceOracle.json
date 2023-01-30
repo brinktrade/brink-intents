@@ -117,19 +117,19 @@
   },
   "ast": {
     "absolutePath": "src/Interfaces/IPriceOracle.sol",
-    "id": 25872,
+    "id": 26292,
     "exportedSymbols": {
       "IPriceOracle": [
-        25871
+        26291
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "45:132:28",
+    "src": "45:132:34",
     "nodes": [
       {
-        "id": 25861,
+        "id": 26281,
         "nodeType": "PragmaDirective",
-        "src": "45:24:28",
+        "src": "45:24:34",
         "nodes": [],
         "literals": [
           "solidity",
@@ -139,34 +139,34 @@
         ]
       },
       {
-        "id": 25871,
+        "id": 26291,
         "nodeType": "ContractDefinition",
-        "src": "71:105:28",
+        "src": "71:105:34",
         "nodes": [
           {
-            "id": 25870,
+            "id": 26290,
             "nodeType": "FunctionDefinition",
-            "src": "98:76:28",
+            "src": "98:76:34",
             "nodes": [],
             "functionSelector": "2b00490d",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "price",
-            "nameLocation": "107:5:28",
+            "nameLocation": "107:5:34",
             "parameters": {
-              "id": 25866,
+              "id": 26286,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25863,
+                  "id": 26283,
                   "mutability": "mutable",
                   "name": "tokenA",
-                  "nameLocation": "121:6:28",
+                  "nameLocation": "121:6:34",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25870,
-                  "src": "113:14:28",
+                  "scope": 26290,
+                  "src": "113:14:34",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -174,10 +174,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 25862,
+                    "id": 26282,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "113:7:28",
+                    "src": "113:7:34",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -188,13 +188,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 25865,
+                  "id": 26285,
                   "mutability": "mutable",
                   "name": "tokenB",
-                  "nameLocation": "137:6:28",
+                  "nameLocation": "137:6:34",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25870,
-                  "src": "129:14:28",
+                  "scope": 26290,
+                  "src": "129:14:34",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -202,10 +202,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 25864,
+                    "id": 26284,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "129:7:28",
+                    "src": "129:7:34",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -215,21 +215,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "112:32:28"
+              "src": "112:32:34"
             },
             "returnParameters": {
-              "id": 25869,
+              "id": 26289,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25868,
+                  "id": 26288,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25870,
-                  "src": "168:4:28",
+                  "scope": 26290,
+                  "src": "168:4:34",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -237,10 +237,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 25867,
+                    "id": 26287,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "168:4:28",
+                    "src": "168:4:34",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -249,9 +249,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "167:6:28"
+              "src": "167:6:34"
             },
-            "scope": 25871,
+            "scope": 26291,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -264,15 +264,15 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          25871
+          26291
         ],
         "name": "IPriceOracle",
-        "nameLocation": "81:12:28",
-        "scope": 25872,
+        "nameLocation": "81:12:34",
+        "scope": 26292,
         "usedErrors": []
       }
     ],
     "license": "GPL-3.0-or-later"
   },
-  "id": 28
+  "id": 34
 }

@@ -104,19 +104,19 @@
   },
   "ast": {
     "absolutePath": "src/Interfaces/ICallExecutor.sol",
-    "id": 25836,
+    "id": 26256,
     "exportedSymbols": {
       "ICallExecutor": [
-        25835
+        26255
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "45:124:25",
+    "src": "45:124:31",
     "nodes": [
       {
-        "id": 25827,
+        "id": 26247,
         "nodeType": "PragmaDirective",
-        "src": "45:24:25",
+        "src": "45:24:31",
         "nodes": [],
         "literals": [
           "solidity",
@@ -126,34 +126,34 @@
         ]
       },
       {
-        "id": 25835,
+        "id": 26255,
         "nodeType": "ContractDefinition",
-        "src": "71:97:25",
+        "src": "71:97:31",
         "nodes": [
           {
-            "id": 25834,
+            "id": 26254,
             "nodeType": "FunctionDefinition",
-            "src": "99:67:25",
+            "src": "99:67:31",
             "nodes": [],
             "functionSelector": "2a31f6b4",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "proxyCall",
-            "nameLocation": "108:9:25",
+            "nameLocation": "108:9:31",
             "parameters": {
-              "id": 25832,
+              "id": 26252,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25829,
+                  "id": 26249,
                   "mutability": "mutable",
                   "name": "to",
-                  "nameLocation": "126:2:25",
+                  "nameLocation": "126:2:31",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25834,
-                  "src": "118:10:25",
+                  "scope": 26254,
+                  "src": "118:10:31",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -161,10 +161,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 25828,
+                    "id": 26248,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "118:7:25",
+                    "src": "118:7:31",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -175,13 +175,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 25831,
+                  "id": 26251,
                   "mutability": "mutable",
                   "name": "data",
-                  "nameLocation": "143:4:25",
+                  "nameLocation": "143:4:31",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25834,
-                  "src": "130:17:25",
+                  "scope": 26254,
+                  "src": "130:17:31",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -189,10 +189,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 25830,
+                    "id": 26250,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "130:5:25",
+                    "src": "130:5:31",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -201,15 +201,15 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "117:31:25"
+              "src": "117:31:31"
             },
             "returnParameters": {
-              "id": 25833,
+              "id": 26253,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "165:0:25"
+              "src": "165:0:31"
             },
-            "scope": 25835,
+            "scope": 26255,
             "stateMutability": "payable",
             "virtual": false,
             "visibility": "external"
@@ -222,15 +222,15 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          25835
+          26255
         ],
         "name": "ICallExecutor",
-        "nameLocation": "81:13:25",
-        "scope": 25836,
+        "nameLocation": "81:13:31",
+        "scope": 26256,
         "usedErrors": []
       }
     ],
     "license": "GPL-3.0-or-later"
   },
-  "id": 25
+  "id": 31
 }

@@ -95,19 +95,19 @@
   },
   "ast": {
     "absolutePath": "src/Interfaces/IPriceDeltaOracle.sol",
-    "id": 25860,
+    "id": 26280,
     "exportedSymbols": {
       "IPriceDeltaOracle": [
-        25859
+        26279
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "45:111:27",
+    "src": "45:111:33",
     "nodes": [
       {
-        "id": 25853,
+        "id": 26273,
         "nodeType": "PragmaDirective",
-        "src": "45:24:27",
+        "src": "45:24:33",
         "nodes": [],
         "literals": [
           "solidity",
@@ -117,40 +117,40 @@
         ]
       },
       {
-        "id": 25859,
+        "id": 26279,
         "nodeType": "ContractDefinition",
-        "src": "71:84:27",
+        "src": "71:84:33",
         "nodes": [
           {
-            "id": 25858,
+            "id": 26278,
             "nodeType": "FunctionDefinition",
-            "src": "103:50:27",
+            "src": "103:50:33",
             "nodes": [],
             "functionSelector": "5bfa896a",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "priceDelta",
-            "nameLocation": "112:10:27",
+            "nameLocation": "112:10:33",
             "parameters": {
-              "id": 25854,
+              "id": 26274,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "122:2:27"
+              "src": "122:2:33"
             },
             "returnParameters": {
-              "id": 25857,
+              "id": 26277,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 25856,
+                  "id": 26276,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 25858,
-                  "src": "148:3:27",
+                  "scope": 26278,
+                  "src": "148:3:33",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -158,10 +158,10 @@
                     "typeString": "int256"
                   },
                   "typeName": {
-                    "id": 25855,
+                    "id": 26275,
                     "name": "int",
                     "nodeType": "ElementaryTypeName",
-                    "src": "148:3:27",
+                    "src": "148:3:33",
                     "typeDescriptions": {
                       "typeIdentifier": "t_int256",
                       "typeString": "int256"
@@ -170,9 +170,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "147:5:27"
+              "src": "147:5:33"
             },
-            "scope": 25859,
+            "scope": 26279,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -185,15 +185,15 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          25859
+          26279
         ],
         "name": "IPriceDeltaOracle",
-        "nameLocation": "81:17:27",
-        "scope": 25860,
+        "nameLocation": "81:17:33",
+        "scope": 26280,
         "usedErrors": []
       }
     ],
     "license": "GPL-3.0-or-later"
   },
-  "id": 27
+  "id": 33
 }

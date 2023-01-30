@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "./Helper.sol";
 
-contract TwapAdapter_getSqrtTwapX96 is Test, Helper  {
+contract TwapAdapter_getTwapX96 is Test, Helper  {
   ITwapAdapter twapAdapter;
 
   // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH, 1549.574 ETH/USDC
