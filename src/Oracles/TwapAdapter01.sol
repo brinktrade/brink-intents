@@ -25,12 +25,15 @@ contract TwapAdapter01 {
   function getTwapX96(address uniswapV3Pool, uint32[] memory secondsAgos) public view returns (uint256 priceX96) {    
     uint160 sqrtPriceX96;
 
-    if (secondsAgos.length == 0) {
+    if (
+      secondsAgos.length == 0 ||
+      (secondsAgos[0] == 0 && secondsAgos[1] == 0)
+    ) {
       // return the current price if no secondsAgos are provided
       (sqrtPriceX96, , , , , , ) = IUniswapV3Pool(uniswapV3Pool).slot0();
     } else {
       int32 secondsAgosDiff = int32(secondsAgos[0] - secondsAgos[1]);
-      if (secondsAgosDiff <= 0) {
+      if (secondsAgosDiff <= 0 || secondsAgos.length > 2) {
         revert("Invalid secondsAgos values");
       }
       (int56[] memory tickCumulatives, ) = IUniswapV3Pool(uniswapV3Pool).observe(secondsAgos);
