@@ -11,7 +11,7 @@
     "linkReferences": {}
   },
   "methodIdentifiers": {},
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"lib/forge-std/src/Base.sol\":\"TestBase\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\"]},\"sources\":{\"lib/forge-std/src/Base.sol\":{\"keccak256\":\"0x7f6016716c0c6f49e8163af625290c7ef270a045d9b82be04e269035726d3213\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bd050537b58640f8545b319928ee66bef9649d1ebd68a3afa1d28a1ce8cea3dd\",\"dweb:/ipfs/QmbBVxERnZ2ciQuRuZ45czd2DRgouCLEhibLWtC2CrH2j4\"]},\"lib/forge-std/src/StdStorage.sol\":{\"keccak256\":\"0xb31c4ee03d05c6202f6e354245ac3ab883d954f9f36074902089e1b3e645273d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://33bd98bde50b840b8d7d5cebf818176b9f219345078ed5d3bd0071f035efb2e3\",\"dweb:/ipfs/QmPYC7FZvCWCPF2qWg6TXXTTPGEdnT4y5nebPn1AoZ1H4p\"]},\"lib/forge-std/src/Vm.sol\":{\"keccak256\":\"0xfd793ebfb854f707ccf9dfec320b3b75d0d73ba54af0dfae727862fe93bc1cfd\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9a0a39917aabf39d981b17d1a06c9b82377917c3a0eedce8e9dc00df5c096bf9\",\"dweb:/ipfs/Qme7GpiHd32FFKYNbY4vdhiiciWPV1z1Uwtj1KDQAusxki\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"lib/forge-std/src/Base.sol\":\"TestBase\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":brink-core/=lib/brink-core/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin/=lib/openzeppelin-contracts/contracts/\",\":uniswap-v3-core/=lib/v3-core/contracts/\",\":v3-core/=lib/v3-core/\"]},\"sources\":{\"lib/forge-std/src/Base.sol\":{\"keccak256\":\"0x7f6016716c0c6f49e8163af625290c7ef270a045d9b82be04e269035726d3213\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bd050537b58640f8545b319928ee66bef9649d1ebd68a3afa1d28a1ce8cea3dd\",\"dweb:/ipfs/QmbBVxERnZ2ciQuRuZ45czd2DRgouCLEhibLWtC2CrH2j4\"]},\"lib/forge-std/src/StdStorage.sol\":{\"keccak256\":\"0xb31c4ee03d05c6202f6e354245ac3ab883d954f9f36074902089e1b3e645273d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://33bd98bde50b840b8d7d5cebf818176b9f219345078ed5d3bd0071f035efb2e3\",\"dweb:/ipfs/QmPYC7FZvCWCPF2qWg6TXXTTPGEdnT4y5nebPn1AoZ1H4p\"]},\"lib/forge-std/src/Vm.sol\":{\"keccak256\":\"0xfd793ebfb854f707ccf9dfec320b3b75d0d73ba54af0dfae727862fe93bc1cfd\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9a0a39917aabf39d981b17d1a06c9b82377917c3a0eedce8e9dc00df5c096bf9\",\"dweb:/ipfs/Qme7GpiHd32FFKYNbY4vdhiiciWPV1z1Uwtj1KDQAusxki\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
       "version": "0.8.17+commit.8df45f5f"
@@ -35,7 +35,9 @@
         ":brink-core/=lib/brink-core/contracts/",
         ":ds-test/=lib/forge-std/lib/ds-test/src/",
         ":forge-std/=lib/forge-std/src/",
-        ":openzeppelin/=lib/openzeppelin-contracts/contracts/"
+        ":openzeppelin/=lib/openzeppelin-contracts/contracts/",
+        ":uniswap-v3-core/=lib/v3-core/contracts/",
+        ":v3-core/=lib/v3-core/"
       ],
       "optimizer": {
         "enabled": true,
@@ -88,16 +90,16 @@
         1855
       ],
       "StdStorage": [
-        6088
+        6051
       ],
       "TestBase": [
         1843
       ],
       "Vm": [
-        9352
+        9315
       ],
       "VmSafe": [
-        9027
+        8990
       ]
     },
     "nodeType": "SourceUnit",
@@ -127,7 +129,7 @@
         "file": "./StdStorage.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 1856,
-        "sourceUnit": 7523,
+        "sourceUnit": 7486,
         "symbolAliases": [
           {
             "foreign": {
@@ -135,7 +137,7 @@
               "name": "StdStorage",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 6088,
+              "referencedDeclaration": 6051,
               "src": "73:10:1",
               "typeDescriptions": {}
             },
@@ -153,7 +155,7 @@
         "file": "./Vm.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 1856,
-        "sourceUnit": 9353,
+        "sourceUnit": 9316,
         "symbolAliases": [
           {
             "foreign": {
@@ -161,7 +163,7 @@
               "name": "Vm",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 9352,
+              "referencedDeclaration": 9315,
               "src": "118:2:1",
               "typeDescriptions": {}
             },
@@ -173,7 +175,7 @@
               "name": "VmSafe",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 9027,
+              "referencedDeclaration": 8990,
               "src": "122:6:1",
               "typeDescriptions": {}
             },
@@ -768,7 +770,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_Vm_$9352",
+              "typeIdentifier": "t_contract$_Vm_$9315",
               "typeString": "contract Vm"
             },
             "typeName": {
@@ -781,13 +783,13 @@
                   "1031:2:1"
                 ],
                 "nodeType": "IdentifierPath",
-                "referencedDeclaration": 9352,
+                "referencedDeclaration": 9315,
                 "src": "1031:2:1"
               },
-              "referencedDeclaration": 9352,
+              "referencedDeclaration": 9315,
               "src": "1031:2:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Vm_$9352",
+                "typeIdentifier": "t_contract$_Vm_$9315",
                 "typeString": "contract Vm"
               }
             },
@@ -817,10 +819,10 @@
                 "name": "Vm",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
-                "referencedDeclaration": 9352,
+                "referencedDeclaration": 9315,
                 "src": "1057:2:1",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_type$_t_contract$_Vm_$9352_$",
+                  "typeIdentifier": "t_type$_t_contract$_Vm_$9315_$",
                   "typeString": "type(contract Vm)"
                 }
               },
@@ -836,7 +838,7 @@
               "src": "1057:14:1",
               "tryCall": false,
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Vm_$9352",
+                "typeIdentifier": "t_contract$_Vm_$9315",
                 "typeString": "contract Vm"
               }
             },
@@ -855,7 +857,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_struct$_StdStorage_$6088_storage",
+              "typeIdentifier": "t_struct$_StdStorage_$6051_storage",
               "typeString": "struct StdStorage"
             },
             "typeName": {
@@ -868,13 +870,13 @@
                   "1077:10:1"
                 ],
                 "nodeType": "IdentifierPath",
-                "referencedDeclaration": 6088,
+                "referencedDeclaration": 6051,
                 "src": "1077:10:1"
               },
-              "referencedDeclaration": 6088,
+              "referencedDeclaration": 6051,
               "src": "1077:10:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_struct$_StdStorage_$6088_storage_ptr",
+                "typeIdentifier": "t_struct$_StdStorage_$6051_storage_ptr",
                 "typeString": "struct StdStorage"
               }
             },
@@ -994,7 +996,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_VmSafe_$9027",
+              "typeIdentifier": "t_contract$_VmSafe_$8990",
               "typeString": "contract VmSafe"
             },
             "typeName": {
@@ -1007,13 +1009,13 @@
                   "1398:6:1"
                 ],
                 "nodeType": "IdentifierPath",
-                "referencedDeclaration": 9027,
+                "referencedDeclaration": 8990,
                 "src": "1398:6:1"
               },
-              "referencedDeclaration": 9027,
+              "referencedDeclaration": 8990,
               "src": "1398:6:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_VmSafe_$9027",
+                "typeIdentifier": "t_contract$_VmSafe_$8990",
                 "typeString": "contract VmSafe"
               }
             },
@@ -1043,10 +1045,10 @@
                 "name": "VmSafe",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
-                "referencedDeclaration": 9027,
+                "referencedDeclaration": 8990,
                 "src": "1432:6:1",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_type$_t_contract$_VmSafe_$9027_$",
+                  "typeIdentifier": "t_type$_t_contract$_VmSafe_$8990_$",
                   "typeString": "type(contract VmSafe)"
                 }
               },
@@ -1062,7 +1064,7 @@
               "src": "1432:18:1",
               "tryCall": false,
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_VmSafe_$9027",
+                "typeIdentifier": "t_contract$_VmSafe_$8990",
                 "typeString": "contract VmSafe"
               }
             },

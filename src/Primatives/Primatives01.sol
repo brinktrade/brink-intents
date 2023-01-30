@@ -129,15 +129,14 @@ contract Primatives01 is TokenHelper {
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactInput (
-    address oracleContract,
-    bytes memory oracleCall,
+    Call memory oraclePriceCall,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenInAmount,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = _getMarketOutput(oracleContract, oracleCall, tokenInAmount);
+    uint tokenOutAmountRequired = _getMarketOutput(oraclePriceCall, tokenInAmount);
     console.log("REQUIRED:%s", tokenOutAmountRequired);
     // _fillSwap(
     //   tokenIn,
@@ -339,7 +338,7 @@ contract Primatives01 is TokenHelper {
     // TODO: implement
   }
 
-  function _getMarketOutput (address oracleTarget, bytes memory oracleCall, uint tokenInAmount) private returns (uint outputAmount) {
+  function _getMarketOutput (Call memory oraclePriceCall, uint tokenInAmount) private returns (uint outputAmount) {
     return 55667788;
     // TODO: implement
   }

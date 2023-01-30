@@ -13,8 +13,7 @@ contract Primatives01_marketSwapExactInput is Primatives01, Test, Helper  {
 
   function testMarketSwapExactInput () public {
     marketSwapExactInput(
-      address(0),
-      new bytes(0),
+      Call(address(0), new bytes(0)),
       address(0),
       WETH_Token,
       USDC_Token,
