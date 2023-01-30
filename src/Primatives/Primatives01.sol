@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
+
 import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/IPriceOracle.sol";
 import "../Interfaces/IPriceDeltaOracle.sol";
@@ -88,37 +90,37 @@ contract Primatives01 is TokenHelper {
   }
 
   // require priceOracle.price(A, B) <= value
-  function requirePriceLowerBound (IPriceOracle priceOracle, Token calldata tokenA, Token calldata tokenB, uint value) public {
+  function requirePriceLowerBound (IPriceOracle priceOracle, Token memory tokenA, Token memory tokenB, uint value) public {
 
   }
 
   // require priceOracle.price(A, B) >= value
-  function requirePriceUpperBound (IPriceOracle priceOracle, Token calldata tokenA, Token calldata tokenB, uint value) public {
+  function requirePriceUpperBound (IPriceOracle priceOracle, Token memory tokenA, Token memory tokenB, uint value) public {
 
   }
 
   // require priceDeltaOracle.priceDelta(A, B, duration) <= value * -1 AND require currentTime - startTime >= duration
-  function requirePriceDecrease (IPriceDeltaOracle priceDeltaOracle, Token calldata tokenA, Token calldata tokenB, uint startTime, uint duration, uint value) public {
+  function requirePriceDecrease (IPriceDeltaOracle priceDeltaOracle, Token memory tokenA, Token memory tokenB, uint startTime, uint duration, uint value) public {
 
   }
 
   // require priceDeltaOracle.priceDelta(A, B, duration) >= value AND require currentTime - startTime >= duration
-  function requirePriceIncrease (IPriceDeltaOracle priceDeltaOracle, Token calldata tokenA, Token calldata tokenB, uint startTime, uint duration, uint value) public {
+  function requirePriceIncrease (IPriceDeltaOracle priceDeltaOracle, Token memory tokenA, Token memory tokenB, uint startTime, uint duration, uint value) public {
 
   }
 
   // requires tx sent by an executor that can prove ownership of one of the executor addresses
-  function requireStake (UnsignedStakeProofData calldata data) public {
+  function requireStake (UnsignedStakeProofData memory data) public {
 
   }
 
   function transfer (
-    Token calldata token,
+    Token memory token,
     address owner,
     address recipient,
     uint amount,
     uint id,
-    UnsignedTransferData calldata data
+    UnsignedTransferData memory data
   ) public {
     _checkUnsignedTransferData(token, amount, data);
     address _recipient = recipient != address(0) ? recipient : data.recipient;
@@ -127,36 +129,37 @@ contract Primatives01 is TokenHelper {
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactInput (
-    IPriceOracle priceOracle,
+    Call memory oraclePriceCall,
     address owner,
-    Token calldata tokenIn,
-    Token calldata tokenOut,
+    Token memory tokenIn,
+    Token memory tokenOut,
     uint tokenInAmount,
-    UnsignedMarketSwapData calldata data
+    UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = _getMarketOutput(priceOracle, tokenIn, tokenOut, tokenInAmount);
-    _fillSwap(
-      tokenIn,
-      tokenOut,
-      owner,
-      data.recipient,
-      tokenInAmount,
-      tokenOutAmountRequired,
-      data.tokenInId,
-      data.tokenInIdMerkleProofs,
-      data.tokenOutIdMerkleProofs,
-      data.fillCall
-    );
+    uint tokenOutAmountRequired = _getMarketOutput(oraclePriceCall, tokenInAmount);
+    console.log("REQUIRED:%s", tokenOutAmountRequired);
+    // _fillSwap(
+    //   tokenIn,
+    //   tokenOut,
+    //   owner,
+    //   data.recipient,
+    //   tokenInAmount,
+    //   tokenOutAmountRequired,
+    //   data.tokenInId,
+    //   data.tokenInIdMerkleProofs,
+    //   data.tokenOutIdMerkleProofs,
+    //   data.fillCall
+    // );
   }
 
   // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactOutput (
     IPriceOracle priceOracle,
     address owner,
-    Token calldata tokenIn,
-    Token calldata tokenOut,
+    Token memory tokenIn,
+    Token memory tokenOut,
     uint tokenOutAmount,
-    UnsignedMarketSwapData calldata data
+    UnsignedMarketSwapData memory data
   ) public {
     uint tokenInAmountRequired = _getMarketInput(priceOracle, tokenIn, tokenOut, tokenOutAmount);
     _fillSwap(
@@ -177,12 +180,12 @@ contract Primatives01 is TokenHelper {
   function limitSwap (
     bytes32 id,
     address owner,
-    Token calldata tokenIn,
-    Token calldata tokenOut,
+    Token memory tokenIn,
+    Token memory tokenOut,
     uint tokenInAmount,
     uint basePrice,
     IPriceCurve priceCurve,
-    UnsignedLimitSwapData calldata data
+    UnsignedLimitSwapData memory data
   ) public {
     _checkUnsignedLimitSwapData(tokenIn, data);
 
@@ -229,13 +232,13 @@ contract Primatives01 is TokenHelper {
 
   // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
   // Should be used for swaps with the same pairs, i.e. A->B and A->B
-  function bindLimitSwapFills (bytes32[] calldata swapsIds) public {
+  function bindLimitSwapFills (bytes32[] memory swapsIds) public {
     
   }
 
   // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
   // // incentivizes initialization of the auction with initializerFee
-  // function dutchAuction (bytes32 id, Token calldata tokenA, Token calldata tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) public {
+  // function dutchAuction (bytes32 id, Token memory tokenA, Token memory tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) public {
 
   // }
 
@@ -264,7 +267,7 @@ contract Primatives01 is TokenHelper {
 
   }
 
-  function _checkUnsignedLimitSwapData (Token calldata token, UnsignedLimitSwapData calldata unsignedData) private pure {
+  function _checkUnsignedLimitSwapData (Token memory token, UnsignedLimitSwapData memory unsignedData) private pure {
     if (
       token.idsMerkleRoot == bytes32(0) &&
       token.id != 0 &&
@@ -285,23 +288,23 @@ contract Primatives01 is TokenHelper {
     }
   }
 
-  function _checkUnsignedTransferData (Token calldata token, uint amount, UnsignedTransferData calldata unsignedData) private pure {
+  function _checkUnsignedTransferData (Token memory token, uint amount, UnsignedTransferData memory unsignedData) private pure {
     if (token.idsMerkleRoot != bytes32(0) && unsignedData.idMerkleProofs.length != amount) {
       revert MerkleProofAndAmountMismatch();
     }
   }
 
   function _fillSwap (
-    Token calldata tokenIn,
-    Token calldata tokenOut,
+    Token memory tokenIn,
+    Token memory tokenOut,
     address owner,
     address recipient,
     uint tokenInAmount,
     uint tokenOutAmount,
     uint tokenInId,
-    IdMerkleProof[] calldata tokenInIdMerkleProofs,
-    IdMerkleProof[] calldata tokenOutIdMerkleProofs,
-    Call calldata fillCall
+    IdMerkleProof[] memory tokenInIdMerkleProofs,
+    IdMerkleProof[] memory tokenOutIdMerkleProofs,
+    Call memory fillCall
   ) private {
     transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdMerkleProofs);
 
@@ -335,11 +338,12 @@ contract Primatives01 is TokenHelper {
     // TODO: implement
   }
 
-  function _getMarketOutput (IPriceOracle priceOracle, Token calldata tokenIn, Token calldata tokenOut, uint tokenInAmount) private returns (uint outputAmount) {
+  function _getMarketOutput (Call memory oraclePriceCall, uint tokenInAmount) private returns (uint outputAmount) {
+    return 55667788;
     // TODO: implement
   }
 
-  function _getMarketInput (IPriceOracle priceOracle, Token calldata tokenIn, Token calldata tokenOut, uint tokenOutAmount) private returns (uint inputAmount) {
+  function _getMarketInput (IPriceOracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) private returns (uint inputAmount) {
     // TODO: implement
   }
 
