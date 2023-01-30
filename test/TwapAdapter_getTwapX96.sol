@@ -67,10 +67,20 @@ contract TwapAdapter_getTwapX96 is Test, Helper  {
     assertEq(p, twapAdapter.getPriceX96FromSqrtPriceX96(sqrtPriceX96));
   }
 
+  // providing twapInterval 0, should return current pool spot price
+  function testGetTwapX96_twapInterval0 () public {
+    uint256 p = twapAdapter.getTwapX96(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), 0);
+    (uint160 sqrtPriceX96, , , , , , ) = USDC_ETH_FEE500_UNISWAP_V3_POOL.slot0();
+    assertEq(p, twapAdapter.getPriceX96FromSqrtPriceX96(sqrtPriceX96));
+  }
+
   // providing more than 2 secondsAgos should revert
   function testGetTwapX96_moreThanTwoSecondsAgos () public {
     vm.expectRevert("Invalid secondsAgos values");
     uint32[] memory secondsAgos = new uint32[](3);
+    secondsAgos[0] = 3000;
+    secondsAgos[1] = 2000;
+    secondsAgos[2] = 1000;
     twapAdapter.getTwapX96(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), secondsAgos);
   }
 
