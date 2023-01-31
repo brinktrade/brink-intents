@@ -4,8 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/console.sol";
 
 import "../Interfaces/ICallExecutor.sol";
-import "../Interfaces/IPriceOracle.sol";
-import "../Interfaces/IPriceDeltaOracle.sol";
+import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
 import "../TokenHelper/TokenHelper.sol";
 
@@ -15,9 +14,9 @@ error NotEnoughTokenReceived(uint amountReceived);
 error MerkleProofAndAmountMismatch();
 error BlockMined();
 error BlockNotMined();
-error OraclePriceReadZero();
-error PriceLowerBoundNotMet(uint256 oraclePrice);
-error PriceUpperBoundNotMet(uint256 oraclePrice);
+error OracleUint256ReadZero();
+error Uint256LowerBoundNotMet(uint256 oraclePrice);
+error Uint256UpperBoundNotMet(uint256 oraclePrice);
 
 contract Primitives01 is TokenHelper {
 
@@ -92,33 +91,23 @@ contract Primitives01 is TokenHelper {
 
   }
 
-  // Require a lower bound price to be met. Revert if oracle price is 0.
-  function requirePriceLowerBound (IPriceOracle priceOracle, bytes memory priceCallParams, uint lowerBoundPrice) public view {
-    uint256 oraclePrice = priceOracle.price(priceCallParams);
-    if (oraclePrice == 0) {
-      revert OraclePriceReadZero();
+  // Require a lower bound uint256 returned from an oracle. Revert if oracle returns 0.
+  function requireUint256LowerBound (IUint256Oracle uint256Oracle, bytes memory params, uint lowerBound) public view {
+    uint256 oracleUint256 = uint256Oracle.getUint256(params);
+    if (oracleUint256 == 0) {
+      revert OracleUint256ReadZero();
     }
-    if(oraclePrice > lowerBoundPrice) {
-      revert PriceLowerBoundNotMet(oraclePrice);
-    }
-  }
-
-  // Require an upper bound price to be met
-  function requirePriceUpperBound (IPriceOracle priceOracle, bytes memory priceCallParams, uint upperBoundPrice) public {
-    uint256 oraclePrice = priceOracle.price(priceCallParams);
-    if(oraclePrice < upperBoundPrice) {
-      revert PriceUpperBoundNotMet(oraclePrice);
+    if(oracleUint256 > lowerBound) {
+      revert Uint256LowerBoundNotMet(oracleUint256);
     }
   }
 
-  // require priceDeltaOracle.priceDelta(A, B, duration) <= value * -1 AND require currentTime - startTime >= duration
-  function requirePriceDecrease (IPriceDeltaOracle priceDeltaOracle, Token memory tokenA, Token memory tokenB, uint startTime, uint duration, uint value) public {
-
-  }
-
-  // require priceDeltaOracle.priceDelta(A, B, duration) >= value AND require currentTime - startTime >= duration
-  function requirePriceIncrease (IPriceDeltaOracle priceDeltaOracle, Token memory tokenA, Token memory tokenB, uint startTime, uint duration, uint value) public {
-
+  // Require an upper bound uint256 returned from an oracle
+  function requireUint256UpperBound (IUint256Oracle uint256Oracle, bytes memory params, uint upperBound) public {
+    uint256 oracleUint256 = uint256Oracle.getUint256(params);
+    if(oracleUint256 < upperBound) {
+      revert Uint256UpperBoundNotMet(oracleUint256);
+    }
   }
 
   // requires tx sent by an executor that can prove ownership of one of the executor addresses
@@ -166,7 +155,7 @@ contract Primitives01 is TokenHelper {
 
   // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactOutput (
-    IPriceOracle priceOracle,
+    IUint256Oracle priceOracle,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
@@ -355,7 +344,7 @@ contract Primitives01 is TokenHelper {
     // TODO: implement
   }
 
-  function _getMarketInput (IPriceOracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) private returns (uint inputAmount) {
+  function _getMarketInput (IUint256Oracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) private returns (uint inputAmount) {
     // TODO: implement
   }
 
