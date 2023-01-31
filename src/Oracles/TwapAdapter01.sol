@@ -5,24 +5,31 @@ import "uniswap-v3-core/interfaces/IUniswapV3Pool.sol";
 import "uniswap-v3-core/libraries/TickMath.sol";
 import "uniswap-v3-core/libraries/FixedPoint96.sol";
 import "uniswap-v3-core/libraries/FullMath.sol";
+import "../Interfaces/IPriceOracle.sol";
+import "../Interfaces/ITwapAdapter.sol";
 
-contract TwapAdapter01 {
+contract TwapAdapter01 is ITwapAdapter {
 
-  function getTwapX96(address uniswapV3Pool, uint32 twapInterval) public view returns (uint256 priceX96) {
+  function price(bytes memory params) public view override returns (uint256) {
+    (address uniswapV3Pool, uint32 twapInterval) = abi.decode(params, (address,uint32));
+    return getTwapX96(uniswapV3Pool, twapInterval);
+  }
+
+  function getTwapX96(address uniswapV3Pool, uint32 twapInterval) public view override returns (uint256 priceX96) {
     uint32[] memory secondsAgos = new uint32[](2);
     secondsAgos[0] = twapInterval;
     secondsAgos[1] = 0;
     priceX96 = getTwapX96(uniswapV3Pool, secondsAgos);
   }
 
-  function getTwapX96(address uniswapV3Pool, uint32 twapIntervalFrom, uint32 twapIntervalTo) public view returns (uint256 priceX96) {
+  function getTwapX96(address uniswapV3Pool, uint32 twapIntervalFrom, uint32 twapIntervalTo) public view override returns (uint256 priceX96) {
     uint32[] memory secondsAgos = new uint32[](2);
     secondsAgos[0] = twapIntervalFrom;
     secondsAgos[1] = twapIntervalTo;
     priceX96 = getTwapX96(uniswapV3Pool, secondsAgos);
   }
 
-  function getTwapX96(address uniswapV3Pool, uint32[] memory secondsAgos) public view returns (uint256 priceX96) {    
+  function getTwapX96(address uniswapV3Pool, uint32[] memory secondsAgos) public view override returns (uint256 priceX96) {    
     uint160 sqrtPriceX96;
 
     if (
@@ -47,7 +54,7 @@ contract TwapAdapter01 {
     priceX96 = getPriceX96FromSqrtPriceX96(sqrtPriceX96);
   }
 
-  function getPriceX96FromSqrtPriceX96(uint160 sqrtPriceX96) public pure returns (uint256 priceX96) {
+  function getPriceX96FromSqrtPriceX96(uint160 sqrtPriceX96) public pure override returns (uint256 priceX96) {
     return FullMath.mulDiv(sqrtPriceX96, sqrtPriceX96, FixedPoint96.Q96);
   }
 

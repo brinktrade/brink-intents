@@ -2,27 +2,11 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/Interfaces/ITwapAdapter.sol";
 import "./Helper.sol";
 
 contract TwapAdapter_getTwapX96 is Test, Helper  {
-  ITwapAdapter twapAdapter;
-
-  // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH, 1549.574 ETH/USDC
-  uint256 MAGIC_TWAP_PRICE_USDC_ETH_1000_0 = 51128994256875305254096266510654458404;
-  
-  // TWAP price for interval 2000s - 1000s: ~0.000646 USDC/ETH, 1547.871 ETH/USDC
-  uint256 MAGIC_TWAP_PRICE_USDC_ETH_2000_1000 = 51185264279942680916728141158213785257;
-
   function setUp () public {
-    setupFork();
-    bytes memory code = vm.getCode('out/TwapAdapter01.sol/TwapAdapter01.json');
-    address addr;
-    assembly {
-      addr := create(0, add(code, 0x20), mload(code))
-      if iszero(addr) { revert (0, 0) }
-    }
-    twapAdapter = ITwapAdapter(addr);
+    setupAll();
   }
 
   // providing a single twapInterval of 1000s, should return TWAP for 1000s - 0s

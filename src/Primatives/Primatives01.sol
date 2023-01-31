@@ -90,7 +90,6 @@ contract Primatives01 is TokenHelper {
   }
 
   // require priceOracle.price(A, B) <= value
-  function requirePriceLowerBound (IPriceOracle priceOracle, Token memory tokenA, Token memory tokenB, uint value) public {
 
   }
 
