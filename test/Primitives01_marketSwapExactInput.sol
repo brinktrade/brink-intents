@@ -2,17 +2,16 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/Primitives/Primitives01.sol";
 import "./Helper.sol";
 
-contract Primitives01_marketSwapExactInput is Primitives01, Test, Helper  {
+contract Primitives01_marketSwapExactInput is Test, Helper  {
 
   function setUp () public {
     setupAll();
   }
 
   function testMarketSwapExactInput () public {
-    marketSwapExactInput(
+    primitives.marketSwapExactInput(
       Call(address(0), new bytes(0)),
       address(0),
       WETH_Token,
