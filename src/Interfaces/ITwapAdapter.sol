@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.5.0;
 
-import "./IPriceOracle.sol";
+import "./IUint256Oracle.sol";
 
-interface ITwapAdapter is IPriceOracle {
+interface ITwapAdapter is IUint256Oracle {
   function getTwapX96(address uniswapV3Pool, uint32 twapInterval) external view returns (uint256 priceX96);
   function getTwapX96(address uniswapV3Pool, uint32 twapIntervalFrom, uint32 twapIntervalTo) external view returns (uint256 priceX96);
   function getTwapX96(address uniswapV3Pool, uint32[] memory secondsAgos) external view returns (uint256 priceX96);

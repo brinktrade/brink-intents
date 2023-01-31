@@ -5,12 +5,11 @@ import "uniswap-v3-core/interfaces/IUniswapV3Pool.sol";
 import "uniswap-v3-core/libraries/TickMath.sol";
 import "uniswap-v3-core/libraries/FixedPoint96.sol";
 import "uniswap-v3-core/libraries/FullMath.sol";
-import "../Interfaces/IPriceOracle.sol";
 import "../Interfaces/ITwapAdapter.sol";
 
 contract TwapAdapter01 is ITwapAdapter {
 
-  function price(bytes memory params) public view override returns (uint256) {
+  function getUint256(bytes memory params) public view override returns (uint256) {
     (address uniswapV3Pool, uint32 twapInterval) = abi.decode(params, (address,uint32));
     return getTwapX96(uniswapV3Pool, twapInterval);
   }

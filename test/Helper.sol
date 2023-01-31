@@ -3,12 +3,17 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "uniswap-v3-core/Interfaces/IUniswapV3Pool.sol";
+import "openzeppelin/utils/Strings.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
+import "../src/Primitives/Primitives01.sol";
+import "./Mocks/MockPriceOracle.sol";
 
 contract Helper is Test {
 
   ITwapAdapter public twapAdapter;
+  Primitives01 public primitives;
+  MockPriceOracle public mockPriceOracle;
 
   // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH, 1549.574 ETH/USDC
   uint256 public MAGIC_TWAP_PRICE_USDC_ETH_1000_0 = 51128994256875305254096266510654458404;
@@ -34,6 +39,7 @@ contract Helper is Test {
 
   function setupContracts () public {
     setupTwapAdapter();
+    setupTestContracts();
   }
 
   function setupTwapAdapter () public {
@@ -44,6 +50,11 @@ contract Helper is Test {
       if iszero(addr) { revert (0, 0) }
     }
     twapAdapter = ITwapAdapter(addr);
+  }
+
+  function setupTestContracts () public {
+    primitives = new Primitives01();
+    mockPriceOracle = new MockPriceOracle();
   }
 
   function setupFork () public {

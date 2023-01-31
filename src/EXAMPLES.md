@@ -1,14 +1,14 @@
 # EXAMPLES
 
-OrderExecutionTarget01 allows for the execution of signed orders composed from low-level primatives. Users can build and sign custom
-strategies with these primatives. Strategy execution is offloaded to MEV bots who earn arbitrage profits by crossing signed
+OrderExecutionTarget01 allows for the execution of signed orders composed from low-level primitives. Users can build and sign custom
+strategies with these primitives. Strategy execution is offloaded to MEV bots who earn arbitrage profits by crossing signed
 order liquidity with on-chain market liquidity. This allows users to automate execution of simple limit and stop-loss swap orders, or to
 automate complex market making strategies involving multi-order execution.
 
 
 ## Limit Order
 
-  A simple limit swap of TokenA to TokenB. This is one order composed of 3 primatives
+  A simple limit swap of TokenA to TokenB. This is one order composed of 3 primitives
 
   Order_0:
     requireBlockNotMined(<blockNumber>)
@@ -18,7 +18,7 @@ automate complex market making strategies involving multi-order execution.
 
 ## Stop-loss Order
 
-  A simple stop-loss order for a TokenA -> TokenB swap when a price lower bound is met. This is one order composed of 4 primatives
+  A simple stop-loss order for a TokenA -> TokenB swap when a price lower bound is met. This is one order composed of 4 primitives
 
   Order_0:
     requireBlockNotMined(<blockNumber>)
