@@ -8,7 +8,7 @@ import "./Helper.sol";
 contract Primatives01_requireBlockNotMined is Primatives01, Test, Helper  {
 
   function setUp () public {
-    setupFork();
+    setupAll();
   }
 
   function testBlockIsNotMined () public view {

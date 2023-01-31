@@ -8,7 +8,7 @@ import "./Helper.sol";
 contract Primatives01_marketSwapExactInput is Primatives01, Test, Helper  {
 
   function setUp () public {
-    setupFork();
+    setupAll();
   }
 
   function testMarketSwapExactInput () public {

@@ -15,6 +15,9 @@ error NotEnoughTokenReceived(uint amountReceived);
 error MerkleProofAndAmountMismatch();
 error BlockMined();
 error BlockNotMined();
+error OraclePriceReadZero();
+error PriceLowerBoundNotMet(uint256 oraclePrice);
+error PriceUpperBoundNotMet(uint256 oraclePrice);
 
 contract Primatives01 is TokenHelper {
 
@@ -89,13 +92,23 @@ contract Primatives01 is TokenHelper {
 
   }
 
-  // require priceOracle.price(A, B) <= value
-
+  // Require a lower bound price to be met. Revert if oracle price is 0.
+  function requirePriceLowerBound (IPriceOracle priceOracle, bytes memory priceCallParams, uint lowerBoundPrice) public view {
+    uint256 oraclePrice = priceOracle.price(priceCallParams);
+    if (oraclePrice == 0) {
+      revert OraclePriceReadZero();
+    }
+    if(oraclePrice > lowerBoundPrice) {
+      revert PriceLowerBoundNotMet(oraclePrice);
+    }
   }
 
-  // require priceOracle.price(A, B) >= value
-  function requirePriceUpperBound (IPriceOracle priceOracle, Token memory tokenA, Token memory tokenB, uint value) public {
-
+  // Require an upper bound price to be met
+  function requirePriceUpperBound (IPriceOracle priceOracle, bytes memory priceCallParams, uint upperBoundPrice) public {
+    uint256 oraclePrice = priceOracle.price(priceCallParams);
+    if(oraclePrice < upperBoundPrice) {
+      revert PriceUpperBoundNotMet(oraclePrice);
+    }
   }
 
   // require priceDeltaOracle.priceDelta(A, B, duration) <= value * -1 AND require currentTime - startTime >= duration
