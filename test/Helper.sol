@@ -6,13 +6,13 @@ import "uniswap-v3-core/Interfaces/IUniswapV3Pool.sol";
 import "openzeppelin/utils/Strings.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
-import "../src/Primatives/Primatives01.sol";
+import "../src/Primitives/Primitives01.sol";
 import "./Mocks/MockPriceOracle.sol";
 
 contract Helper is Test {
 
   ITwapAdapter public twapAdapter;
-  Primatives01 public primatives;
+  Primitives01 public primitives;
   MockPriceOracle public mockPriceOracle;
 
   // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH, 1549.574 ETH/USDC
@@ -53,7 +53,7 @@ contract Helper is Test {
   }
 
   function setupTestContracts () public {
-    primatives = new Primatives01();
+    primitives = new Primitives01();
     mockPriceOracle = new MockPriceOracle();
   }
 

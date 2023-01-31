@@ -2,10 +2,10 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/Primatives/Primatives01.sol";
+import "../src/Primitives/Primitives01.sol";
 import "./Helper.sol";
 
-contract Primatives01_requireBlockNotMined is Primatives01, Test, Helper  {
+contract Primitives01_requireBlockNotMined is Primitives01, Test, Helper  {
 
   function setUp () public {
     setupAll();

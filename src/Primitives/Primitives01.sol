@@ -19,7 +19,7 @@ error OraclePriceReadZero();
 error PriceLowerBoundNotMet(uint256 oraclePrice);
 error PriceUpperBoundNotMet(uint256 oraclePrice);
 
-contract Primatives01 is TokenHelper {
+contract Primitives01 is TokenHelper {
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
 
