@@ -2,10 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/Primitives/Primitives01.sol";
 import "./Helper.sol";
 
-contract Primitives01_requireUint256UpperBound is Primitives01, Test, Helper  {
+contract Primitives01_requireUint256UpperBound is Test, Helper  {
 
   function setUp () public {
     setupAll();

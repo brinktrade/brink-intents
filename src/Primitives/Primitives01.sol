@@ -18,40 +18,40 @@ error OracleUint256ReadZero();
 error Uint256LowerBoundNotMet(uint256 oraclePrice);
 error Uint256UpperBoundNotMet(uint256 oraclePrice);
 
+struct UnsignedTransferData {
+  address recipient;
+  IdMerkleProof[] idMerkleProofs;
+}
+
+struct UnsignedMarketSwapData {
+  address recipient;
+  uint tokenInId;
+  IdMerkleProof[] tokenInIdMerkleProofs;
+  IdMerkleProof[] tokenOutIdMerkleProofs;
+  Call fillCall;
+}
+
+struct UnsignedLimitSwapData {
+  address recipient;
+  uint tokenInAmount;
+  uint tokenInId;
+  IdMerkleProof[] tokenInIdMerkleProofs;
+  IdMerkleProof[] tokenOutIdMerkleProofs;
+  Call fillCall;
+}
+
+struct UnsignedStakeProofData {
+  bytes stakerSignature;
+}
+
+struct Call {
+  address targetContract;
+  bytes data;
+}
+
 contract Primitives01 is TokenHelper {
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
-
-  struct UnsignedTransferData {
-    address recipient;
-    IdMerkleProof[] idMerkleProofs;
-  }
-
-  struct UnsignedMarketSwapData {
-    address recipient;
-    uint tokenInId;
-    IdMerkleProof[] tokenInIdMerkleProofs;
-    IdMerkleProof[] tokenOutIdMerkleProofs;
-    Call fillCall;
-  }
-
-  struct UnsignedLimitSwapData {
-    address recipient;
-    uint tokenInAmount;
-    uint tokenInId;
-    IdMerkleProof[] tokenInIdMerkleProofs;
-    IdMerkleProof[] tokenOutIdMerkleProofs;
-    Call fillCall;
-  }
-
-  struct UnsignedStakeProofData {
-    bytes stakerSignature;
-  }
-
-  struct Call {
-    address targetContract;
-    bytes data;
-  }
 
   // require bitmapIndex/bit not to be used
   function requireBitNotUsed (uint bitmapIndex, uint bit) public {
