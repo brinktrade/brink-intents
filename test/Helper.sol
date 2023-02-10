@@ -8,18 +8,28 @@ import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
 import "../src/Primitives/Primitives01.sol";
 import "./Mocks/MockPriceOracle.sol";
+import "./Mocks/MockPrimitiveInternals.sol";
 
 contract Helper is Test {
 
   ITwapAdapter public twapAdapter;
+  ITwapAdapter public twapInverseAdapter;
   Primitives01 public primitives;
   MockPriceOracle public mockPriceOracle;
+  MockPrimitiveInternals public primitiveInternals;
 
-  // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH, 1549.574 ETH/USDC
+  // TWAP prices are in fixed point X96 (2**96)
+
+  // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH
   uint256 public MAGIC_TWAP_PRICE_USDC_ETH_1000_0 = 51128994256875305254096266510654458404;
+  // inverse ~1549.574 ETH/USDC
+  uint256 public MAGIC_TWAP_PRICE_ETH_USDC_1000_0 = 122769904368744749859;
   
-  // TWAP price for interval 2000s - 1000s: ~0.000646 USDC/ETH, 1547.871 ETH/USDC
+  
+  // TWAP price for interval 2000s - 1000s: ~0.000646 USDC/ETH
   uint256 public MAGIC_TWAP_PRICE_USDC_ETH_2000_1000 = 51185264279942680916728141158213785257;
+  // inverse ~1547.871 ETH/USDC
+  uint256 public MAGIC_TWAP_PRICE_ETH_USDC_2000_1000 = 122634938466976106938;
 
   uint256 public defaultBlock = 16_485_101;
   uint256 public mainnetFork;
@@ -39,11 +49,12 @@ contract Helper is Test {
 
   function setupContracts () public {
     setupTwapAdapter();
+    setupTwapInverseAdapter();
     setupTestContracts();
   }
 
   function setupTwapAdapter () public {
-    bytes memory code = vm.getCode('out/TwapAdapter01.sol/TwapAdapter01.json');
+    bytes memory code = vm.getCode('out/TwapAdapter.sol/TwapAdapter.json');
     address addr;
     assembly {
       addr := create(0, add(code, 0x20), mload(code))
@@ -52,9 +63,20 @@ contract Helper is Test {
     twapAdapter = ITwapAdapter(addr);
   }
 
+  function setupTwapInverseAdapter () public {
+    bytes memory code = vm.getCode('out/TwapInverseAdapter.sol/TwapInverseAdapter.json');
+    address addr;
+    assembly {
+      addr := create(0, add(code, 0x20), mload(code))
+      if iszero(addr) { revert (0, 0) }
+    }
+    twapInverseAdapter = ITwapAdapter(addr);
+  }
+
   function setupTestContracts () public {
     primitives = new Primitives01();
     mockPriceOracle = new MockPriceOracle();
+    primitiveInternals = new MockPrimitiveInternals();
   }
 
   function setupFork () public {

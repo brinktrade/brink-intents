@@ -130,14 +130,16 @@ contract Primitives01 is TokenHelper {
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactInput (
-    Call memory oraclePriceCall,
+    IUint256Oracle priceOracle,
+    bytes memory priceOracleParams,
+    uint fee,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenInAmount,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = _getMarketOutput(oraclePriceCall, tokenInAmount);
+    uint tokenOutAmountRequired = _getMarketOutputWithFee(priceOracle, priceOracleParams, tokenInAmount, fee);
     console.log("REQUIRED:%s", tokenOutAmountRequired);
     // _fillSwap(
     //   tokenIn,
@@ -153,29 +155,29 @@ contract Primitives01 is TokenHelper {
     // );
   }
 
-  // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
-  function marketSwapExactOutput (
-    IUint256Oracle priceOracle,
-    address owner,
-    Token memory tokenIn,
-    Token memory tokenOut,
-    uint tokenOutAmount,
-    UnsignedMarketSwapData memory data
-  ) public {
-    uint tokenInAmountRequired = _getMarketInput(priceOracle, tokenIn, tokenOut, tokenOutAmount);
-    _fillSwap(
-      tokenIn,
-      tokenOut,
-      owner,
-      data.recipient,
-      tokenInAmountRequired,
-      tokenOutAmount,
-      data.tokenInId,
-      data.tokenInIdMerkleProofs,
-      data.tokenOutIdMerkleProofs,
-      data.fillCall
-    );
-  }
+  // // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
+  // function marketSwapExactOutput (
+  //   IUint256Oracle priceOracle,
+  //   address owner,
+  //   Token memory tokenIn,
+  //   Token memory tokenOut,
+  //   uint tokenOutAmount,
+  //   UnsignedMarketSwapData memory data
+  // ) public {
+  //   uint tokenInAmountRequired = _getMarketInput(priceOracle, tokenIn, tokenOut, tokenOutAmount);
+  //   _fillSwap(
+  //     tokenIn,
+  //     tokenOut,
+  //     owner,
+  //     data.recipient,
+  //     tokenInAmountRequired,
+  //     tokenOutAmount,
+  //     data.tokenInId,
+  //     data.tokenInIdMerkleProofs,
+  //     data.tokenOutIdMerkleProofs,
+  //     data.fillCall
+  //   );
+  // }
 
   // fill all or part of a swap for tokenIn -> tokenOut. Price curve calculates output based on input
   function limitSwap (
@@ -335,20 +337,25 @@ contract Primitives01 is TokenHelper {
     }
   }
 
-  function _updateLimitSwapOutputFilled(bytes32 id, uint newOutputFilled) private {
+  function _updateLimitSwapOutputFilled(bytes32 id, uint newOutputFilled) internal {
     // TODO: implement
   }
 
-  function _getMarketOutput (Call memory oraclePriceCall, uint tokenInAmount) private returns (uint outputAmount) {
-    return 55667788;
-    // TODO: implement
+  function _getMarketOutputWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint input, uint fee) internal returns (uint outputWithFee) {
+    uint output = _getMarketOutput(priceOracle, priceOracleParams, input);
+    outputWithFee = output - fee;
   }
 
-  function _getMarketInput (IUint256Oracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) private returns (uint inputAmount) {
-    // TODO: implement
+  function _getMarketOutput (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint input) internal returns (uint output) {
+    uint priceX96 = priceOracle.getUint256(priceOracleParams);
+    output = priceX96;
   }
 
-  function _getLimitSwapOutputFilled (bytes32 limitSwapId) private returns (uint outputFilled) {
+  // function _getMarketInput (IUint256Oracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) internal returns (uint inputAmount) {
+  //   // TODO: implement
+  // }
+
+  function _getLimitSwapOutputFilled (bytes32 limitSwapId) internal returns (uint outputFilled) {
     // TODO: implement
   }
 
