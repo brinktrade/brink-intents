@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import "forge-std/console.sol";
 
+import "openzeppelin/utils/math/Math.sol";
+import "openzeppelin/utils/math/SignedMath.sol";
 import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
@@ -50,6 +52,10 @@ struct Call {
 }
 
 contract Primitives01 is TokenHelper {
+  using Math for uint256;
+  using SignedMath for int256;
+
+  uint256 internal constant Q96 = 0x1000000000000000000000000;
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
 
@@ -132,15 +138,16 @@ contract Primitives01 is TokenHelper {
   function marketSwapExactInput (
     IUint256Oracle priceOracle,
     bytes memory priceOracleParams,
-    uint fee,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenInAmount,
+    uint24 feePercent,
+    uint feeMinTokenOut,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = _getMarketOutputWithFee(priceOracle, priceOracleParams, tokenInAmount, fee);
-    console.log("REQUIRED:%s", tokenOutAmountRequired);
+    uint tokenOutAmountRequired = _getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut));
+    console.log("tokenOutAmountRequired: %s", tokenOutAmountRequired);
     // _fillSwap(
     //   tokenIn,
     //   tokenOut,
@@ -155,29 +162,33 @@ contract Primitives01 is TokenHelper {
     // );
   }
 
-  // // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
-  // function marketSwapExactOutput (
-  //   IUint256Oracle priceOracle,
-  //   address owner,
-  //   Token memory tokenIn,
-  //   Token memory tokenOut,
-  //   uint tokenOutAmount,
-  //   UnsignedMarketSwapData memory data
-  // ) public {
-  //   uint tokenInAmountRequired = _getMarketInput(priceOracle, tokenIn, tokenOut, tokenOutAmount);
-  //   _fillSwap(
-  //     tokenIn,
-  //     tokenOut,
-  //     owner,
-  //     data.recipient,
-  //     tokenInAmountRequired,
-  //     tokenOutAmount,
-  //     data.tokenInId,
-  //     data.tokenInIdMerkleProofs,
-  //     data.tokenOutIdMerkleProofs,
-  //     data.fillCall
-  //   );
-  // }
+  // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
+  function marketSwapExactOutput (
+    IUint256Oracle priceOracle,
+    bytes memory priceOracleParams,
+    address owner,
+    Token memory tokenIn,
+    Token memory tokenOut,
+    uint tokenOutAmount,
+    uint24 feePercent,
+    uint feeMinTokenIn,
+    UnsignedMarketSwapData memory data
+  ) public {
+    uint tokenInAmountRequired = _getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn));
+    console.log("tokenInAmountRequired: %s", tokenInAmountRequired);
+    // _fillSwap(
+    //   tokenIn,
+    //   tokenOut,
+    //   owner,
+    //   data.recipient,
+    //   tokenInAmountRequired,
+    //   tokenOutAmount,
+    //   data.tokenInId,
+    //   data.tokenInIdMerkleProofs,
+    //   data.tokenOutIdMerkleProofs,
+    //   data.fillCall
+    // );
+  }
 
   // fill all or part of a swap for tokenIn -> tokenOut. Price curve calculates output based on input
   function limitSwap (
@@ -337,26 +348,29 @@ contract Primitives01 is TokenHelper {
     }
   }
 
-  function _updateLimitSwapOutputFilled(bytes32 id, uint newOutputFilled) internal {
+  function _updateLimitSwapOutputFilled (bytes32 id, uint newOutputFilled) internal {
     // TODO: implement
   }
 
-  function _getMarketOutputWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint input, uint fee) internal returns (uint outputWithFee) {
-    uint output = _getMarketOutput(priceOracle, priceOracleParams, input);
-    outputWithFee = output - fee;
-  }
-
-  function _getMarketOutput (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint input) internal returns (uint output) {
+  function _getSwapAmount (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount) internal returns (uint token1Amount) {
     uint priceX96 = priceOracle.getUint256(priceOracleParams);
-    output = priceX96;
+    token1Amount = priceX96 * token0Amount / Q96;
   }
 
-  // function _getMarketInput (IUint256Oracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) internal returns (uint inputAmount) {
-  //   // TODO: implement
-  // }
+  function _getSwapAmountWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount, int24 feePercent, int feeMin) internal returns (uint token1Amount) {
+    token1Amount = _getSwapAmount(priceOracle, priceOracleParams, token0Amount);
+    int feeAmount = int(token1Amount.mulDiv(int(feePercent).abs(), 10**6)) * _sign(feePercent);
+    if (feeAmount.abs() < feeMin.abs()) {
+      feeAmount = feeMin;
+    }
+    token1Amount = uint(int(token1Amount) + feeAmount);
+  }
 
   function _getLimitSwapOutputFilled (bytes32 limitSwapId) internal returns (uint outputFilled) {
     // TODO: implement
   }
 
+  function _sign (int n) internal pure returns (int8 sign) {
+    return n >= 0 ? int8(1) : -1;
+  }
 }
