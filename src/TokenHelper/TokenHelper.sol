@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import 'openzeppelin/token/ERC20/IERC20.sol';
 import 'openzeppelin/token/ERC721/IERC721.sol';
 import 'openzeppelin/token/ERC1155/IERC1155.sol';
+import 'openzeppelin/utils/cryptography/MerkleProof.sol';
 
   enum TokenStandard { ERC20, ERC721, ERC1155, ETH }
 
@@ -38,7 +39,7 @@ contract TokenHelper {
         IERC721(token.addr).transferFrom(from, to, id);
       } else {
         for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          _merkleProofCheck(token.idsMerkleRoot, idMerkleProofs[i].proof, idMerkleProofs[i].id);
+          verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot,idMerkleProofs[i].id);
           IERC721(token.addr).transferFrom(from, to, idMerkleProofs[i].id);
         }
       }
@@ -50,7 +51,7 @@ contract TokenHelper {
         uint[] memory ids;
         uint[] memory amounts;
         for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          _merkleProofCheck(token.idsMerkleRoot, idMerkleProofs[i].proof, idMerkleProofs[i].id);
+          verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot, idMerkleProofs[i].id);
           ids[i] = idMerkleProofs[i].id;
           amounts[i] = 1;
         }
@@ -116,9 +117,9 @@ contract TokenHelper {
     }
   }
 
-  function _merkleProofCheck (bytes32 root, bytes32[] memory proof, uint id) internal {
-    // TODO: Merkle proof check here
-    // check proof that root contains id
+  function verifyId (bytes32[] memory proof, bytes32 root, uint id) internal pure returns (bool) {
+    bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(id))));
+    return MerkleProof.verify(proof, root, leaf);
   }
 
 }
