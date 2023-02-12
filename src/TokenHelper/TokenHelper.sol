@@ -68,6 +68,32 @@ contract TokenHelper {
     revert UnsupportedTokenStandard();
   }
 
+  // returns total balance and number of NFT ids owned
+  function checkTokenOwnership (
+    address owner,
+    Token memory token,
+    IdMerkleProof[] memory idMerkleProofs
+  ) internal view returns (uint balance, uint ownedIdCount) {
+    if (token.standard == TokenStandard.ERC721) {
+      if (token.id > 0 && IERC721(token.addr).ownerOf(token.id) == owner) {
+        ownedIdCount = 1;
+      } else if (token.idsMerkleRoot != bytes32(0)) {
+        for (uint8 i=0; i<idMerkleProofs.length; i++) {
+          if (IERC721(token.addr).ownerOf(idMerkleProofs[i].id) == owner) {
+            ownedIdCount++;
+            break;
+          }
+        }
+      }
+    }
+
+    balance = balanceOf(token, owner, idMerkleProofs);
+
+    if (token.standard == TokenStandard.ERC1155 && token.idsMerkleRoot != bytes32(0)) {
+      ownedIdCount = balance;
+    }
+  }
+
   function balanceOf(Token memory token, address owner, IdMerkleProof[] memory idMerkleProofs) internal view returns (uint) {
     if (token.standard == TokenStandard.ETH) {
       return owner.balance;
@@ -94,32 +120,6 @@ contract TokenHelper {
     }
 
     revert UnsupportedTokenStandard();
-  }
-
-  // returns total balance and number of NFT ids owned
-  function checkTokenOwnership (
-    address owner,
-    Token memory token,
-    IdMerkleProof[] memory idMerkleProofs
-  ) internal view returns (uint balance, uint ownedIdCount) {
-    if (token.standard == TokenStandard.ERC721) {
-      if (token.id > 0 && IERC721(token.addr).ownerOf(token.id) == owner) {
-        ownedIdCount = 1;
-      } else if (token.idsMerkleRoot != bytes32(0)) {
-        for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          if (IERC721(token.addr).ownerOf(idMerkleProofs[i].id) == owner) {
-            ownedIdCount++;
-            break;
-          }
-        }
-      }
-    }
-
-    balance = balanceOf(token, owner, idMerkleProofs);
-
-    if (token.standard == TokenStandard.ERC1155 && token.idsMerkleRoot != bytes32(0)) {
-      ownedIdCount = balance;
-    }
   }
 
   function verifyId (bytes32[] memory proof, bytes32 root, uint id) internal pure returns (bool) {
