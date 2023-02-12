@@ -24,4 +24,8 @@ contract MockTokenHelperInternals is TokenHelper {
   function verifyId_internal (bytes32[] memory proof, bytes32 root, uint id) external pure returns (bool) {
     return verifyId(proof, root, id);
   }
+
+  function verifyIds_internal (bytes32[] memory proof, bool[] memory proofFlags, bytes32 root, uint[] memory ids) external pure returns (bool) {
+    return verifyIds(proof, proofFlags, root, ids);
+  }
 }

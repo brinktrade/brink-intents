@@ -6,25 +6,26 @@ import 'openzeppelin/token/ERC721/IERC721.sol';
 import 'openzeppelin/token/ERC1155/IERC1155.sol';
 import 'openzeppelin/utils/cryptography/MerkleProof.sol';
 
-  enum TokenStandard { ERC20, ERC721, ERC1155, ETH }
+enum TokenStandard { ERC20, ERC721, ERC1155, ETH }
 
-  struct Token {
-    TokenStandard standard;
-    address addr;
-    bytes32 idsMerkleRoot;
-    uint id;
-  }
+struct Token {
+  TokenStandard standard;
+  address addr;
+  bytes32 idsMerkleRoot;
+  uint id;
+}
 
-  struct IdMerkleProof {
-    uint id;
-    bytes32[] proof;
-  }
+struct IdMerkleProof {
+  uint id;
+  bytes32[] proof;
+}
 
-  error UnsupportedTokenStandard();
-  error IdNotAllowed();
-  error MerkleProofsRequired();
-  error ERC1155IdNotProvided();
-  error OwnerHasNft();
+error UnsupportedTokenStandard();
+error IdNotAllowed();
+error MerkleProofsRequired();
+error ERC1155IdNotProvided();
+error OwnerHasNft();
+error InvalidMerkleProof(uint8 index);
 
 contract TokenHelper {
 
@@ -39,7 +40,9 @@ contract TokenHelper {
         IERC721(token.addr).transferFrom(from, to, id);
       } else {
         for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot,idMerkleProofs[i].id);
+          if (!verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot,idMerkleProofs[i].id)) {
+            revert InvalidMerkleProof(i);
+          }
           IERC721(token.addr).transferFrom(from, to, idMerkleProofs[i].id);
         }
       }
@@ -51,7 +54,9 @@ contract TokenHelper {
         uint[] memory ids;
         uint[] memory amounts;
         for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot, idMerkleProofs[i].id);
+          if (!verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot, idMerkleProofs[i].id)) {
+            revert InvalidMerkleProof(i);
+          }
           ids[i] = idMerkleProofs[i].id;
           amounts[i] = 1;
         }
@@ -120,6 +125,14 @@ contract TokenHelper {
   function verifyId (bytes32[] memory proof, bytes32 root, uint id) internal pure returns (bool) {
     bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(id))));
     return MerkleProof.verify(proof, root, leaf);
+  }
+
+  function verifyIds (bytes32[] memory proof, bool[] memory proofFlags, bytes32 root, uint[] memory ids) internal pure returns (bool) {
+    bytes32[] memory leaves = new bytes32[](ids.length);
+    for (uint8 i=0; i<ids.length; i++) {
+      leaves[i] = keccak256(bytes.concat(keccak256(abi.encode(ids[i]))));
+    }
+    return MerkleProof.multiProofVerify(proof, proofFlags, root, leaves);
   }
 
 }

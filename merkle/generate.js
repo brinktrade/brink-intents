@@ -13,3 +13,6 @@ for (const [i, v] of tree.entries()) {
   console.log('Value: ', v);
   console.log('Proof: ', proof);
 }
+
+const multiProof = tree.getMultiProof([2, 3, 6])
+console.log('multi proof for 9592, 9107, and 7754: ', multiProof)

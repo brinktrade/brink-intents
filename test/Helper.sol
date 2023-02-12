@@ -117,4 +117,14 @@ contract Helper is Test {
     proof[2] = 0xc97ce8d1e731b4088a0419629557892a06ca5462a6083a0cf6e92a1d5a720b75;
   }
 
+  function merkleMultiProofForDoodles_9592_7754_9107 () public returns (bytes32[] memory proof, bool[] memory proofFlags) {
+    proof = new bytes32[](1);
+    proof[0] = 0x0db851939cf734f5e0f3eafe70ccfbcb5509e5a8ade8c6ace7c1d1d1cfc841a5;
+
+    proofFlags = new bool[](3);
+    proofFlags[0] = true;
+    proofFlags[1] = true;
+    proofFlags[2] = false;
+  }
+
 }
