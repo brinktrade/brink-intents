@@ -22,23 +22,22 @@ error Uint256UpperBoundNotMet(uint256 oraclePrice);
 
 struct UnsignedTransferData {
   address recipient;
-  IdMerkleProof[] idMerkleProofs;
+  IdsMerkleProof idsMerkleProof;
 }
 
 struct UnsignedMarketSwapData {
   address recipient;
   uint tokenInId;
-  IdMerkleProof[] tokenInIdMerkleProofs;
-  IdMerkleProof[] tokenOutIdMerkleProofs;
+  IdsMerkleProof tokenInIdsMerkleProof;
+  IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
 }
 
 struct UnsignedLimitSwapData {
   address recipient;
   uint tokenInAmount;
-  uint tokenInId;
-  IdMerkleProof[] tokenInIdMerkleProofs;
-  IdMerkleProof[] tokenOutIdMerkleProofs;
+  IdsMerkleProof tokenInIdsMerkleProof;
+  IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
 }
 
@@ -126,12 +125,11 @@ contract Primitives01 is TokenHelper {
     address owner,
     address recipient,
     uint amount,
-    uint id,
     UnsignedTransferData memory data
   ) public {
     _checkUnsignedTransferData(token, amount, data);
     address _recipient = recipient != address(0) ? recipient : data.recipient;
-    transferFrom(token, owner, _recipient, amount, id, data.idMerkleProofs);
+    transferFrom(token, owner, _recipient, amount, data.idsMerkleProof);
   }
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
@@ -156,8 +154,8 @@ contract Primitives01 is TokenHelper {
     //   tokenInAmount,
     //   tokenOutAmountRequired,
     //   data.tokenInId,
-    //   data.tokenInIdMerkleProofs,
-    //   data.tokenOutIdMerkleProofs,
+    //   data.tokenInIdsMerkleProof,
+    //   data.tokenOutIdsMerkleProof,
     //   data.fillCall
     // );
   }
@@ -184,8 +182,8 @@ contract Primitives01 is TokenHelper {
     //   tokenInAmountRequired,
     //   tokenOutAmount,
     //   data.tokenInId,
-    //   data.tokenInIdMerkleProofs,
-    //   data.tokenOutIdMerkleProofs,
+    //   data.tokenInIdsMerkleProof,
+    //   data.tokenOutIdsMerkleProof,
     //   data.fillCall
     // );
   }
@@ -218,9 +216,8 @@ contract Primitives01 is TokenHelper {
       data.recipient,
       data.tokenInAmount,
       tokenOutAmountRequired,
-      data.tokenInId,
-      data.tokenInIdMerkleProofs,
-      data.tokenOutIdMerkleProofs,
+      data.tokenInIdsMerkleProof,
+      data.tokenOutIdsMerkleProof,
       data.fillCall
     );
 
@@ -282,19 +279,11 @@ contract Primitives01 is TokenHelper {
   }
 
   function _checkUnsignedLimitSwapData (Token memory token, UnsignedLimitSwapData memory unsignedData) private pure {
-    if (
-      token.idsMerkleRoot == bytes32(0) &&
-      token.id != 0 &&
-      token.id != unsignedData.tokenInId
-    ) {
-      revert IdNotAllowed();
-    }
-
     if (token.idsMerkleRoot != bytes32(0)) {
-      if (unsignedData.tokenInIdMerkleProofs.length == 0) {
+      if (unsignedData.tokenInIdsMerkleProof.ids.length == 0) {
         revert MerkleProofsRequired();
       }
-      if (unsignedData.tokenInIdMerkleProofs.length != unsignedData.tokenInAmount) {
+      if (unsignedData.tokenInIdsMerkleProof.ids.length != unsignedData.tokenInAmount) {
         revert MerkleProofAndAmountMismatch();
       }
 
@@ -303,7 +292,7 @@ contract Primitives01 is TokenHelper {
   }
 
   function _checkUnsignedTransferData (Token memory token, uint amount, UnsignedTransferData memory unsignedData) private pure {
-    if (token.idsMerkleRoot != bytes32(0) && unsignedData.idMerkleProofs.length != amount) {
+    if (token.idsMerkleRoot != bytes32(0) && unsignedData.idsMerkleProof.ids.length != amount) {
       revert MerkleProofAndAmountMismatch();
     }
   }
@@ -315,16 +304,15 @@ contract Primitives01 is TokenHelper {
     address recipient,
     uint tokenInAmount,
     uint tokenOutAmount,
-    uint tokenInId,
-    IdMerkleProof[] memory tokenInIdMerkleProofs,
-    IdMerkleProof[] memory tokenOutIdMerkleProofs,
+    IdsMerkleProof memory tokenInIdsMerkleProof,
+    IdsMerkleProof memory tokenOutIdsMerkleProof,
     Call memory fillCall
   ) private {
-    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdMerkleProofs);
+    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInIdsMerkleProof);
 
     uint initialTokenOutBalance;
     {
-      (uint _initialTokenOutBalance, uint initialOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdMerkleProofs);
+      (uint _initialTokenOutBalance, uint initialOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdsMerkleProof);
       initialTokenOutBalance = _initialTokenOutBalance;
       if (initialOwnedIdCount > 0) {
         revert NftIdAlreadyOwned();
@@ -333,11 +321,11 @@ contract Primitives01 is TokenHelper {
 
     CALL_EXECUTOR_V2.proxyCall(fillCall.targetContract, fillCall.data);
 
-    (uint finalTokenOutBalance, uint finalOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdMerkleProofs);
+    (uint finalTokenOutBalance, uint finalOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdsMerkleProof);
 
     if (
       (tokenOut.id > 0 && finalOwnedIdCount < 1) ||
-      (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdMerkleProofs.length)
+      (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdsMerkleProof.ids.length)
     ) {
       revert NftIdNotReceived();
     } else {

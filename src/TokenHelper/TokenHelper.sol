@@ -15,9 +15,10 @@ struct Token {
   uint id;
 }
 
-struct IdMerkleProof {
-  uint id;
+struct IdsMerkleProof {
+  uint[] ids;
   bytes32[] proof;
+  bool[] proofFlags;
 }
 
 error UnsupportedTokenStandard();
@@ -25,11 +26,12 @@ error IdNotAllowed();
 error MerkleProofsRequired();
 error ERC1155IdNotProvided();
 error OwnerHasNft();
-error InvalidMerkleProof(uint8 index);
+error InvalidIds();
+error IdsLengthZero();
 
 contract TokenHelper {
 
-  function transferFrom (Token memory token, address from, address to, uint amount, uint id, IdMerkleProof[] memory idMerkleProofs) internal {
+  function transferFrom (Token memory token, address from, address to, uint amount, IdsMerkleProof memory idsMerkleProof) internal {
     if (token.standard == TokenStandard.ERC20) {
       IERC20(token.addr).transferFrom(from, to, amount);
       return;
@@ -37,30 +39,28 @@ contract TokenHelper {
     
     if (token.standard == TokenStandard.ERC721) {
       if (token.idsMerkleRoot == bytes32(0)) {
-        IERC721(token.addr).transferFrom(from, to, id);
+        IERC721(token.addr).transferFrom(from, to, token.id);
       } else {
-        for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          if (!verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot,idMerkleProofs[i].id)) {
-            revert InvalidMerkleProof(i);
-          }
-          IERC721(token.addr).transferFrom(from, to, idMerkleProofs[i].id);
+        if (!verifyIdsMerkleProof(idsMerkleProof, token.idsMerkleRoot)) {
+          revert InvalidIds();
+        }
+        for (uint8 i=0; i<idsMerkleProof.ids.length; i++) {
+          IERC721(token.addr).transferFrom(from, to, idsMerkleProof.ids[i]);
         }
       }
       return;
     } else if (token.standard == TokenStandard.ERC1155) {
       if (token.idsMerkleRoot == bytes32(0)) {
-        IERC1155(token.addr).safeTransferFrom(from, to, id, amount, '');
+        IERC1155(token.addr).safeTransferFrom(from, to, token.id, amount, '');
       } else {
-        uint[] memory ids;
+        if (!verifyIdsMerkleProof(idsMerkleProof, token.idsMerkleRoot)) {
+          revert InvalidIds();
+        }
         uint[] memory amounts;
-        for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          if (!verifyId(idMerkleProofs[i].proof, token.idsMerkleRoot, idMerkleProofs[i].id)) {
-            revert InvalidMerkleProof(i);
-          }
-          ids[i] = idMerkleProofs[i].id;
+        for (uint8 i=0; i<idsMerkleProof.ids.length; i++) {
           amounts[i] = 1;
         }
-        IERC1155(token.addr).safeBatchTransferFrom(from, to, ids, amounts, '');
+        IERC1155(token.addr).safeBatchTransferFrom(from, to, idsMerkleProof.ids, amounts, '');
       }
       return;
     }
@@ -72,14 +72,14 @@ contract TokenHelper {
   function checkTokenOwnership (
     address owner,
     Token memory token,
-    IdMerkleProof[] memory idMerkleProofs
+    IdsMerkleProof memory idsMerkleProof
   ) internal view returns (uint balance, uint ownedIdCount) {
     if (token.standard == TokenStandard.ERC721) {
       if (token.id > 0 && IERC721(token.addr).ownerOf(token.id) == owner) {
         ownedIdCount = 1;
       } else if (token.idsMerkleRoot != bytes32(0)) {
-        for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          if (IERC721(token.addr).ownerOf(idMerkleProofs[i].id) == owner) {
+        for (uint8 i=0; i<idsMerkleProof.ids.length; i++) {
+          if (IERC721(token.addr).ownerOf(idsMerkleProof.ids[i]) == owner) {
             ownedIdCount++;
             break;
           }
@@ -87,14 +87,14 @@ contract TokenHelper {
       }
     }
 
-    balance = balanceOf(token, owner, idMerkleProofs);
+    balance = balanceOf(token, owner, idsMerkleProof);
 
     if (token.standard == TokenStandard.ERC1155 && token.idsMerkleRoot != bytes32(0)) {
       ownedIdCount = balance;
     }
   }
 
-  function balanceOf(Token memory token, address owner, IdMerkleProof[] memory idMerkleProofs) internal view returns (uint) {
+  function balanceOf(Token memory token, address owner, IdsMerkleProof memory idsMerkleProof) internal view returns (uint) {
     if (token.standard == TokenStandard.ETH) {
       return owner.balance;
     }
@@ -112,14 +112,24 @@ contract TokenHelper {
         return IERC1155(token.addr).balanceOf(owner, token.id);
       } else {
         uint balance;
-        for (uint8 i=0; i<idMerkleProofs.length; i++) {
-          balance += (IERC1155(token.addr).balanceOf(owner, idMerkleProofs[i].id) > 0 ? 1 : 0);
+        for (uint8 i=0; i<idsMerkleProof.ids.length; i++) {
+          balance += (IERC1155(token.addr).balanceOf(owner, idsMerkleProof.ids[i]) > 0 ? 1 : 0);
         }
         return balance;
       }
     }
 
     revert UnsupportedTokenStandard();
+  }
+
+  function verifyIdsMerkleProof (IdsMerkleProof memory idsMerkleProof, bytes32 root) internal pure returns (bool) {
+    if (idsMerkleProof.ids.length == 0) {
+      return false;
+    } else if (idsMerkleProof.ids.length == 1) {
+      return verifyId(idsMerkleProof.proof, root, idsMerkleProof.ids[0]);
+    } else {
+      return verifyIds(idsMerkleProof.proof, idsMerkleProof.proofFlags, root, idsMerkleProof.ids);
+    }
   }
 
   function verifyId (bytes32[] memory proof, bytes32 root, uint id) internal pure returns (bool) {
