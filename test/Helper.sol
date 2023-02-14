@@ -35,7 +35,6 @@ contract Helper is Test {
 
   uint256 public BLOCK_JAN_25_2023 = 16_485_101;
   uint256 public BLOCK_FEB_12_2023 = 16_614_361;
-  uint256 public mainnetFork;
 
   address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
   address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
@@ -45,9 +44,17 @@ contract Helper is Test {
   Token public WETH_Token = Token(TokenStandard.ERC20, WETH, 0x0, 0);
   Token public USDC_Token = Token(TokenStandard.ERC20, USDC, 0x0, 0);
   Token public DOODLES_Token = Token(TokenStandard.ERC721, DOODLES, 0x0, 0);
-  Token public THE_MEMES_FIRSTGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 8);
+  Token public THE_MEMES_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 0);
+
+  IERC20 public WETH_ERC20 = IERC20(WETH);
+  IERC20 public USDC_ERC20 = IERC20(USDC);
+  IERC721 public DOODLES_ERC721 = IERC721(DOODLES);
+  IERC1155 public THE_MEMES_ERC1155 = IERC1155(THE_MEMES);
 
   IUniswapV3Pool USDC_ETH_FEE500_UNISWAP_V3_POOL = IUniswapV3Pool(0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640);
+
+  address public USDC_WHALE = 0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1;
+  address public ETH_WHALE = 0x00000000219ab540356cBB839Cbe05303d7705Fa;
 
   // Doodle Id's owned by 0x3111114529b97dAeF7A03FD10054dBBA2a085826 in BLOCK_FEB_12_2023:
   //    9878, 9785, 9592, 9107, 8064, 8038, 7754, 5268, 4631, 3989, 3643, 3206, 3110, 3104,
@@ -57,8 +64,34 @@ contract Helper is Test {
   // Merkle root for Id's 9878, 9785, 9592, 9107, 8064, 8038, 7754
   bytes32 DOODLE_WHALE_MERKLE_ROOT = 0x08f3eb3db4c2471f4f86ffafecd871a4e98a451613c9f437c1e8b7ffd54647cb;
 
+  address public THE_MEMES_WHALE = 0xc6400A5584db71e41B0E5dFbdC769b54B91256CD;
+
+  // Merkle root for Id's 8, 14, 64
+  bytes32 THE_MEMES_MERKLE_ROOT = 0x23dccdb06adb5c64caf600b3476f3036e612ad58436f2a5de84d447c165bae38;
+
+  Token public DOODLES_Token_With_Merkle_Root = Token(TokenStandard.ERC721, DOODLES, DOODLE_WHALE_MERKLE_ROOT, 0);
+  Token public DOODLES_Token_476 = Token(TokenStandard.ERC721, DOODLES, 0x0, 476);
+  Token public THE_MEMES_FIRSTGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 8);
+  Token public THE_MEMES_GMGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 14);
+  Token public THE_MEMES_Token_With_Merkle_root = Token(TokenStandard.ERC1155, THE_MEMES, THE_MEMES_MERKLE_ROOT, 0);
+  Token public ETH_TOKEN = Token(TokenStandard.ETH, address(0), 0x0, 0);
+
+  address RANDOM_1 = 0xb6F5284E09C7D1E6456A496D839593291D8d7C08;
+  
+
+  IdsMerkleProof EMPTY_IDS_MERKLE_PROOF = IdsMerkleProof(
+    new uint[](0),
+    new bytes32[](0),
+    new bool[](0)
+  );
+
   function setupAll () public {
-    setupFork();
+    // setup with default fork
+    setupAll(BLOCK_JAN_25_2023);
+  }
+
+  function setupAll (uint blockNumber) public {
+    setupFork(blockNumber);
     setupContracts();
   }
 
@@ -95,13 +128,9 @@ contract Helper is Test {
     tokenHelper = new MockTokenHelperInternals();
   }
 
-  function setupFork () public {
-    setupFork(BLOCK_JAN_25_2023);
-  }
-
   function setupFork (uint blockNumber) public {
-    mainnetFork = vm.createFork(vm.envString("MAINNET_RPC_URL"), blockNumber);
-    vm.selectFork(mainnetFork);
+    uint fork = vm.createFork(vm.envString("MAINNET_RPC_URL"), blockNumber);
+    vm.selectFork(fork);
   }
 
   function merkleProofForDoodle9107 () public returns (bytes32[] memory proof) {
@@ -125,6 +154,15 @@ contract Helper is Test {
     proofFlags[0] = true;
     proofFlags[1] = true;
     proofFlags[2] = false;
+  }
+
+  function merkleMultiProofForTheMemes_14_8 () public returns (bytes32[] memory proof, bool[] memory proofFlags) {
+    proof = new bytes32[](1);
+    proof[0] = 0x86b497a4c646080e1b92d6d127798c22334da8d4795695f4a1f0a4855e09600c;
+
+    proofFlags = new bool[](2);
+    proofFlags[0] = false;
+    proofFlags[1] = true;
   }
 
 }

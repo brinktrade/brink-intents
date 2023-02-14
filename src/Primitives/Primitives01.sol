@@ -22,6 +22,7 @@ error Uint256UpperBoundNotMet(uint256 oraclePrice);
 
 struct UnsignedTransferData {
   address recipient;
+  uint id;
   IdsMerkleProof idsMerkleProof;
 }
 
@@ -36,6 +37,8 @@ struct UnsignedMarketSwapData {
 struct UnsignedLimitSwapData {
   address recipient;
   uint tokenInAmount;
+  uint tokenInId;
+  uint tokenOutId;
   IdsMerkleProof tokenInIdsMerkleProof;
   IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
@@ -129,7 +132,7 @@ contract Primitives01 is TokenHelper {
   ) public {
     _checkUnsignedTransferData(token, amount, data);
     address _recipient = recipient != address(0) ? recipient : data.recipient;
-    transferFrom(token, owner, _recipient, amount, data.idsMerkleProof);
+    transferFrom(token, owner, _recipient, amount, data.id, data.idsMerkleProof);
   }
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
@@ -216,6 +219,8 @@ contract Primitives01 is TokenHelper {
       data.recipient,
       data.tokenInAmount,
       tokenOutAmountRequired,
+      data.tokenInId,
+      data.tokenOutId,
       data.tokenInIdsMerkleProof,
       data.tokenOutIdsMerkleProof,
       data.fillCall
@@ -304,11 +309,13 @@ contract Primitives01 is TokenHelper {
     address recipient,
     uint tokenInAmount,
     uint tokenOutAmount,
+    uint tokenInId,
+    uint tokenOutId,
     IdsMerkleProof memory tokenInIdsMerkleProof,
     IdsMerkleProof memory tokenOutIdsMerkleProof,
     Call memory fillCall
   ) private {
-    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInIdsMerkleProof);
+    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
 
     uint initialTokenOutBalance;
     {

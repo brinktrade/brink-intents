@@ -4,8 +4,8 @@ pragma solidity ^0.8.13;
 import "../../src/TokenHelper/TokenHelper.sol";
 
 contract MockTokenHelperInternals is TokenHelper {
-  function transferFrom_internal (Token memory token, address from, address to, uint amount,IdsMerkleProof memory idsMerkleProof) external {
-    transferFrom(token, from, to, amount, idsMerkleProof);
+  function transferFrom_internal (Token memory token, address from, address to, uint amount, uint tokenId, IdsMerkleProof memory idsMerkleProof) external {
+    transferFrom(token, from, to, amount, tokenId, idsMerkleProof);
   }
 
   function balanceOf_internal(Token memory token, address owner, IdsMerkleProof memory idsMerkleProof) external view returns (uint) {
