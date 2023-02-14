@@ -315,11 +315,13 @@ contract Primitives01 is TokenHelper {
     IdsMerkleProof memory tokenOutIdsMerkleProof,
     Call memory fillCall
   ) private {
+    // TODO: move all merkle ids verification here!
+
     transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
 
     uint initialTokenOutBalance;
     {
-      (uint _initialTokenOutBalance, uint initialOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdsMerkleProof);
+      (uint _initialTokenOutBalance, uint initialOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
       initialTokenOutBalance = _initialTokenOutBalance;
       if (initialOwnedIdCount > 0) {
         revert NftIdAlreadyOwned();
@@ -328,7 +330,7 @@ contract Primitives01 is TokenHelper {
 
     CALL_EXECUTOR_V2.proxyCall(fillCall.targetContract, fillCall.data);
 
-    (uint finalTokenOutBalance, uint finalOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdsMerkleProof);
+    (uint finalTokenOutBalance, uint finalOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
 
     if (
       (tokenOut.id > 0 && finalOwnedIdCount < 1) ||

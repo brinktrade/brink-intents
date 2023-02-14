@@ -23,6 +23,7 @@ struct IdsMerkleProof {
 
 error UnsupportedTokenStandard();
 error IdNotAllowed();
+error AtLeastOneIdRequired();
 error MerkleProofsRequired();
 error ERC1155IdNotProvided();
 error OwnerHasNft();
@@ -78,58 +79,43 @@ contract TokenHelper {
     revert UnsupportedTokenStandard();
   }
 
-  // returns total balance and number of NFT ids owned
-  function checkTokenOwnership (
+  // returns
+  //    balance: total balance for all ids
+  //    ownedIdCount: total number of ids with balance > 0
+  //    idBalances: array of individual id balances
+  function tokenOwnership (
     address owner,
-    Token memory token,
-    IdsMerkleProof memory idsMerkleProof
-  ) internal view returns (uint balance, uint ownedIdCount) {
-    if (token.standard == TokenStandard.ERC721) {
-      if (token.id > 0 && IERC721(token.addr).ownerOf(token.id) == owner) {
-        ownedIdCount = 1;
-      } else if (token.idsMerkleRoot != bytes32(0)) {
-        for (uint8 i=0; i<idsMerkleProof.ids.length; i++) {
-          if (IERC721(token.addr).ownerOf(idsMerkleProof.ids[i]) == owner) {
+    TokenStandard tokenStandard,
+    address tokenAddress,
+    uint[] memory ids
+  ) internal view returns (uint balance, uint ownedIdCount, uint[] memory idBalances) {
+    if (tokenStandard == TokenStandard.ERC721 || tokenStandard == TokenStandard.ERC1155) {
+      if (ids[0] == 0) {
+        revert AtLeastOneIdRequired();
+      }
+
+      idBalances = new uint[](ids.length);
+
+      for (uint8 i=0; i<ids.length; i++) {
+        if (tokenStandard == TokenStandard.ERC721 && IERC721(tokenAddress).ownerOf(ids[i]) == owner) {
+          ownedIdCount++;
+          balance++;
+          idBalances[i] = 1;
+        } else if (tokenStandard == TokenStandard.ERC1155) {
+          idBalances[i] = IERC1155(tokenAddress).balanceOf(owner, ids[i]);
+          if (idBalances[i] > 0) {
             ownedIdCount++;
-            break;
+            balance += idBalances[i];
           }
         }
       }
+    } else if (tokenStandard == TokenStandard.ERC20) {
+      balance = IERC20(tokenAddress).balanceOf(owner);
+    } else if (tokenStandard == TokenStandard.ETH) {
+      balance = owner.balance;
+    } else {
+      revert UnsupportedTokenStandard();
     }
-
-    balance = balanceOf(token, owner, idsMerkleProof);
-
-    if (token.standard == TokenStandard.ERC1155 && token.idsMerkleRoot != bytes32(0)) {
-      ownedIdCount = balance;
-    }
-  }
-
-  function balanceOf(Token memory token, address owner, IdsMerkleProof memory idsMerkleProof) internal view returns (uint) {
-    if (token.standard == TokenStandard.ETH) {
-      return owner.balance;
-    }
-    
-    if (token.standard == TokenStandard.ERC20) {
-      return IERC20(token.addr).balanceOf(owner);
-    }
-    
-    if (token.standard == TokenStandard.ERC721) {
-      return IERC721(token.addr).balanceOf(owner);
-    }
-    
-    if (token.standard == TokenStandard.ERC1155) {
-      if (token.id > 0) {
-        return IERC1155(token.addr).balanceOf(owner, token.id);
-      } else {
-        uint balance;
-        for (uint8 i=0; i<idsMerkleProof.ids.length; i++) {
-          balance += (IERC1155(token.addr).balanceOf(owner, idsMerkleProof.ids[i]) > 0 ? 1 : 0);
-        }
-        return balance;
-      }
-    }
-
-    revert UnsupportedTokenStandard();
   }
 
   function verifyIdsMerkleProof (IdsMerkleProof memory idsMerkleProof, bytes32 root) internal pure returns (bool) {

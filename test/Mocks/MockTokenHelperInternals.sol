@@ -8,17 +8,14 @@ contract MockTokenHelperInternals is TokenHelper {
     transferFrom(token, from, to, amount, tokenId, idsMerkleProof);
   }
 
-  function balanceOf_internal(Token memory token, address owner, IdsMerkleProof memory idsMerkleProof) external view returns (uint) {
-    return balanceOf(token, owner, idsMerkleProof);
-  }
-
   // returns total balance and number of NFT ids owned
-  function checkTokenOwnership_internal (
+  function tokenOwnership_internal (
     address owner,
-    Token memory token,
-    IdsMerkleProof memory idsMerkleProof
-  ) external view returns (uint, uint) {
-    return checkTokenOwnership(owner, token, idsMerkleProof);
+    TokenStandard tokenStandard,
+    address tokenAddress,
+    uint[] memory ids
+  ) external view returns (uint, uint, uint[] memory) {
+    return tokenOwnership(owner, tokenStandard, tokenAddress, ids);
   }
 
   function verifyIdsMerkleProof_internal (IdsMerkleProof memory idsMerkleProof, bytes32 root) external pure returns (bool) {

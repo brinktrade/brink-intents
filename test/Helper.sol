@@ -64,7 +64,11 @@ contract Helper is Test {
   // Merkle root for Id's 9878, 9785, 9592, 9107, 8064, 8038, 7754
   bytes32 DOODLE_WHALE_MERKLE_ROOT = 0x08f3eb3db4c2471f4f86ffafecd871a4e98a451613c9f437c1e8b7ffd54647cb;
 
+  // memes vault, owns a lot of all the memes
   address public THE_MEMES_WHALE = 0xc6400A5584db71e41B0E5dFbdC769b54B91256CD;
+
+  // owns 2 FIRSTGM (id=8)
+  address public THE_MEMES_MINNOW = 0x001442C1a4C7CA5EC68091fc246FF9377e234510;
 
   // Merkle root for Id's 8, 14, 64
   bytes32 THE_MEMES_MERKLE_ROOT = 0x23dccdb06adb5c64caf600b3476f3036e612ad58436f2a5de84d447c165bae38;
