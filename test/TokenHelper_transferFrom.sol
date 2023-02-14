@@ -96,6 +96,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     tokenHelper.transferFrom_internal(DOODLES_Token_With_Merkle_Root, DOODLE_WHALE, RANDOM_1, 0, 0, idsMerkleProof);
   }
 
+  // when transfering ERC1155 token with no restrictions on ID, should execute the transfer
   function testTransferFrom_erc1155_anyId () public {
     vm.prank(THE_MEMES_WHALE);
     THE_MEMES_ERC1155.setApprovalForAll(address(tokenHelper), true);
@@ -105,6 +106,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     assertEq(THE_MEMES_ERC1155.balanceOf(RANDOM_1, 14), 5);
   }
 
+  // when transfering ERC1155 token that allows a specific ID, should execute the transfer
   function testTransferFrom_erc1155_specificId_valid () public {
     vm.prank(THE_MEMES_WHALE);
     THE_MEMES_ERC1155.setApprovalForAll(address(tokenHelper), true);
@@ -114,6 +116,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     assertEq(THE_MEMES_ERC1155.balanceOf(RANDOM_1, 8), 23);
   }
 
+  // when transfering the wrong ID for ERC1155 token that allows a specific ID, should revert with IdNotAllowed()
   function testTransferFrom_erc1155_specificId_invalid () public {
     vm.prank(THE_MEMES_WHALE);
     THE_MEMES_ERC1155.setApprovalForAll(address(tokenHelper), true);
@@ -122,6 +125,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     tokenHelper.transferFrom_internal(THE_MEMES_FIRSTGM_Token, THE_MEMES_WHALE, RANDOM_1, 23, 14, EMPTY_IDS_MERKLE_PROOF);
   }
 
+  // when transfering ERC1155 token with a merkle root of ids, should transfer all ids
   function testTransferFrom_erc1155_idsMerkle_validProof () public {
     (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForTheMemes_14_8();
     uint[] memory ids = new uint[](2);
@@ -143,6 +147,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     assertEq(THE_MEMES_ERC1155.balanceOf(RANDOM_1, 14), 1);
   }
 
+  // when transfering ERC1155 token with a merkle root of ids with an invalid proof, should revert with InvalidIds()
   function testTransferFrom_erc1155_idsMerkle_invalidProof () public {
     (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForTheMemes_14_8();
     uint[] memory ids = new uint[](2);
@@ -162,6 +167,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     tokenHelper.transferFrom_internal(THE_MEMES_Token_With_Merkle_root, THE_MEMES_WHALE, RANDOM_1, 0, 0, idsMerkleProof);
   }
 
+  // when called with an unsupported token standard, should revert with UnsupportedTokenStandard()
   function testTransferFrom_unsupportedTokenStandard () public {
     vm.expectRevert(UnsupportedTokenStandard.selector);
     tokenHelper.transferFrom_internal(ETH_TOKEN, ETH_WHALE, RANDOM_1, 0, 0, EMPTY_IDS_MERKLE_PROOF);
