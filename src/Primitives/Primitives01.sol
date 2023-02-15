@@ -19,6 +19,7 @@ error BlockNotMined();
 error OracleUint256ReadZero();
 error Uint256LowerBoundNotMet(uint256 oraclePrice);
 error Uint256UpperBoundNotMet(uint256 oraclePrice);
+error InvalidTokenIds(address tokenAddress);
 
 struct UnsignedTransferData {
   address recipient;
@@ -37,8 +38,6 @@ struct UnsignedMarketSwapData {
 struct UnsignedLimitSwapData {
   address recipient;
   uint tokenInAmount;
-  uint tokenInId;
-  uint tokenOutId;
   IdsMerkleProof tokenInIdsMerkleProof;
   IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
@@ -219,8 +218,6 @@ contract Primitives01 is TokenHelper {
       data.recipient,
       data.tokenInAmount,
       tokenOutAmountRequired,
-      data.tokenInId,
-      data.tokenOutId,
       data.tokenInIdsMerkleProof,
       data.tokenOutIdsMerkleProof,
       data.fillCall
@@ -309,21 +306,27 @@ contract Primitives01 is TokenHelper {
     address recipient,
     uint tokenInAmount,
     uint tokenOutAmount,
-    uint tokenInId,
-    uint tokenOutId,
     IdsMerkleProof memory tokenInIdsMerkleProof,
     IdsMerkleProof memory tokenOutIdsMerkleProof,
     Call memory fillCall
-  ) private {
-    // TODO: move all merkle ids verification here!
+  ) internal {
+    if (!verifyTokenIds(tokenIn, tokenInIdsMerkleProof)) {
+      revert InvalidTokenIds(tokenIn.addr);
+    }
+    if (!verifyTokenIds(tokenOut, tokenOutIdsMerkleProof)) {
+      revert InvalidTokenIds(tokenOut.addr);
+    }
 
-    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
+    // TODO: additional verification for tokenOutIds here (flagged NFT oracle)
+
+    // TODO: remove the merkle verification from this, simplify the fn
+    // transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
 
     uint initialTokenOutBalance;
     {
       (uint _initialTokenOutBalance, uint initialOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
       initialTokenOutBalance = _initialTokenOutBalance;
-      if (initialOwnedIdCount > 0) {
+      if (initialOwnedIdCount != 0) {
         revert NftIdAlreadyOwned();
       }
     }
@@ -333,7 +336,7 @@ contract Primitives01 is TokenHelper {
     (uint finalTokenOutBalance, uint finalOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
 
     if (
-      (tokenOut.id > 0 && finalOwnedIdCount < 1) ||
+      (tokenOut.id > 0 && finalOwnedIdCount == 0) ||
       (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdsMerkleProof.ids.length)
     ) {
       revert NftIdNotReceived();
