@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import "forge-std/console.sol";
 
+import "openzeppelin/utils/math/Math.sol";
+import "openzeppelin/utils/math/SignedMath.sol";
 import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
@@ -20,14 +22,15 @@ error Uint256UpperBoundNotMet(uint256 oraclePrice);
 
 struct UnsignedTransferData {
   address recipient;
-  IdMerkleProof[] idMerkleProofs;
+  uint id;
+  IdsMerkleProof idsMerkleProof;
 }
 
 struct UnsignedMarketSwapData {
   address recipient;
   uint tokenInId;
-  IdMerkleProof[] tokenInIdMerkleProofs;
-  IdMerkleProof[] tokenOutIdMerkleProofs;
+  IdsMerkleProof tokenInIdsMerkleProof;
+  IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
 }
 
@@ -35,8 +38,9 @@ struct UnsignedLimitSwapData {
   address recipient;
   uint tokenInAmount;
   uint tokenInId;
-  IdMerkleProof[] tokenInIdMerkleProofs;
-  IdMerkleProof[] tokenOutIdMerkleProofs;
+  uint tokenOutId;
+  IdsMerkleProof tokenInIdsMerkleProof;
+  IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
 }
 
@@ -50,6 +54,10 @@ struct Call {
 }
 
 contract Primitives01 is TokenHelper {
+  using Math for uint256;
+  using SignedMath for int256;
+
+  uint256 internal constant Q96 = 0x1000000000000000000000000;
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
 
@@ -120,25 +128,27 @@ contract Primitives01 is TokenHelper {
     address owner,
     address recipient,
     uint amount,
-    uint id,
     UnsignedTransferData memory data
   ) public {
     _checkUnsignedTransferData(token, amount, data);
     address _recipient = recipient != address(0) ? recipient : data.recipient;
-    transferFrom(token, owner, _recipient, amount, id, data.idMerkleProofs);
+    transferFrom(token, owner, _recipient, amount, data.id, data.idsMerkleProof);
   }
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactInput (
-    Call memory oraclePriceCall,
+    IUint256Oracle priceOracle,
+    bytes memory priceOracleParams,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenInAmount,
+    uint24 feePercent,
+    uint feeMinTokenOut,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = _getMarketOutput(oraclePriceCall, tokenInAmount);
-    console.log("REQUIRED:%s", tokenOutAmountRequired);
+    uint tokenOutAmountRequired = _getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut));
+    console.log("tokenOutAmountRequired: %s", tokenOutAmountRequired);
     // _fillSwap(
     //   tokenIn,
     //   tokenOut,
@@ -147,8 +157,8 @@ contract Primitives01 is TokenHelper {
     //   tokenInAmount,
     //   tokenOutAmountRequired,
     //   data.tokenInId,
-    //   data.tokenInIdMerkleProofs,
-    //   data.tokenOutIdMerkleProofs,
+    //   data.tokenInIdsMerkleProof,
+    //   data.tokenOutIdsMerkleProof,
     //   data.fillCall
     // );
   }
@@ -156,25 +166,29 @@ contract Primitives01 is TokenHelper {
   // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
   function marketSwapExactOutput (
     IUint256Oracle priceOracle,
+    bytes memory priceOracleParams,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenOutAmount,
+    uint24 feePercent,
+    uint feeMinTokenIn,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenInAmountRequired = _getMarketInput(priceOracle, tokenIn, tokenOut, tokenOutAmount);
-    _fillSwap(
-      tokenIn,
-      tokenOut,
-      owner,
-      data.recipient,
-      tokenInAmountRequired,
-      tokenOutAmount,
-      data.tokenInId,
-      data.tokenInIdMerkleProofs,
-      data.tokenOutIdMerkleProofs,
-      data.fillCall
-    );
+    uint tokenInAmountRequired = _getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn));
+    console.log("tokenInAmountRequired: %s", tokenInAmountRequired);
+    // _fillSwap(
+    //   tokenIn,
+    //   tokenOut,
+    //   owner,
+    //   data.recipient,
+    //   tokenInAmountRequired,
+    //   tokenOutAmount,
+    //   data.tokenInId,
+    //   data.tokenInIdsMerkleProof,
+    //   data.tokenOutIdsMerkleProof,
+    //   data.fillCall
+    // );
   }
 
   // fill all or part of a swap for tokenIn -> tokenOut. Price curve calculates output based on input
@@ -206,8 +220,9 @@ contract Primitives01 is TokenHelper {
       data.tokenInAmount,
       tokenOutAmountRequired,
       data.tokenInId,
-      data.tokenInIdMerkleProofs,
-      data.tokenOutIdMerkleProofs,
+      data.tokenOutId,
+      data.tokenInIdsMerkleProof,
+      data.tokenOutIdsMerkleProof,
       data.fillCall
     );
 
@@ -269,19 +284,11 @@ contract Primitives01 is TokenHelper {
   }
 
   function _checkUnsignedLimitSwapData (Token memory token, UnsignedLimitSwapData memory unsignedData) private pure {
-    if (
-      token.idsMerkleRoot == bytes32(0) &&
-      token.id != 0 &&
-      token.id != unsignedData.tokenInId
-    ) {
-      revert IdNotAllowed();
-    }
-
     if (token.idsMerkleRoot != bytes32(0)) {
-      if (unsignedData.tokenInIdMerkleProofs.length == 0) {
+      if (unsignedData.tokenInIdsMerkleProof.ids.length == 0) {
         revert MerkleProofsRequired();
       }
-      if (unsignedData.tokenInIdMerkleProofs.length != unsignedData.tokenInAmount) {
+      if (unsignedData.tokenInIdsMerkleProof.ids.length != unsignedData.tokenInAmount) {
         revert MerkleProofAndAmountMismatch();
       }
 
@@ -290,7 +297,7 @@ contract Primitives01 is TokenHelper {
   }
 
   function _checkUnsignedTransferData (Token memory token, uint amount, UnsignedTransferData memory unsignedData) private pure {
-    if (token.idsMerkleRoot != bytes32(0) && unsignedData.idMerkleProofs.length != amount) {
+    if (token.idsMerkleRoot != bytes32(0) && unsignedData.idsMerkleProof.ids.length != amount) {
       revert MerkleProofAndAmountMismatch();
     }
   }
@@ -303,15 +310,18 @@ contract Primitives01 is TokenHelper {
     uint tokenInAmount,
     uint tokenOutAmount,
     uint tokenInId,
-    IdMerkleProof[] memory tokenInIdMerkleProofs,
-    IdMerkleProof[] memory tokenOutIdMerkleProofs,
+    uint tokenOutId,
+    IdsMerkleProof memory tokenInIdsMerkleProof,
+    IdsMerkleProof memory tokenOutIdsMerkleProof,
     Call memory fillCall
   ) private {
-    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdMerkleProofs);
+    // TODO: move all merkle ids verification here!
+
+    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
 
     uint initialTokenOutBalance;
     {
-      (uint _initialTokenOutBalance, uint initialOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdMerkleProofs);
+      (uint _initialTokenOutBalance, uint initialOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
       initialTokenOutBalance = _initialTokenOutBalance;
       if (initialOwnedIdCount > 0) {
         revert NftIdAlreadyOwned();
@@ -320,11 +330,11 @@ contract Primitives01 is TokenHelper {
 
     CALL_EXECUTOR_V2.proxyCall(fillCall.targetContract, fillCall.data);
 
-    (uint finalTokenOutBalance, uint finalOwnedIdCount) = checkTokenOwnership(owner, tokenOut, tokenOutIdMerkleProofs);
+    (uint finalTokenOutBalance, uint finalOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
 
     if (
       (tokenOut.id > 0 && finalOwnedIdCount < 1) ||
-      (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdMerkleProofs.length)
+      (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdsMerkleProof.ids.length)
     ) {
       revert NftIdNotReceived();
     } else {
@@ -335,21 +345,29 @@ contract Primitives01 is TokenHelper {
     }
   }
 
-  function _updateLimitSwapOutputFilled(bytes32 id, uint newOutputFilled) private {
+  function _updateLimitSwapOutputFilled (bytes32 id, uint newOutputFilled) internal {
     // TODO: implement
   }
 
-  function _getMarketOutput (Call memory oraclePriceCall, uint tokenInAmount) private returns (uint outputAmount) {
-    return 55667788;
+  function _getSwapAmount (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount) internal returns (uint token1Amount) {
+    uint priceX96 = priceOracle.getUint256(priceOracleParams);
+    token1Amount = priceX96 * token0Amount / Q96;
+  }
+
+  function _getSwapAmountWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount, int24 feePercent, int feeMin) internal returns (uint token1Amount) {
+    token1Amount = _getSwapAmount(priceOracle, priceOracleParams, token0Amount);
+    int feeAmount = int(token1Amount.mulDiv(int(feePercent).abs(), 10**6)) * _sign(feePercent);
+    if (feeAmount.abs() < feeMin.abs()) {
+      feeAmount = feeMin;
+    }
+    token1Amount = uint(int(token1Amount) + feeAmount);
+  }
+
+  function _getLimitSwapOutputFilled (bytes32 limitSwapId) internal returns (uint outputFilled) {
     // TODO: implement
   }
 
-  function _getMarketInput (IUint256Oracle priceOracle, Token memory tokenIn, Token memory tokenOut, uint tokenOutAmount) private returns (uint inputAmount) {
-    // TODO: implement
+  function _sign (int n) internal pure returns (int8 sign) {
+    return n >= 0 ? int8(1) : -1;
   }
-
-  function _getLimitSwapOutputFilled (bytes32 limitSwapId) private returns (uint outputFilled) {
-    // TODO: implement
-  }
-
 }

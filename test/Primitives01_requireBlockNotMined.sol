@@ -12,19 +12,19 @@ contract Primitives01_requireBlockNotMined is Test, Helper  {
 
   function testBlockIsNotMined () public view {
     // when block is ahead of current block, don't revert
-    primitives.requireBlockNotMined(defaultBlock + 1);
+    primitives.requireBlockNotMined(BLOCK_JAN_25_2023 + 1);
   }
 
   function testBlockIsMining () public {
     // when block is equal to current block, revert with `BlockMined()`
     vm.expectRevert(BlockMined.selector);
-    primitives.requireBlockNotMined(defaultBlock);
+    primitives.requireBlockNotMined(BLOCK_JAN_25_2023);
   }
 
   function testBlockIsMined () public {
     // when block is behind current block, revert with `BlockMined()`
     vm.expectRevert(BlockMined.selector);
-    primitives.requireBlockNotMined(defaultBlock - 1);
+    primitives.requireBlockNotMined(BLOCK_JAN_25_2023 - 1);
   }
 
 }

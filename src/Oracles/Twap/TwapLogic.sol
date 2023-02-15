@@ -5,14 +5,9 @@ import "uniswap-v3-core/interfaces/IUniswapV3Pool.sol";
 import "uniswap-v3-core/libraries/TickMath.sol";
 import "uniswap-v3-core/libraries/FixedPoint96.sol";
 import "uniswap-v3-core/libraries/FullMath.sol";
-import "../Interfaces/ITwapAdapter.sol";
+import "../../Interfaces/ITwapAdapter.sol";
 
-contract TwapAdapter01 is ITwapAdapter {
-
-  function getUint256(bytes memory params) public view override returns (uint256) {
-    (address uniswapV3Pool, uint32 twapInterval) = abi.decode(params, (address,uint32));
-    return getTwapX96(uniswapV3Pool, twapInterval);
-  }
+abstract contract TwapLogic is ITwapAdapter {
 
   function getTwapX96(address uniswapV3Pool, uint32 twapInterval) public view override returns (uint256 priceX96) {
     uint32[] memory secondsAgos = new uint32[](2);
