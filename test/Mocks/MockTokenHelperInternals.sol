@@ -18,6 +18,10 @@ contract MockTokenHelperInternals is TokenHelper {
     return tokenOwnership(owner, tokenStandard, tokenAddress, ids);
   }
 
+  function verifyTokenIds_internal (Token memory token, IdsMerkleProof memory idsMerkleProof) external pure returns (bool valid) {
+    return verifyTokenIds(token, idsMerkleProof);
+  }
+
   function verifyIdsMerkleProof_internal (IdsMerkleProof memory idsMerkleProof, bytes32 root) external pure returns (bool) {
     return verifyIdsMerkleProof(idsMerkleProof, root);
   }

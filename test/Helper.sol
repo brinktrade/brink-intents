@@ -82,7 +82,6 @@ contract Helper is Test {
   Token public ETH_TOKEN = Token(TokenStandard.ETH, address(0), 0x0, 0);
 
   address RANDOM_1 = 0xb6F5284E09C7D1E6456A496D839593291D8d7C08;
-  
 
   IdsMerkleProof EMPTY_IDS_MERKLE_PROOF = IdsMerkleProof(
     new uint[](0),
@@ -138,36 +137,59 @@ contract Helper is Test {
     vm.selectFork(fork);
   }
 
-  function merkleProofForDoodle9107 () public returns (bytes32[] memory proof) {
-    proof = new bytes32[](2);
+  function merkleProofForDoodle9107 () public returns (IdsMerkleProof memory idsMerkleProof) {
+    uint[] memory ids = new uint[](1);
+    ids[0] = 9107;
+
+    bytes32[] memory proof = new bytes32[](2);
     proof[0] = 0xab5623858b421d453a6ea4a4873a731863781529261bcc39f0160f476e1217a5;
     proof[1] = 0x0db851939cf734f5e0f3eafe70ccfbcb5509e5a8ade8c6ace7c1d1d1cfc841a5;
+
+    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
   }
 
-  function invalidMerkleProof () public returns (bytes32[] memory proof) {
-    proof = new bytes32[](3);
+  function invalidMerkleProof () public returns (IdsMerkleProof memory idsMerkleProof) {
+    uint[] memory ids = new uint[](1);
+    ids[0] = 1234;
+
+    bytes32[] memory proof = new bytes32[](3);
     proof[0] = 0xb0f1b2dc479b6baed16151fbb6cebd075c54c10d3e48a8e6c67334a3382a9c20;
     proof[1] = 0xab5623858b421d453a6ea4a4873a731863781529261bcc39f0160f476e1217a5;
     proof[2] = 0xc97ce8d1e731b4088a0419629557892a06ca5462a6083a0cf6e92a1d5a720b75;
+
+    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
   }
 
-  function merkleMultiProofForDoodles_9592_7754_9107 () public returns (bytes32[] memory proof, bool[] memory proofFlags) {
-    proof = new bytes32[](1);
+  function merkleMultiProofForDoodles_9592_7754_9107 () public returns (IdsMerkleProof memory idsMerkleProof) {
+    uint[] memory ids = new uint[](3);
+    ids[0] = 9592;
+    ids[1] = 7754;
+    ids[2] = 9107;
+
+    bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0x0db851939cf734f5e0f3eafe70ccfbcb5509e5a8ade8c6ace7c1d1d1cfc841a5;
 
-    proofFlags = new bool[](3);
+    bool[] memory proofFlags = new bool[](3);
     proofFlags[0] = true;
     proofFlags[1] = true;
     proofFlags[2] = false;
+
+    idsMerkleProof = IdsMerkleProof(ids, proof, proofFlags);
   }
 
-  function merkleMultiProofForTheMemes_14_8 () public returns (bytes32[] memory proof, bool[] memory proofFlags) {
-    proof = new bytes32[](1);
+  function merkleMultiProofForTheMemes_14_8 () public returns (IdsMerkleProof memory idsMerkleProof) {
+    uint[] memory ids = new uint[](2);
+    ids[0] = 14;
+    ids[1] = 8;
+  
+    bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0x86b497a4c646080e1b92d6d127798c22334da8d4795695f4a1f0a4855e09600c;
 
-    proofFlags = new bool[](2);
+    bool[] memory proofFlags = new bool[](2);
     proofFlags[0] = false;
     proofFlags[1] = true;
+
+    idsMerkleProof = IdsMerkleProof(ids, proof, proofFlags);
   }
 
 }

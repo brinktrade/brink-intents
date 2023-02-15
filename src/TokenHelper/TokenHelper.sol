@@ -118,14 +118,12 @@ contract TokenHelper {
     }
   }
 
-  // TODO: tests for this
   function verifyTokenIds (Token memory token, IdsMerkleProof memory idsMerkleProof) internal pure returns (bool valid) {
-    if (token.id > 0) {
-      valid = idsMerkleProof.ids.length == 1 && token.id == idsMerkleProof.ids[0];
-    } else if (token.idsMerkleRoot != bytes32(0)) {
+    if (token.idsMerkleRoot != bytes32(0)) {
       return verifyIdsMerkleProof(idsMerkleProof, token.idsMerkleRoot);
+    } else {
+      return idsMerkleProof.ids.length == 0;
     }
-    return true;
   }
 
   function verifyIdsMerkleProof (IdsMerkleProof memory idsMerkleProof, bytes32 root) internal pure returns (bool) {

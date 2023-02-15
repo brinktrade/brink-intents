@@ -53,22 +53,10 @@ contract TokenHelper_transferFrom is Test, Helper  {
 
   // when transfering ERC721 token with a merkle root of ids, should transfer all ids
   function testTransferFrom_erc721_idsMerkle_validProof () public {
-    (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForDoodles_9592_7754_9107();
-    uint[] memory ids = new uint[](3);
-    ids[0] = 9592;
-    ids[1] = 7754;
-    ids[2] = 9107;
-
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids,
-      proof,
-      proofFlags
-    );
-
     vm.prank(DOODLE_WHALE);
     DOODLES_ERC721.setApprovalForAll(address(tokenHelper), true);
 
-    tokenHelper.transferFrom_internal(DOODLES_Token_With_Merkle_Root, DOODLE_WHALE, RANDOM_1, 0, 0, idsMerkleProof);
+    tokenHelper.transferFrom_internal(DOODLES_Token_With_Merkle_Root, DOODLE_WHALE, RANDOM_1, 0, 0, merkleMultiProofForDoodles_9592_7754_9107());
 
     assertEq(DOODLES_ERC721.ownerOf(9592), RANDOM_1);
     assertEq(DOODLES_ERC721.ownerOf(7754), RANDOM_1);
@@ -77,17 +65,8 @@ contract TokenHelper_transferFrom is Test, Helper  {
 
   // when transfering ERC721 token with a merkle root of ids with an invalid proof, should revert with InvalidIds()
   function testTransferFrom_erc721_idsMerkle_invalidProof () public {
-    (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForDoodles_9592_7754_9107();
-    uint[] memory ids = new uint[](3);
-    ids[0] = 9878; // not in the proof
-    ids[1] = 7754;
-    ids[2] = 9107;
-
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids,
-      proof,
-      proofFlags
-    );
+    IdsMerkleProof memory idsMerkleProof = merkleMultiProofForDoodles_9592_7754_9107();
+    idsMerkleProof.ids[0] = 9878; // not in the proof
 
     vm.prank(DOODLE_WHALE);
     DOODLES_ERC721.setApprovalForAll(address(tokenHelper), true);
@@ -127,21 +106,10 @@ contract TokenHelper_transferFrom is Test, Helper  {
 
   // when transfering ERC1155 token with a merkle root of ids, should transfer all ids
   function testTransferFrom_erc1155_idsMerkle_validProof () public {
-    (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForTheMemes_14_8();
-    uint[] memory ids = new uint[](2);
-    ids[0] = 14;
-    ids[1] = 8;
-
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids,
-      proof,
-      proofFlags
-    );
-
     vm.prank(THE_MEMES_WHALE);
     THE_MEMES_ERC1155.setApprovalForAll(address(tokenHelper), true);
 
-    tokenHelper.transferFrom_internal(THE_MEMES_Token_With_Merkle_root, THE_MEMES_WHALE, RANDOM_1, 0, 0, idsMerkleProof);
+    tokenHelper.transferFrom_internal(THE_MEMES_Token_With_Merkle_root, THE_MEMES_WHALE, RANDOM_1, 0, 0, merkleMultiProofForTheMemes_14_8());
 
     assertEq(THE_MEMES_ERC1155.balanceOf(RANDOM_1, 8), 1);
     assertEq(THE_MEMES_ERC1155.balanceOf(RANDOM_1, 14), 1);
@@ -149,16 +117,8 @@ contract TokenHelper_transferFrom is Test, Helper  {
 
   // when transfering ERC1155 token with a merkle root of ids with an invalid proof, should revert with InvalidIds()
   function testTransferFrom_erc1155_idsMerkle_invalidProof () public {
-    (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForTheMemes_14_8();
-    uint[] memory ids = new uint[](2);
-    ids[0] = 64; // not in proof
-    ids[1] = 8;
-
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids,
-      proof,
-      proofFlags
-    );
+    IdsMerkleProof memory idsMerkleProof = merkleMultiProofForTheMemes_14_8();
+    idsMerkleProof.ids[0] = 64; // not in proof
 
     vm.prank(THE_MEMES_WHALE);
     THE_MEMES_ERC1155.setApprovalForAll(address(tokenHelper), true);
