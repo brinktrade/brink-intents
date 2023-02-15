@@ -4,8 +4,8 @@ pragma solidity ^0.8.13;
 import "../../src/TokenHelper/TokenHelper.sol";
 
 contract MockTokenHelperInternals is TokenHelper {
-  function transferFrom_internal (Token memory token, address from, address to, uint amount, uint tokenId, IdsMerkleProof memory idsMerkleProof) external {
-    transferFrom(token, from, to, amount, tokenId, idsMerkleProof);
+  function transferFrom_internal (address tokenAddress, TokenStandard tokenStandard, address from, address to, uint amount, uint[] memory ids) external {
+    transferFrom(tokenAddress, tokenStandard, from, to, amount, ids);
   }
 
   // returns total balance and number of NFT ids owned
