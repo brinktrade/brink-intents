@@ -32,18 +32,14 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
 
   // when given a token with a merkle root and a valid proof, should return true
   function testVerifyTokenIds_withMerkleRoot_validProof () public {  
-    assertEq(
-      tokenHelper.verifyIdsMerkleProof_internal(
-        merkleProofForDoodle9107(),
-        DOODLE_WHALE_MERKLE_ROOT
-      ),
-      true
-    );
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, merkleProofForDoodle9107()), true);
   }
 
   // when given a token with a merkle root and an invalid proof, should return false
   function testVerifyTokenIds_withMerkleRoot_invalidProof () public {
-    revert("NOT IMPLEMENTED");
+    IdsMerkleProof memory idsMerkleProof = merkleProofForDoodle9107();
+    idsMerkleProof.ids[0] = 476; // not in proof
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, idsMerkleProof), false);
   }
 
 }
