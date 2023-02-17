@@ -11,8 +11,9 @@ import "./Mocks/MockPriceOracle.sol";
 import "./Mocks/MockPrimitiveInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
 import "./Utils/Filler.sol";
+import "./Utils/Constants.sol";
 
-contract Helper is Test {
+contract Helper is Test, Constants {
 
   ITwapAdapter public twapAdapter;
   ITwapAdapter public twapInverseAdapter;

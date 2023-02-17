@@ -43,6 +43,47 @@ contract Primitives01_fillSwap is Test, Helper  {
     assertEq(diffBalance(WETH, address(filler)), -1_000000000000000000);
   }
 
+  // erc721 (any id) to erc20 swap
+  function testFillSwap_erc721_anyIds_in () public {
+    vm.prank(TRADER_1);
+    DOODLES_ERC721.setApprovalForAll(address(primitiveInternals), true);
+
+    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, USDC, TokenStandard.ERC20, TRADER_1, 500_000000, new uint[](0));
+
+    uint[] memory ids = new uint[](2);
+    ids[0] = 3643;
+    ids[1] = 3206;
+    IdsMerkleProof memory inIds = EMPTY_IDS_MERKLE_PROOF;
+    inIds.ids = ids;
+
+    startBalances(address(filler));
+    startBalances(TRADER_1);
+
+    primitiveInternals.fillSwap(
+      DOODLES_Token,
+      USDC_Token,
+      TRADER_1,
+      address(filler),
+      2,
+      500_000000,
+      inIds,
+      EMPTY_IDS_MERKLE_PROOF,
+      Call(address(filler), fillCall)
+    );
+
+    endBalances(address(filler));
+    endBalances(TRADER_1);
+
+    assertEq(diffBalance(USDC, TRADER_1), 500_000000);
+    assertEq(diffBalance(USDC, address(filler)), -500_000000);
+    assertEq(diffBalance(DOODLES, TRADER_1), -2);
+    assertEq(diffBalance(DOODLES, 3643, TRADER_1), -1);
+    assertEq(diffBalance(DOODLES, 3206, TRADER_1), -1);
+    assertEq(diffBalance(DOODLES, address(filler)), 2);
+    assertEq(diffBalance(DOODLES, 3643, address(filler)), 1);
+    assertEq(diffBalance(DOODLES, 3206, address(filler)), 1);
+  }
+
   // erc20 to erc721 (any id) swap
   function testFillSwap_erc721_anyIds_out () public {
     vm.prank(TRADER_1);
