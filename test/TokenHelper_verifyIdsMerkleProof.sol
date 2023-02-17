@@ -15,7 +15,7 @@ contract TokenHelper_verifyIdsMerkleProof is Test, Helper  {
     assertEq(
       tokenHelper.verifyIdsMerkleProof_internal(
         merkleProofForDoodle9107(),
-        DOODLE_WHALE_MERKLE_ROOT
+        DOODLES_WHALE_MERKLE_ROOT
       ),
       true
     );
@@ -26,7 +26,7 @@ contract TokenHelper_verifyIdsMerkleProof is Test, Helper  {
     assertEq(
       tokenHelper.verifyIdsMerkleProof_internal(
         merkleMultiProofForDoodles_9592_7754_9107(),
-        DOODLE_WHALE_MERKLE_ROOT
+        DOODLES_WHALE_MERKLE_ROOT
       ),
       true
     );
@@ -40,7 +40,7 @@ contract TokenHelper_verifyIdsMerkleProof is Test, Helper  {
     assertEq(
       tokenHelper.verifyIdsMerkleProof_internal(
         idsMerkleProof,
-        DOODLE_WHALE_MERKLE_ROOT
+        DOODLES_WHALE_MERKLE_ROOT
       ),
       false
     );

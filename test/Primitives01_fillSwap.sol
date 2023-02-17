@@ -125,4 +125,79 @@ contract Primitives01_fillSwap is Test, Helper  {
     assertEq(diffBalance(DOODLES, 4631, address(filler)), -1);
   }
 
+    // erc721 (merkle root ids) to erc20 swap
+  function testFillSwap_erc721_merkleIds_in () public {
+    vm.prank(TRADER_1);
+    DOODLES_ERC721.setApprovalForAll(address(primitiveInternals), true);
+
+    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, USDC, TokenStandard.ERC20, TRADER_1, 500_000000, new uint[](0));
+
+    (,IdsMerkleProof memory idsIn) = doodlesProof_3643();
+
+    startBalances(address(filler));
+    startBalances(TRADER_1);
+
+    primitiveInternals.fillSwap(
+      DOODLES_Token_5268_4631_3643,
+      USDC_Token,
+      TRADER_1,
+      address(filler),
+      1,
+      500_000000,
+      idsIn,
+      EMPTY_IDS_MERKLE_PROOF,
+      Call(address(filler), fillCall)
+    );
+
+    endBalances(address(filler));
+    endBalances(TRADER_1);
+
+    assertEq(diffBalance(USDC, TRADER_1), 500_000000);
+    assertEq(diffBalance(USDC, address(filler)), -500_000000);
+    assertEq(diffBalance(DOODLES, TRADER_1), -1);
+    assertEq(diffBalance(DOODLES, 3643, TRADER_1), -1);
+    assertEq(diffBalance(DOODLES, address(filler)), 1);
+    assertEq(diffBalance(DOODLES, 3643, address(filler)), 1);
+  }
+
+  // erc20 to erc721 (merkle root ids) swap
+  function testFillSwap_erc721_merkleIds_out () public {
+    vm.prank(TRADER_1);
+    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+
+    uint[] memory ids = new uint[](2);
+    ids[0] = 5268;
+    ids[1] = 4631;
+    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, DOODLES, TokenStandard.ERC721, TRADER_1, 0, ids);
+
+    (,IdsMerkleProof memory outIds) = doodlesProof_5268_4631();
+
+    startBalances(address(filler));
+    startBalances(TRADER_1);
+
+    primitiveInternals.fillSwap(
+      USDC_Token,
+      DOODLES_Token_5268_4631_3643,
+      TRADER_1,
+      address(filler),
+      500_000000,
+      2,
+      EMPTY_IDS_MERKLE_PROOF,
+      outIds,
+      Call(address(filler), fillCall)
+    );
+
+    endBalances(address(filler));
+    endBalances(TRADER_1);
+
+    assertEq(diffBalance(USDC, TRADER_1), -500_000000);
+    assertEq(diffBalance(USDC, address(filler)), 500_000000);
+    assertEq(diffBalance(DOODLES, TRADER_1), 2);
+    assertEq(diffBalance(DOODLES, 5268, TRADER_1), 1);
+    assertEq(diffBalance(DOODLES, 4631, TRADER_1), 1);
+    assertEq(diffBalance(DOODLES, address(filler)), -2);
+    assertEq(diffBalance(DOODLES, 5268, address(filler)), -1);
+    assertEq(diffBalance(DOODLES, 4631, address(filler)), -1);
+  }
+
 }

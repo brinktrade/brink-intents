@@ -17,7 +17,7 @@ contract TokenHelper_verfiyId is Test, Helper  {
       tokenHelper.verifyIds_internal(
         idsMerkleProof.proof,
         idsMerkleProof.proofFlags,
-        DOODLE_WHALE_MERKLE_ROOT,
+        DOODLES_WHALE_MERKLE_ROOT,
         idsMerkleProof.ids
       ),
       true
@@ -32,7 +32,7 @@ contract TokenHelper_verfiyId is Test, Helper  {
       tokenHelper.verifyIds_internal(
         idsMerkleProof.proof,
         idsMerkleProof.proofFlags,
-        DOODLE_WHALE_MERKLE_ROOT,
+        DOODLES_WHALE_MERKLE_ROOT,
         idsMerkleProof.ids
       ),
       false
