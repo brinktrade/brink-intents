@@ -77,14 +77,14 @@ contract Helper is Test, Constants {
   address public THE_MEMES_MINNOW = 0x001442C1a4C7CA5EC68091fc246FF9377e234510;
 
   // Merkle root for Id's 8, 14, 64
-  bytes32 THE_MEMES_MERKLE_ROOT = 0x23dccdb06adb5c64caf600b3476f3036e612ad58436f2a5de84d447c165bae38;
+  bytes32 THE_MEMES_MERKLE_ROOT_8_14_64 = 0x23dccdb06adb5c64caf600b3476f3036e612ad58436f2a5de84d447c165bae38;
 
   Token public DOODLES_Token_With_Merkle_Root = Token(TokenStandard.ERC721, DOODLES, DOODLES_WHALE_MERKLE_ROOT, 0);
   Token public DOODLES_Token_5268_4631_3643 = Token(TokenStandard.ERC721, DOODLES, DOODLES_MERKLE_ROOT_5268_4631_3643, 0);
   Token public DOODLES_Token_476 = Token(TokenStandard.ERC721, DOODLES, 0x0, 476);
   Token public THE_MEMES_FIRSTGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 8);
   Token public THE_MEMES_GMGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 14);
-  Token public THE_MEMES_Token_With_Merkle_root = Token(TokenStandard.ERC1155, THE_MEMES, THE_MEMES_MERKLE_ROOT, 0);
+  Token public THE_MEMES_Token_8_14_64 = Token(TokenStandard.ERC1155, THE_MEMES, THE_MEMES_MERKLE_ROOT_8_14_64, 0);
   Token public ETH_TOKEN = Token(TokenStandard.ETH, address(0), 0x0, 0);
 
   address RANDOM_1 = 0xb6F5284E09C7D1E6456A496D839593291D8d7C08;
@@ -415,6 +415,31 @@ contract Helper is Test, Constants {
 
     bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0xca6d21e8ce3c6bdb0961de5c17cfba9d14bc52512fd4c391619a3bbf16f075ad;
+
+    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+  }
+
+  function proof_8 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+    root = THE_MEMES_MERKLE_ROOT_8_14_64;
+
+    uint[] memory ids = new uint[](1);
+    ids[0] = 8;
+
+    bytes32[] memory proof = new bytes32[](1);
+    proof[0] = 0x6b2b13c7307ddaf2f976f27ff73e1913a9b405c2a30efc4ab203460d0a61cb6c;
+
+    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+  }
+
+  function proof_14 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+    root = THE_MEMES_MERKLE_ROOT_8_14_64;
+
+    uint[] memory ids = new uint[](1);
+    ids[0] = 8;
+
+    bytes32[] memory proof = new bytes32[](2);
+    proof[0] = 0x86b497a4c646080e1b92d6d127798c22334da8d4795695f4a1f0a4855e09600c;
+    proof[1] = 0xa7c46294ffa3fad92dc8422b2e38b688ccf1b86172f5beaf864af9368d2844e5;
 
     idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
   }

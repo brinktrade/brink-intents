@@ -11,7 +11,7 @@ import "../Interfaces/IPriceCurve.sol";
 import "../TokenHelper/TokenHelper.sol";
 
 error NftIdAlreadyOwned();
-error NftIdNotReceived();
+error NotEnoughNftReceived();
 error NotEnoughTokenReceived(uint amountReceived);
 error MerkleProofAndAmountMismatch();
 error BlockMined();
@@ -19,7 +19,8 @@ error BlockNotMined();
 error OracleUint256ReadZero();
 error Uint256LowerBoundNotMet(uint256 oraclePrice);
 error Uint256UpperBoundNotMet(uint256 oraclePrice);
-error InvalidTokenIds(address tokenAddress);
+error InvalidTokenInIds();
+error InvalidTokenOutIds();
 
 struct UnsignedTransferData {
   address recipient;
@@ -311,10 +312,10 @@ contract Primitives01 is TokenHelper {
     Call memory fillCall
   ) internal {
     if (!verifyTokenIds(tokenIn, tokenInIdsMerkleProof)) {
-      revert InvalidTokenIds(tokenIn.addr);
+      revert InvalidTokenInIds();
     }
     if (!verifyTokenIds(tokenOut, tokenOutIdsMerkleProof)) {
-      revert InvalidTokenIds(tokenOut.addr);
+      revert InvalidTokenOutIds();
     }
 
     // TODO: additional verification for tokenOutIds here (flagged NFT oracle)
@@ -325,25 +326,18 @@ contract Primitives01 is TokenHelper {
     {
       (uint _initialTokenOutBalance, uint initialOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
       initialTokenOutBalance = _initialTokenOutBalance;
-      if (initialOwnedIdCount != 0) {
+      if (tokenOut.standard == TokenStandard.ERC721 && initialOwnedIdCount != 0) {
         revert NftIdAlreadyOwned();
       }
     }
 
     CALL_EXECUTOR_V2.proxyCall(fillCall.targetContract, fillCall.data);
 
-    (uint finalTokenOutBalance, uint finalOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
+    (uint finalTokenOutBalance,,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
 
-    if (
-      (tokenOut.id > 0 && finalOwnedIdCount == 0) ||
-      (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdsMerkleProof.ids.length)
-    ) {
-      revert NftIdNotReceived();
-    } else {
-      uint256 tokenOutAmountReceived = finalTokenOutBalance - initialTokenOutBalance;
-      if (tokenOutAmountReceived < tokenOutAmount) {
-        revert NotEnoughTokenReceived(tokenOutAmountReceived);
-      }
+    uint256 tokenOutAmountReceived = finalTokenOutBalance - initialTokenOutBalance;
+    if (tokenOutAmountReceived < tokenOutAmount) {
+      revert NotEnoughTokenReceived(tokenOutAmountReceived);
     }
   }
 
