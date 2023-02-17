@@ -10,6 +10,7 @@ import "../src/Primitives/Primitives01.sol";
 import "./Mocks/MockPriceOracle.sol";
 import "./Mocks/MockPrimitiveInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
+import "./Utils/Filler.sol";
 
 contract Helper is Test {
 
@@ -19,6 +20,7 @@ contract Helper is Test {
   MockPriceOracle public mockPriceOracle;
   MockPrimitiveInternals public primitiveInternals;
   MockTokenHelperInternals public tokenHelper;
+  Filler public filler;
 
   // TWAP prices are in fixed point X96 (2**96)
 
@@ -83,6 +85,16 @@ contract Helper is Test {
 
   address RANDOM_1 = 0xb6F5284E09C7D1E6456A496D839593291D8d7C08;
 
+  address TRADER_1 = 0x7F3b23B48Ad3f38f519Fa743f497F0589729aCE5;
+
+  // [token][id][holder][0] = initialBalance
+  // [token][id][holder][1] = finalBalance
+  mapping(address => mapping(uint => mapping(address => uint[2]))) private balances;
+
+  // [holder][0] = balance tracking started
+  // [holder][1] = balance tracking ended
+  mapping(address => bool[2]) private balanceTracking;
+
   IdsMerkleProof EMPTY_IDS_MERKLE_PROOF = IdsMerkleProof(
     new uint[](0),
     new bytes32[](0),
@@ -135,6 +147,124 @@ contract Helper is Test {
   function setupFork (uint blockNumber) public {
     uint fork = vm.createFork(vm.envString("MAINNET_RPC_URL"), blockNumber);
     vm.selectFork(fork);
+  }
+
+  function startBalances (address holder) public {
+    balanceTracking[holder][0] = true;
+    balances[WETH][0][holder][0] = WETH_ERC20.balanceOf(holder);
+    balances[USDC][0][holder][0] = USDC_ERC20.balanceOf(holder);
+  }
+
+  function endBalances (address holder) public {
+    if (!balanceTracking[holder][0]) {
+      revert("endBalances() called without startBalances()");
+    }
+    balanceTracking[holder][1] = true;
+    balances[WETH][0][holder][1] = WETH_ERC20.balanceOf(holder);
+    balances[USDC][0][holder][1] = USDC_ERC20.balanceOf(holder);
+  }
+
+  function diffBalance (address token, address holder) public returns (int) {
+    return diffBalance(token, 0, holder);
+  }
+
+  function diffBalance (address token, uint id, address holder) public returns (int) {
+    if (!balanceTracking[holder][0]) {
+      revert("diffBalances() called without startBalances()");
+    }
+    if (!balanceTracking[holder][1]) {
+      revert("diffBalances() called without endBalances()");
+    }
+    uint[2] memory _balances = balances[token][id][holder];
+    return int(_balances[1]) - int(_balances[0]);
+  }
+
+  // Seeds filler contract with:
+  //    ETH:       32_500000000000000000
+  //    WETH:      13_500000000000000000
+  //    USDC:      128000_000000
+  //    DOODLES:   5268, 4631, 3989
+  //    THE_MEMES: [8]:5, [14]:7, [55]:13
+  function setupFiller () public {
+    filler = new Filler();
+    uint[] memory doodlesIds = new uint[](3);
+    doodlesIds[0] = 5268;
+    doodlesIds[1] = 4631;
+    doodlesIds[2] = 3989;
+    uint[] memory memesIds = new uint[](3);
+    memesIds[0] = 8;
+    memesIds[1] = 14;
+    memesIds[2] = 55;
+    uint[] memory memesAmounts = new uint[](3);
+    memesAmounts[0] = 5;
+    memesAmounts[1] = 7;
+    memesAmounts[2] = 13;
+    seedAssets(
+      address(filler),
+      32_500000000000000000,
+      13_500000000000000000,
+      128_000_000000,
+      doodlesIds,
+      memesIds,
+      memesAmounts
+    );
+  }
+
+  // Seeds TRADER_1 with:
+  //    ETH:       8_000000000000000000
+  //    WETH:      2_000000000000000000
+  //    USDC:      10_000_000000
+  //    DOODLES:   3643, 3206
+  //    THE_MEMES: [8]:2, [14]:3
+  function setupTrader1 () public {
+    uint[] memory doodlesIds = new uint[](2);
+    doodlesIds[0] = 3643;
+    doodlesIds[1] = 3206;
+    uint[] memory memesIds = new uint[](2);
+    memesIds[0] = 8;
+    memesIds[1] = 14;
+    uint[] memory memesAmounts = new uint[](2);
+    memesAmounts[0] = 2;
+    memesAmounts[1] = 3;
+    seedAssets(
+      TRADER_1,
+      8_000000000000000000,
+      2_000000000000000000,
+      10_000_000000,
+      doodlesIds,
+      memesIds,
+      memesAmounts
+    );
+  }
+
+  function seedAssets (
+    address holder,
+    uint ethAmount,
+    uint wethAmount,
+    uint usdcAmount,
+    uint[] memory doodlesIds,
+    uint[] memory memesIds,
+    uint[] memory memesAmounts
+  ) public {
+    if(block.number != BLOCK_FEB_12_2023) {
+      revert("seedAssets setup requires fork for BLOCK_FEB_12_2023");
+    }
+
+    vm.deal(holder, ethAmount);
+
+    vm.prank(WETH_WHALE);
+    WETH_ERC20.transfer(holder, wethAmount);
+
+    vm.prank(USDC_WHALE);
+    USDC_ERC20.transfer(holder, usdcAmount);
+
+    for(uint8 i=0; i < doodlesIds.length; i++) {
+      vm.prank(DOODLE_WHALE);
+      DOODLES_ERC721.transferFrom(DOODLE_WHALE, holder, doodlesIds[i]);
+    }
+
+    vm.prank(THE_MEMES_WHALE);
+    THE_MEMES_ERC1155.safeBatchTransferFrom(THE_MEMES_WHALE, holder, memesIds, memesAmounts, '');
   }
 
   function merkleProofForDoodle9107 () public returns (IdsMerkleProof memory idsMerkleProof) {

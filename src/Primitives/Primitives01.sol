@@ -319,8 +319,7 @@ contract Primitives01 is TokenHelper {
 
     // TODO: additional verification for tokenOutIds here (flagged NFT oracle)
 
-    // TODO: remove the merkle verification from this, simplify the fn
-    // transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
+    transferFrom(tokenIn.addr, tokenIn.standard, owner, recipient, tokenInAmount, tokenInIdsMerkleProof.ids);
 
     uint initialTokenOutBalance;
     {
