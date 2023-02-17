@@ -95,6 +95,9 @@ contract Helper is Test {
   // [holder][1] = balance tracking ended
   mapping(address => bool[2]) private balanceTracking;
 
+  uint[] public trackingDoodlesIds;
+  uint[] public trackingMemesIds;
+
   IdsMerkleProof EMPTY_IDS_MERKLE_PROOF = IdsMerkleProof(
     new uint[](0),
     new bytes32[](0),
@@ -109,6 +112,7 @@ contract Helper is Test {
   function setupAll (uint blockNumber) public {
     setupFork(blockNumber);
     setupContracts();
+    setupNftIds();
   }
 
   function setupContracts () public {
@@ -149,10 +153,49 @@ contract Helper is Test {
     vm.selectFork(fork);
   }
 
+  function setupNftIds () public {
+    trackingDoodlesIds.push(9878);
+    trackingDoodlesIds.push(9785);
+    trackingDoodlesIds.push(9592);
+    trackingDoodlesIds.push(9107);
+    trackingDoodlesIds.push(8064);
+    trackingDoodlesIds.push(8038);
+    trackingDoodlesIds.push(7754);
+    trackingDoodlesIds.push(5268);
+    trackingDoodlesIds.push(4631);
+    trackingDoodlesIds.push(3989);
+    trackingDoodlesIds.push(3643);
+    trackingDoodlesIds.push(3206);
+    trackingDoodlesIds.push(3110);
+    trackingDoodlesIds.push(3104);
+    trackingDoodlesIds.push(2847);
+    trackingDoodlesIds.push(2829);
+    trackingDoodlesIds.push(2756);
+    trackingDoodlesIds.push(2701);
+    trackingDoodlesIds.push(2388);
+    trackingDoodlesIds.push(2284);
+    trackingDoodlesIds.push(1170);
+    trackingDoodlesIds.push(476);
+    trackingDoodlesIds.push(368);
+    trackingMemesIds.push(8);
+    trackingMemesIds.push(14);
+    trackingMemesIds.push(64);
+  }
+
   function startBalances (address holder) public {
     balanceTracking[holder][0] = true;
+    balances[address(0)][0][holder][0] = holder.balance;
     balances[WETH][0][holder][0] = WETH_ERC20.balanceOf(holder);
     balances[USDC][0][holder][0] = USDC_ERC20.balanceOf(holder);
+    balances[DOODLES][0][holder][0] = DOODLES_ERC721.balanceOf(holder);
+
+    for (uint8 i = 0; i < trackingDoodlesIds.length; i++) {
+      balances[DOODLES][trackingDoodlesIds[i]][holder][0] = DOODLES_ERC721.ownerOf(trackingDoodlesIds[i]) == holder ? 1 : 0;
+    }
+
+    for (uint8 i = 0; i < trackingMemesIds.length; i++) {
+      balances[THE_MEMES][trackingMemesIds[i]][holder][0] = THE_MEMES_ERC1155.balanceOf(holder, trackingMemesIds[i]);
+    }
   }
 
   function endBalances (address holder) public {
@@ -160,8 +203,18 @@ contract Helper is Test {
       revert("endBalances() called without startBalances()");
     }
     balanceTracking[holder][1] = true;
+    balances[address(0)][0][holder][1] = holder.balance;
     balances[WETH][0][holder][1] = WETH_ERC20.balanceOf(holder);
     balances[USDC][0][holder][1] = USDC_ERC20.balanceOf(holder);
+    balances[DOODLES][0][holder][1] = DOODLES_ERC721.balanceOf(holder);
+
+    for (uint8 i = 0; i < trackingDoodlesIds.length; i++) {
+      balances[DOODLES][trackingDoodlesIds[i]][holder][1] = DOODLES_ERC721.ownerOf(trackingDoodlesIds[i]) == holder ? 1 : 0;
+    }
+
+    for (uint8 i = 0; i < trackingMemesIds.length; i++) {
+      balances[THE_MEMES][trackingMemesIds[i]][holder][1] = THE_MEMES_ERC1155.balanceOf(holder, trackingMemesIds[i]);
+    }
   }
 
   function diffBalance (address token, address holder) public returns (int) {
