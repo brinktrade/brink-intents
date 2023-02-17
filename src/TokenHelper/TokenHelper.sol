@@ -107,8 +107,10 @@ contract TokenHelper {
   function verifyTokenIds (Token memory token, IdsMerkleProof memory idsMerkleProof) internal pure returns (bool valid) {
     if (token.idsMerkleRoot != bytes32(0)) {
       return verifyIdsMerkleProof(idsMerkleProof, token.idsMerkleRoot);
+    } else if (token.id > 0) {
+      return idsMerkleProof.ids.length == 1 && idsMerkleProof.ids[0] == token.id;
     } else {
-      return idsMerkleProof.ids.length == 0;
+      return true;
     }
   }
 
