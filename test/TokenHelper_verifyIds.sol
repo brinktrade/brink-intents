@@ -12,17 +12,13 @@ contract TokenHelper_verfiyId is Test, Helper  {
 
   // when proof is valid, should return true
   function testVerifyIds_validProof () public {
-    (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForDoodles_9592_7754_9107();
-    uint[] memory ids = new uint[](3);
-    ids[0] = 9592;
-    ids[1] = 7754;
-    ids[2] = 9107;
+    IdsMerkleProof memory idsMerkleProof = merkleMultiProofForDoodles_9592_7754_9107();
     assertEq(
       tokenHelper.verifyIds_internal(
-        proof,
-        proofFlags,
-        DOODLE_WHALE_MERKLE_ROOT,
-        ids
+        idsMerkleProof.proof,
+        idsMerkleProof.proofFlags,
+        DOODLES_WHALE_MERKLE_ROOT,
+        idsMerkleProof.ids
       ),
       true
     );
@@ -30,17 +26,14 @@ contract TokenHelper_verfiyId is Test, Helper  {
 
   // when proof is invalid, should return false
   function testVerifyIds_invalidProof () public {
-    (bytes32[] memory proof, bool[] memory proofFlags) = merkleMultiProofForDoodles_9592_7754_9107();
-    uint[] memory ids = new uint[](3);
-    ids[0] = 9878; // not in the proof
-    ids[1] = 7754;
-    ids[2] = 9107;
+    IdsMerkleProof memory idsMerkleProof = merkleMultiProofForDoodles_9592_7754_9107();
+    idsMerkleProof.ids[0] = 9878; // not in the proof
     assertEq(
       tokenHelper.verifyIds_internal(
-        proof,
-        proofFlags,
-        DOODLE_WHALE_MERKLE_ROOT,
-        ids
+        idsMerkleProof.proof,
+        idsMerkleProof.proofFlags,
+        DOODLES_WHALE_MERKLE_ROOT,
+        idsMerkleProof.ids
       ),
       false
     );

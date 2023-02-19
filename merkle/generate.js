@@ -34,3 +34,20 @@ for (let [i, v] of tree.entries()) {
 
 multiProof = tree.getMultiProof([0, 1])
 console.log('multi proof for 8 and 14: ', multiProof)
+
+values = [
+  ["5268"], ["4631"], ["3643"]
+];
+
+tree = StandardMerkleTree.of(values, ["uint256"]);
+
+console.log('Merkle Root: ["5268"], ["4631"], ["3643"]', tree.root);
+
+for (let [i, v] of tree.entries()) {
+  proof = tree.getProof(i);
+  console.log('Value: ', v);
+  console.log('Proof: ', proof);
+}
+
+multiProof = tree.getMultiProof([0, 1])
+console.log('multi proof for 5268 and 4631: ', multiProof)

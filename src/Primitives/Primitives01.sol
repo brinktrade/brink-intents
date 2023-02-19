@@ -11,7 +11,7 @@ import "../Interfaces/IPriceCurve.sol";
 import "../TokenHelper/TokenHelper.sol";
 
 error NftIdAlreadyOwned();
-error NftIdNotReceived();
+error NotEnoughNftReceived();
 error NotEnoughTokenReceived(uint amountReceived);
 error MerkleProofAndAmountMismatch();
 error BlockMined();
@@ -19,6 +19,8 @@ error BlockNotMined();
 error OracleUint256ReadZero();
 error Uint256LowerBoundNotMet(uint256 oraclePrice);
 error Uint256UpperBoundNotMet(uint256 oraclePrice);
+error InvalidTokenInIds();
+error InvalidTokenOutIds();
 
 struct UnsignedTransferData {
   address recipient;
@@ -37,8 +39,6 @@ struct UnsignedMarketSwapData {
 struct UnsignedLimitSwapData {
   address recipient;
   uint tokenInAmount;
-  uint tokenInId;
-  uint tokenOutId;
   IdsMerkleProof tokenInIdsMerkleProof;
   IdsMerkleProof tokenOutIdsMerkleProof;
   Call fillCall;
@@ -132,7 +132,7 @@ contract Primitives01 is TokenHelper {
   ) public {
     _checkUnsignedTransferData(token, amount, data);
     address _recipient = recipient != address(0) ? recipient : data.recipient;
-    transferFrom(token, owner, _recipient, amount, data.id, data.idsMerkleProof);
+    // transferFrom(token, owner, _recipient, amount, data.id, data.idsMerkleProof);
   }
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
@@ -219,8 +219,6 @@ contract Primitives01 is TokenHelper {
       data.recipient,
       data.tokenInAmount,
       tokenOutAmountRequired,
-      data.tokenInId,
-      data.tokenOutId,
       data.tokenInIdsMerkleProof,
       data.tokenOutIdsMerkleProof,
       data.fillCall
@@ -309,39 +307,37 @@ contract Primitives01 is TokenHelper {
     address recipient,
     uint tokenInAmount,
     uint tokenOutAmount,
-    uint tokenInId,
-    uint tokenOutId,
     IdsMerkleProof memory tokenInIdsMerkleProof,
     IdsMerkleProof memory tokenOutIdsMerkleProof,
     Call memory fillCall
-  ) private {
-    // TODO: move all merkle ids verification here!
+  ) internal {
+    if (!verifyTokenIds(tokenIn, tokenInIdsMerkleProof)) {
+      revert InvalidTokenInIds();
+    }
+    if (!verifyTokenIds(tokenOut, tokenOutIdsMerkleProof)) {
+      revert InvalidTokenOutIds();
+    }
 
-    transferFrom(tokenIn, owner, recipient, tokenInAmount, tokenInId, tokenInIdsMerkleProof);
+    // TODO: additional verification for tokenOutIds here (flagged NFT oracle)
+
+    transferFrom(tokenIn.addr, tokenIn.standard, owner, recipient, tokenInAmount, tokenInIdsMerkleProof.ids);
 
     uint initialTokenOutBalance;
     {
       (uint _initialTokenOutBalance, uint initialOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
       initialTokenOutBalance = _initialTokenOutBalance;
-      if (initialOwnedIdCount > 0) {
+      if (tokenOut.standard == TokenStandard.ERC721 && initialOwnedIdCount != 0) {
         revert NftIdAlreadyOwned();
       }
     }
 
     CALL_EXECUTOR_V2.proxyCall(fillCall.targetContract, fillCall.data);
 
-    (uint finalTokenOutBalance, uint finalOwnedIdCount,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
+    (uint finalTokenOutBalance,,) = tokenOwnership(owner, tokenOut.standard, tokenOut.addr, tokenOutIdsMerkleProof.ids);
 
-    if (
-      (tokenOut.id > 0 && finalOwnedIdCount < 1) ||
-      (tokenOut.idsMerkleRoot != bytes32(0) && finalOwnedIdCount < tokenOutIdsMerkleProof.ids.length)
-    ) {
-      revert NftIdNotReceived();
-    } else {
-      uint256 tokenOutAmountReceived = finalTokenOutBalance - initialTokenOutBalance;
-      if (tokenOutAmountReceived < tokenOutAmount) {
-        revert NotEnoughTokenReceived(tokenOutAmountReceived);
-      }
+    uint256 tokenOutAmountReceived = finalTokenOutBalance - initialTokenOutBalance;
+    if (tokenOutAmountReceived < tokenOutAmount) {
+      revert NotEnoughTokenReceived(tokenOutAmountReceived);
     }
   }
 
