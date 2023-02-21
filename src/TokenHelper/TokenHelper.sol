@@ -13,9 +13,10 @@ struct Token {
   address addr;
   bytes32 idsMerkleRoot;
   uint id;
+  bool disallowFlagged;
 }
 
-struct IdsMerkleProof {
+struct IdsProof {
   uint[] ids;
   bytes32[] proof;
   bool[] proofFlags;
@@ -104,23 +105,23 @@ contract TokenHelper {
     }
   }
 
-  function verifyTokenIds (Token memory token, IdsMerkleProof memory idsMerkleProof) internal pure returns (bool valid) {
+  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal pure returns (bool valid) {
     if (token.idsMerkleRoot != bytes32(0)) {
-      return verifyIdsMerkleProof(idsMerkleProof, token.idsMerkleRoot);
+      return verifyIdsMerkleProof(idsProof, token.idsMerkleRoot);
     } else if (token.id > 0) {
-      return idsMerkleProof.ids.length == 1 && idsMerkleProof.ids[0] == token.id;
+      return idsProof.ids.length == 1 && idsProof.ids[0] == token.id;
     } else {
       return true;
     }
   }
 
-  function verifyIdsMerkleProof (IdsMerkleProof memory idsMerkleProof, bytes32 root) internal pure returns (bool) {
-    if (idsMerkleProof.ids.length == 0) {
+  function verifyIdsMerkleProof (IdsProof memory idsProof, bytes32 root) internal pure returns (bool) {
+    if (idsProof.ids.length == 0) {
       return false;
-    } else if (idsMerkleProof.ids.length == 1) {
-      return verifyId(idsMerkleProof.proof, root, idsMerkleProof.ids[0]);
+    } else if (idsProof.ids.length == 1) {
+      return verifyId(idsProof.proof, root, idsProof.ids[0]);
     } else {
-      return verifyIds(idsMerkleProof.proof, idsMerkleProof.proofFlags, root, idsMerkleProof.ids);
+      return verifyIds(idsProof.proof, idsProof.proofFlags, root, idsProof.ids);
     }
   }
 

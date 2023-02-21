@@ -48,10 +48,10 @@ contract Helper is Test, Constants {
   address public DOODLES = 0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e;
   address public THE_MEMES = 0x33FD426905F149f8376e227d0C9D3340AaD17aF1;
 
-  Token public WETH_Token = Token(TokenStandard.ERC20, WETH, 0x0, 0);
-  Token public USDC_Token = Token(TokenStandard.ERC20, USDC, 0x0, 0);
-  Token public DOODLES_Token = Token(TokenStandard.ERC721, DOODLES, 0x0, 0);
-  Token public THE_MEMES_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 0);
+  Token public WETH_Token = Token(TokenStandard.ERC20, WETH, 0x0, 0, false);
+  Token public USDC_Token = Token(TokenStandard.ERC20, USDC, 0x0, 0, false);
+  Token public DOODLES_Token = Token(TokenStandard.ERC721, DOODLES, 0x0, 0, false);
+  Token public THE_MEMES_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 0, false);
 
   IERC20 public WETH_ERC20 = IERC20(WETH);
   IERC20 public USDC_ERC20 = IERC20(USDC);
@@ -83,13 +83,13 @@ contract Helper is Test, Constants {
   // Merkle root for Id's 8, 14, 64
   bytes32 THE_MEMES_MERKLE_ROOT_8_14_64 = 0x23dccdb06adb5c64caf600b3476f3036e612ad58436f2a5de84d447c165bae38;
 
-  Token public DOODLES_Token_With_Merkle_Root = Token(TokenStandard.ERC721, DOODLES, DOODLES_WHALE_MERKLE_ROOT, 0);
-  Token public DOODLES_Token_5268_4631_3643 = Token(TokenStandard.ERC721, DOODLES, DOODLES_MERKLE_ROOT_5268_4631_3643, 0);
-  Token public DOODLES_Token_476 = Token(TokenStandard.ERC721, DOODLES, 0x0, 476);
-  Token public THE_MEMES_FIRSTGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 8);
-  Token public THE_MEMES_GMGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 14);
-  Token public THE_MEMES_Token_8_14_64 = Token(TokenStandard.ERC1155, THE_MEMES, THE_MEMES_MERKLE_ROOT_8_14_64, 0);
-  Token public ETH_TOKEN = Token(TokenStandard.ETH, address(0), 0x0, 0);
+  Token public DOODLES_Token_With_Merkle_Root = Token(TokenStandard.ERC721, DOODLES, DOODLES_WHALE_MERKLE_ROOT, 0, false);
+  Token public DOODLES_Token_5268_4631_3643 = Token(TokenStandard.ERC721, DOODLES, DOODLES_MERKLE_ROOT_5268_4631_3643, 0, false);
+  Token public DOODLES_Token_476 = Token(TokenStandard.ERC721, DOODLES, 0x0, 476, false);
+  Token public THE_MEMES_FIRSTGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 8, false);
+  Token public THE_MEMES_GMGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 14, false);
+  Token public THE_MEMES_Token_8_14_64 = Token(TokenStandard.ERC1155, THE_MEMES, THE_MEMES_MERKLE_ROOT_8_14_64, 0, false);
+  Token public ETH_TOKEN = Token(TokenStandard.ETH, address(0), 0x0, 0, false);
 
   address RANDOM_1 = 0xb6F5284E09C7D1E6456A496D839593291D8d7C08;
 
@@ -106,7 +106,7 @@ contract Helper is Test, Constants {
   uint[] public trackingDoodlesIds;
   uint[] public trackingMemesIds;
 
-  IdsMerkleProof EMPTY_IDS_MERKLE_PROOF = IdsMerkleProof(
+  IdsProof EMPTY_IDS_MERKLE_PROOF = IdsProof(
     new uint[](0),
     new bytes32[](0),
     new bool[](0)
@@ -330,7 +330,7 @@ contract Helper is Test, Constants {
     THE_MEMES_ERC1155.safeBatchTransferFrom(THE_MEMES_WHALE, holder, memesIds, memesAmounts, '');
   }
 
-  function merkleProofForDoodle9107 () public returns (IdsMerkleProof memory idsMerkleProof) {
+  function merkleProofForDoodle9107 () public returns (IdsProof memory idsProof) {
     uint[] memory ids = new uint[](1);
     ids[0] = 9107;
 
@@ -338,10 +338,10 @@ contract Helper is Test, Constants {
     proof[0] = 0xab5623858b421d453a6ea4a4873a731863781529261bcc39f0160f476e1217a5;
     proof[1] = 0x0db851939cf734f5e0f3eafe70ccfbcb5509e5a8ade8c6ace7c1d1d1cfc841a5;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function invalidMerkleProof () public returns (IdsMerkleProof memory idsMerkleProof) {
+  function invalidMerkleProof () public returns (IdsProof memory idsProof) {
     uint[] memory ids = new uint[](1);
     ids[0] = 1234;
 
@@ -350,10 +350,10 @@ contract Helper is Test, Constants {
     proof[1] = 0xab5623858b421d453a6ea4a4873a731863781529261bcc39f0160f476e1217a5;
     proof[2] = 0xc97ce8d1e731b4088a0419629557892a06ca5462a6083a0cf6e92a1d5a720b75;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function merkleMultiProofForDoodles_9592_7754_9107 () public returns (IdsMerkleProof memory idsMerkleProof) {
+  function merkleMultiProofForDoodles_9592_7754_9107 () public returns (IdsProof memory idsProof) {
     uint[] memory ids = new uint[](3);
     ids[0] = 9592;
     ids[1] = 7754;
@@ -367,10 +367,10 @@ contract Helper is Test, Constants {
     proofFlags[1] = true;
     proofFlags[2] = false;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, proofFlags);
+    idsProof = IdsProof(ids, proof, proofFlags);
   }
 
-  function doodlesProof_5268_4631 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+  function doodlesProof_5268_4631 () public returns (bytes32 root, IdsProof memory idsProof) {
     root = DOODLES_MERKLE_ROOT_5268_4631_3643;
 
     uint[] memory ids = new uint[](2);
@@ -384,10 +384,10 @@ contract Helper is Test, Constants {
     proofFlags[0] = true;
     proofFlags[1] = false;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, proofFlags);
+    idsProof = IdsProof(ids, proof, proofFlags);
   }
 
-  function doodlesProof_5268 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+  function doodlesProof_5268 () public returns (bytes32 root, IdsProof memory idsProof) {
     root = DOODLES_MERKLE_ROOT_5268_4631_3643;
 
     uint[] memory ids = new uint[](1);
@@ -397,10 +397,10 @@ contract Helper is Test, Constants {
     proof[0] = 0x7dc50ef10fb8ecffa9c5a88a923dbcea14656cd50bbdbbc676fc70da54e952c3;
     proof[1] = 0xe3e9087e3f9657390c36c16d027666e282f86c45feb3185dbbd0ef61cd9ab308;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function doodlesProof_4631 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+  function doodlesProof_4631 () public returns (bytes32 root, IdsProof memory idsProof) {
     root = DOODLES_MERKLE_ROOT_5268_4631_3643;
 
     uint[] memory ids = new uint[](1);
@@ -410,10 +410,10 @@ contract Helper is Test, Constants {
     proof[0] = 0xadcd3150a02a72335c452c15cb9a4d5862581e6e6ae1c870dfa576f86cff6f1b;
     proof[1] = 0xe3e9087e3f9657390c36c16d027666e282f86c45feb3185dbbd0ef61cd9ab308;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function doodlesProof_3643 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+  function doodlesProof_3643 () public returns (bytes32 root, IdsProof memory idsProof) {
     root = DOODLES_MERKLE_ROOT_5268_4631_3643;
 
     uint[] memory ids = new uint[](1);
@@ -422,10 +422,10 @@ contract Helper is Test, Constants {
     bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0xca6d21e8ce3c6bdb0961de5c17cfba9d14bc52512fd4c391619a3bbf16f075ad;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function proof_8 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+  function proof_8 () public returns (bytes32 root, IdsProof memory idsProof) {
     root = THE_MEMES_MERKLE_ROOT_8_14_64;
 
     uint[] memory ids = new uint[](1);
@@ -434,10 +434,10 @@ contract Helper is Test, Constants {
     bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0x6b2b13c7307ddaf2f976f27ff73e1913a9b405c2a30efc4ab203460d0a61cb6c;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function proof_14 () public returns (bytes32 root, IdsMerkleProof memory idsMerkleProof) {
+  function proof_14 () public returns (bytes32 root, IdsProof memory idsProof) {
     root = THE_MEMES_MERKLE_ROOT_8_14_64;
 
     uint[] memory ids = new uint[](1);
@@ -447,10 +447,10 @@ contract Helper is Test, Constants {
     proof[0] = 0x86b497a4c646080e1b92d6d127798c22334da8d4795695f4a1f0a4855e09600c;
     proof[1] = 0xa7c46294ffa3fad92dc8422b2e38b688ccf1b86172f5beaf864af9368d2844e5;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0));
   }
 
-  function merkleMultiProofForTheMemes_14_8 () public returns (IdsMerkleProof memory idsMerkleProof) {
+  function merkleMultiProofForTheMemes_14_8 () public returns (IdsProof memory idsProof) {
     uint[] memory ids = new uint[](2);
     ids[0] = 14;
     ids[1] = 8;
@@ -462,7 +462,7 @@ contract Helper is Test, Constants {
     proofFlags[0] = false;
     proofFlags[1] = true;
 
-    idsMerkleProof = IdsMerkleProof(ids, proof, proofFlags);
+    idsProof = IdsProof(ids, proof, proofFlags);
   }
 
 }
