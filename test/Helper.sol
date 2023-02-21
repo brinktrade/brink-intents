@@ -7,6 +7,8 @@ import "openzeppelin/utils/Strings.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
 import "../src/Primitives/Primitives01.sol";
+import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
+import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
 import "./Mocks/MockPriceOracle.sol";
 import "./Mocks/MockPrimitiveInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
@@ -18,6 +20,8 @@ contract Helper is Test, Constants {
   ITwapAdapter public twapAdapter;
   ITwapAdapter public twapInverseAdapter;
   Primitives01 public primitives;
+  ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
+  ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
   MockPriceOracle public mockPriceOracle;
   MockPrimitiveInternals public primitiveInternals;
   MockTokenHelperInternals public tokenHelper;
@@ -150,6 +154,8 @@ contract Helper is Test, Constants {
     mockPriceOracle = new MockPriceOracle();
     primitiveInternals = new MockPrimitiveInternals();
     tokenHelper = new MockTokenHelperInternals();
+    reservoirFloorPriceOracleAdapter = new ReservoirFloorPriceOracleAdapter();
+    reservoirTokenStatusOracleAdapter = new ReservoirTokenStatusOracleAdapter();
   }
 
   function setupFork (uint blockNumber) public {
