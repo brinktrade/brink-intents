@@ -19,8 +19,8 @@ struct Token {
 
 struct IdsProof {
   uint[] ids;
-  bytes32[] proof;
-  bool[] proofFlags;
+  bytes32[] merkleProof_hashes;
+  bool[] merkleProof_flags;
   uint[] statusProof_lastTransferTimes;
   uint[] statusProof_timestamps;
   bytes[] statusProof_signatures;
@@ -137,9 +137,9 @@ contract TokenHelper {
     if (idsProof.ids.length == 0) {
       return false;
     } else if (idsProof.ids.length == 1) {
-      return verifyId(idsProof.proof, root, idsProof.ids[0]);
+      return verifyId(idsProof.merkleProof_hashes, root, idsProof.ids[0]);
     } else {
-      return verifyIds(idsProof.proof, idsProof.proofFlags, root, idsProof.ids);
+      return verifyIds(idsProof.merkleProof_hashes, idsProof.merkleProof_flags, root, idsProof.ids);
     }
   }
 
