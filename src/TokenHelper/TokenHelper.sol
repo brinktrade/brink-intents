@@ -5,6 +5,7 @@ import 'openzeppelin/token/ERC20/IERC20.sol';
 import 'openzeppelin/token/ERC721/IERC721.sol';
 import 'openzeppelin/token/ERC1155/IERC1155.sol';
 import 'openzeppelin/utils/cryptography/MerkleProof.sol';
+import '../Interfaces/ITokenStatusOracle.sol';
 
 enum TokenStandard { ERC20, ERC721, ERC1155, ETH }
 
@@ -13,12 +14,16 @@ struct Token {
   address addr;
   bytes32 idsMerkleRoot;
   uint id;
+  bool disallowFlagged;
 }
 
-struct IdsMerkleProof {
+struct IdsProof {
   uint[] ids;
   bytes32[] proof;
   bool[] proofFlags;
+  uint[] statusProof_lastTransferTimes;
+  uint[] statusProof_timestamps;
+  bytes[] statusProof_signatures;
 }
 
 error UnsupportedTokenStandard();
@@ -31,6 +36,8 @@ error InvalidIds();
 error IdsLengthZero();
 
 contract TokenHelper {
+
+  ITokenStatusOracle private constant TOKEN_STATUS_ORACLE = ITokenStatusOracle(0x5847B8b11846Af977709b16b4a2d45B8e6B86248);
 
   function transferFrom (address tokenAddress, TokenStandard tokenStandard, address from, address to, uint amount, uint[] memory ids) internal {
     if (tokenStandard == TokenStandard.ERC20) {
@@ -104,23 +111,35 @@ contract TokenHelper {
     }
   }
 
-  function verifyTokenIds (Token memory token, IdsMerkleProof memory idsMerkleProof) internal pure returns (bool valid) {
+  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal pure returns (bool valid) {
     if (token.idsMerkleRoot != bytes32(0)) {
-      return verifyIdsMerkleProof(idsMerkleProof, token.idsMerkleRoot);
+      return verifyIdsMerkleProof(idsProof, token.idsMerkleRoot);
     } else if (token.id > 0) {
-      return idsMerkleProof.ids.length == 1 && idsMerkleProof.ids[0] == token.id;
+      return idsProof.ids.length == 1 && idsProof.ids[0] == token.id;
     } else {
       return true;
     }
   }
 
-  function verifyIdsMerkleProof (IdsMerkleProof memory idsMerkleProof, bytes32 root) internal pure returns (bool) {
-    if (idsMerkleProof.ids.length == 0) {
+  function verifyTokenIdsNotFlagged (
+    address tokenAddress,
+    uint[] memory ids,
+    uint[] memory lastTransferTimes,
+    uint[] memory timestamps,
+    bytes[] memory signatures
+  ) internal view {
+    for(uint8 i = 0; i < ids.length; i++) {
+      TOKEN_STATUS_ORACLE.verifyTokenStatus(tokenAddress, ids[i], false, lastTransferTimes[i], timestamps[i], signatures[i]);
+    }
+  }
+
+  function verifyIdsMerkleProof (IdsProof memory idsProof, bytes32 root) internal pure returns (bool) {
+    if (idsProof.ids.length == 0) {
       return false;
-    } else if (idsMerkleProof.ids.length == 1) {
-      return verifyId(idsMerkleProof.proof, root, idsMerkleProof.ids[0]);
+    } else if (idsProof.ids.length == 1) {
+      return verifyId(idsProof.proof, root, idsProof.ids[0]);
     } else {
-      return verifyIds(idsMerkleProof.proof, idsMerkleProof.proofFlags, root, idsMerkleProof.ids);
+      return verifyIds(idsProof.proof, idsProof.proofFlags, root, idsProof.ids);
     }
   }
 

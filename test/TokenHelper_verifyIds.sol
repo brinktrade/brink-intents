@@ -12,13 +12,13 @@ contract TokenHelper_verfiyId is Test, Helper  {
 
   // when proof is valid, should return true
   function testVerifyIds_validProof () public {
-    IdsMerkleProof memory idsMerkleProof = merkleMultiProofForDoodles_9592_7754_9107();
+    IdsProof memory idsProof = merkleMultiProofForDoodles_9592_7754_9107();
     assertEq(
       tokenHelper.verifyIds_internal(
-        idsMerkleProof.proof,
-        idsMerkleProof.proofFlags,
+        idsProof.proof,
+        idsProof.proofFlags,
         DOODLES_WHALE_MERKLE_ROOT,
-        idsMerkleProof.ids
+        idsProof.ids
       ),
       true
     );
@@ -26,14 +26,14 @@ contract TokenHelper_verfiyId is Test, Helper  {
 
   // when proof is invalid, should return false
   function testVerifyIds_invalidProof () public {
-    IdsMerkleProof memory idsMerkleProof = merkleMultiProofForDoodles_9592_7754_9107();
-    idsMerkleProof.ids[0] = 9878; // not in the proof
+    IdsProof memory idsProof = merkleMultiProofForDoodles_9592_7754_9107();
+    idsProof.ids[0] = 9878; // not in the proof
     assertEq(
       tokenHelper.verifyIds_internal(
-        idsMerkleProof.proof,
-        idsMerkleProof.proofFlags,
+        idsProof.proof,
+        idsProof.proofFlags,
         DOODLES_WHALE_MERKLE_ROOT,
-        idsMerkleProof.ids
+        idsProof.ids
       ),
       false
     );

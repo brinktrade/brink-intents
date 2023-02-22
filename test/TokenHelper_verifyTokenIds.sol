@@ -24,10 +24,10 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
   function testVerifyTokenIds_noMerkleRoot_noTokenId () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids, new bytes32[](0), new bool[](0)
+    IdsProof memory idsProof = IdsProof(
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, idsMerkleProof), true);
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, idsProof), true);
   }
 
   // when given a token with a merkle root and a valid proof, should return true
@@ -37,29 +37,29 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
 
   // when given a token with a merkle root and an invalid proof, should return false
   function testVerifyTokenIds_withMerkleRoot_invalidProof () public {
-    IdsMerkleProof memory idsMerkleProof = merkleProofForDoodle9107();
-    idsMerkleProof.ids[0] = 476; // not in proof
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, idsMerkleProof), false);
+    IdsProof memory idsProof = merkleProofForDoodle9107();
+    idsProof.ids[0] = 476; // not in proof
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, idsProof), false);
   }
 
   // when given a token with id and matching merkleProofIds, should return true
   function testVerifyTokenIds_tokenWithId_matchingMerkleProofIds () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids, new bytes32[](0), new bool[](0)
+    IdsProof memory idsProof = IdsProof(
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsMerkleProof), true);
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), true);
   }
 
   // when given a token with id and unmatching merkleProofIds, should return false
   function testVerifyTokenIds_tokenWithId_unmatchingMerkleProofIds () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 789;
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids, new bytes32[](0), new bool[](0)
+    IdsProof memory idsProof = IdsProof(
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsMerkleProof), false);
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), false);
   }
 
   // when given a token with id and more than one merkle proof ids, should return false
@@ -67,10 +67,10 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     uint[] memory ids = new uint[](2);
     ids[0] = 476;
     ids[1] = 789;
-    IdsMerkleProof memory idsMerkleProof = IdsMerkleProof(
-      ids, new bytes32[](0), new bool[](0)
+    IdsProof memory idsProof = IdsProof(
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsMerkleProof), false);
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), false);
   }
 
   // when given a token with id and zero merkle proof ids, should return false

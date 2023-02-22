@@ -12,7 +12,7 @@ contract MockPrimitiveInternals is Primitives01 {
     amount = _getSwapAmountWithFee(priceOracle, priceOracleParams, token0Amount, feePercent, feeMin);
   }
 
-  function fillSwap (Token memory tokenIn, Token memory tokenOut, address owner, address recipient, uint tokenInAmount, uint tokenOutAmount, IdsMerkleProof memory tokenInIdsMerkleProof, IdsMerkleProof memory tokenOutIdsMerkleProof, Call memory fillCall) external {
-    _fillSwap(tokenIn, tokenOut, owner, recipient, tokenInAmount, tokenOutAmount, tokenInIdsMerkleProof, tokenOutIdsMerkleProof, fillCall);
+  function fillSwap (Token memory tokenIn, Token memory tokenOut, address owner, address recipient, uint tokenInAmount, uint tokenOutAmount, IdsProof memory tokenInIdsProof, IdsProof memory tokenOutIdsProof, Call memory fillCall) external {
+    _fillSwap(tokenIn, tokenOut, owner, recipient, tokenInAmount, tokenOutAmount, tokenInIdsProof, tokenOutIdsProof, fillCall);
   }
 }
