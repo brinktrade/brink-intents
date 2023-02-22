@@ -111,14 +111,29 @@ contract TokenHelper {
     }
   }
 
-  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal pure returns (bool valid) {
-    if (token.idsMerkleRoot != bytes32(0)) {
-      return verifyIdsMerkleProof(idsProof, token.idsMerkleRoot);
-    } else if (token.id > 0) {
-      return idsProof.ids.length == 1 && idsProof.ids[0] == token.id;
-    } else {
-      return true;
+  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal view returns (bool valid) {
+    // if token specifies a single id, verify that one proof id is provided that matches
+    if (token.id > 0 && !(idsProof.ids.length == 1 && idsProof.ids[0] == token.id)) {
+      return false;
     }
+
+    // if token specifies a merkle root for ids, verify merkle proofs provided for the ids
+    if (token.idsMerkleRoot != bytes32(0) && !verifyIdsMerkleProof(idsProof, token.idsMerkleRoot)) {
+      return false;
+    }
+
+    // if token has disallowFlagged=true, verify status proofs provided for the ids
+    if (token.disallowFlagged) {
+      verifyTokenIdsNotFlagged(
+        token.addr,
+        idsProof.ids,
+        idsProof.statusProof_lastTransferTimes,
+        idsProof.statusProof_timestamps,
+        idsProof.statusProof_signatures
+      );
+    }
+    
+    return true;
   }
 
   function verifyTokenIdsNotFlagged (
