@@ -118,7 +118,15 @@ contract TokenHelper {
     }
 
     // if token specifies a merkle root for ids, verify merkle proofs provided for the ids
-    if (token.idsMerkleRoot != bytes32(0) && !verifyIdsMerkleProof(idsProof, token.idsMerkleRoot)) {
+    if (
+      token.idsMerkleRoot != bytes32(0) &&
+      !verifyIdsMerkleProof(
+        idsProof.ids,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
+        token.idsMerkleRoot
+      )
+    ) {
       return false;
     }
 
@@ -148,13 +156,13 @@ contract TokenHelper {
     }
   }
 
-  function verifyIdsMerkleProof (IdsProof memory idsProof, bytes32 root) internal pure returns (bool) {
-    if (idsProof.ids.length == 0) {
+  function verifyIdsMerkleProof (uint[] memory ids, bytes32[] memory proof, bool[] memory proofFlags, bytes32 root) internal pure returns (bool) {
+    if (ids.length == 0) {
       return false;
-    } else if (idsProof.ids.length == 1) {
-      return verifyId(idsProof.merkleProof_hashes, root, idsProof.ids[0]);
+    } else if (ids.length == 1) {
+      return verifyId(proof, root, ids[0]);
     } else {
-      return verifyIds(idsProof.merkleProof_hashes, idsProof.merkleProof_flags, root, idsProof.ids);
+      return verifyIds(proof, proofFlags, root, ids);
     }
   }
 

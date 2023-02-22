@@ -32,8 +32,8 @@ contract MockTokenHelperInternals is TokenHelper {
     verifyTokenIdsNotFlagged(tokenAddress, ids, lastTransferTimes, timestamps, signatures);
   }
 
-  function verifyIdsMerkleProof_internal (IdsProof memory idsProof, bytes32 root) external pure returns (bool) {
-    return verifyIdsMerkleProof(idsProof, root);
+  function verifyIdsMerkleProof_internal (uint[] memory ids, bytes32[] memory proof, bool[] memory proofFlags, bytes32 root) external pure returns (bool) {
+    return verifyIdsMerkleProof(ids, proof, proofFlags, root);
   }
 
   function verifyId_internal (bytes32[] memory proof, bytes32 root, uint id) external pure returns (bool) {
