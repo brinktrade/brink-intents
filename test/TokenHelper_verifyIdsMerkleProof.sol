@@ -12,9 +12,12 @@ contract TokenHelper_verifyIdsMerkleProof is Test, Helper  {
 
   // when proof is a valid single proof, should return true
   function testVerifyIdsProof_validSingleProof () public {
+    IdsProof memory idsProof = merkleProofForDoodle9107();
     assertEq(
       tokenHelper.verifyIdsMerkleProof_internal(
-        merkleProofForDoodle9107(),
+        idsProof.ids,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
         DOODLES_WHALE_MERKLE_ROOT
       ),
       true
@@ -23,9 +26,12 @@ contract TokenHelper_verifyIdsMerkleProof is Test, Helper  {
 
   // when proof is a valid single proof, should return true
   function testVerifyIdsProof_validMultiProof () public {  
+    IdsProof memory idsProof = merkleMultiProofForDoodles_9592_7754_9107();
     assertEq(
       tokenHelper.verifyIdsMerkleProof_internal(
-        merkleMultiProofForDoodles_9592_7754_9107(),
+        idsProof.ids,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
         DOODLES_WHALE_MERKLE_ROOT
       ),
       true
@@ -39,7 +45,9 @@ contract TokenHelper_verifyIdsMerkleProof is Test, Helper  {
 
     assertEq(
       tokenHelper.verifyIdsMerkleProof_internal(
-        idsProof,
+        idsProof.ids,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
         DOODLES_WHALE_MERKLE_ROOT
       ),
       false

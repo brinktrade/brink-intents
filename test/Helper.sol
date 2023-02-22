@@ -88,6 +88,7 @@ contract Helper is Test, Constants {
   Token public DOODLES_Token_With_Merkle_Root = Token(TokenStandard.ERC721, DOODLES, DOODLES_WHALE_MERKLE_ROOT, 0, false);
   Token public DOODLES_Token_5268_4631_3643 = Token(TokenStandard.ERC721, DOODLES, DOODLES_MERKLE_ROOT_5268_4631_3643, 0, false);
   Token public DOODLES_Token_476 = Token(TokenStandard.ERC721, DOODLES, 0x0, 476, false);
+  Token public DOODLES_Token_DisallowFlagged = Token(TokenStandard.ERC721, DOODLES, 0x0, 0, true);
   Token public THE_MEMES_FIRSTGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 8, false);
   Token public THE_MEMES_GMGM_Token = Token(TokenStandard.ERC1155, THE_MEMES, 0x0, 14, false);
   Token public THE_MEMES_Token_8_14_64 = Token(TokenStandard.ERC1155, THE_MEMES, THE_MEMES_MERKLE_ROOT_8_14_64, 0, false);

@@ -19,8 +19,8 @@ struct Token {
 
 struct IdsProof {
   uint[] ids;
-  bytes32[] proof;
-  bool[] proofFlags;
+  bytes32[] merkleProof_hashes;
+  bool[] merkleProof_flags;
   uint[] statusProof_lastTransferTimes;
   uint[] statusProof_timestamps;
   bytes[] statusProof_signatures;
@@ -111,14 +111,37 @@ contract TokenHelper {
     }
   }
 
-  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal pure returns (bool valid) {
-    if (token.idsMerkleRoot != bytes32(0)) {
-      return verifyIdsMerkleProof(idsProof, token.idsMerkleRoot);
-    } else if (token.id > 0) {
-      return idsProof.ids.length == 1 && idsProof.ids[0] == token.id;
-    } else {
-      return true;
+  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal view returns (bool valid) {
+    // if token specifies a single id, verify that one proof id is provided that matches
+    if (token.id > 0 && !(idsProof.ids.length == 1 && idsProof.ids[0] == token.id)) {
+      return false;
     }
+
+    // if token specifies a merkle root for ids, verify merkle proofs provided for the ids
+    if (
+      token.idsMerkleRoot != bytes32(0) &&
+      !verifyIdsMerkleProof(
+        idsProof.ids,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
+        token.idsMerkleRoot
+      )
+    ) {
+      return false;
+    }
+
+    // if token has disallowFlagged=true, verify status proofs provided for the ids
+    if (token.disallowFlagged) {
+      verifyTokenIdsNotFlagged(
+        token.addr,
+        idsProof.ids,
+        idsProof.statusProof_lastTransferTimes,
+        idsProof.statusProof_timestamps,
+        idsProof.statusProof_signatures
+      );
+    }
+    
+    return true;
   }
 
   function verifyTokenIdsNotFlagged (
@@ -133,13 +156,13 @@ contract TokenHelper {
     }
   }
 
-  function verifyIdsMerkleProof (IdsProof memory idsProof, bytes32 root) internal pure returns (bool) {
-    if (idsProof.ids.length == 0) {
+  function verifyIdsMerkleProof (uint[] memory ids, bytes32[] memory proof, bool[] memory proofFlags, bytes32 root) internal pure returns (bool) {
+    if (ids.length == 0) {
       return false;
-    } else if (idsProof.ids.length == 1) {
-      return verifyId(idsProof.proof, root, idsProof.ids[0]);
+    } else if (ids.length == 1) {
+      return verifyId(proof, root, ids[0]);
     } else {
-      return verifyIds(idsProof.proof, idsProof.proofFlags, root, idsProof.ids);
+      return verifyIds(proof, proofFlags, root, ids);
     }
   }
 

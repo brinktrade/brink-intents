@@ -14,7 +14,7 @@ contract TokenHelper_verfiyId is Test, Helper  {
   function testVerifyId_validProof () public {
     assertEq(
       tokenHelper.verifyId_internal(
-        merkleProofForDoodle9107().proof,
+        merkleProofForDoodle9107().merkleProof_hashes,
         DOODLES_WHALE_MERKLE_ROOT,
         9107
       ),
@@ -26,7 +26,7 @@ contract TokenHelper_verfiyId is Test, Helper  {
   function testVerifyId_proofIdMismatch () public {
     assertEq(
       tokenHelper.verifyId_internal(
-        merkleProofForDoodle9107().proof,
+        merkleProofForDoodle9107().merkleProof_hashes,
         DOODLES_WHALE_MERKLE_ROOT,
         9108
       ),
@@ -38,7 +38,7 @@ contract TokenHelper_verfiyId is Test, Helper  {
   function testVerifyId_invalidProof () public {
     assertEq(
       tokenHelper.verifyId_internal(
-        invalidMerkleProof().proof,
+        invalidMerkleProof().merkleProof_hashes,
         DOODLES_WHALE_MERKLE_ROOT,
         1234
       ),

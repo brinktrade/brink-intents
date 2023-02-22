@@ -78,4 +78,30 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, EMPTY_IDS_MERKLE_PROOF), false);
   }
 
+  // when given a token that disallows flagged with valid signatures for status proof, should return true
+  function testVerifyTokenIds_disallowFlagged_validSignatures () public {
+    uint[] memory ids = new uint[](1);
+    ids[0] = 476;
+    IdsProof memory idsProof = IdsProof(
+      ids, new bytes32[](0), new bool[](0), new uint[](1), new uint[](1), new bytes[](1)
+    );
+    idsProof.statusProof_lastTransferTimes[0] = 1676959331;
+    idsProof.statusProof_timestamps[0] = 1677101603;
+    idsProof.statusProof_signatures[0] = hex"64a07dbfacabcc58f056278bd8784b87f012c0805bbc022f99958182bb20d6c226bfbca2839fa33bdb412dce7944c1891d88fd55d747848cf0f72de6857f0d7c1b";
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_DisallowFlagged, idsProof), true);
+  }
+
+  // when given a token that disallows flagged with invalid signatures for status proof, should revert
+  function testVerifyTokenIds_disallowFlagged_invalidSignatures () public {
+    uint[] memory ids = new uint[](1);
+    ids[0] = 476; // id does not match the status proof
+    IdsProof memory idsProof = IdsProof(
+      ids, new bytes32[](0), new bool[](0), new uint[](1), new uint[](1), new bytes[](1)
+    );
+
+    // will revert with ExceedsValidTime() because timestamp for status proof is 0
+    vm.expectRevert(ExceedsValidTime.selector);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_DisallowFlagged, idsProof);
+  }
+
 }

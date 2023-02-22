@@ -15,8 +15,8 @@ contract TokenHelper_verfiyId is Test, Helper  {
     IdsProof memory idsProof = merkleMultiProofForDoodles_9592_7754_9107();
     assertEq(
       tokenHelper.verifyIds_internal(
-        idsProof.proof,
-        idsProof.proofFlags,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
         DOODLES_WHALE_MERKLE_ROOT,
         idsProof.ids
       ),
@@ -30,8 +30,8 @@ contract TokenHelper_verfiyId is Test, Helper  {
     idsProof.ids[0] = 9878; // not in the proof
     assertEq(
       tokenHelper.verifyIds_internal(
-        idsProof.proof,
-        idsProof.proofFlags,
+        idsProof.merkleProof_hashes,
+        idsProof.merkleProof_flags,
         DOODLES_WHALE_MERKLE_ROOT,
         idsProof.ids
       ),
