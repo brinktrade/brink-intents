@@ -5,6 +5,7 @@ import 'openzeppelin/token/ERC20/IERC20.sol';
 import 'openzeppelin/token/ERC721/IERC721.sol';
 import 'openzeppelin/token/ERC1155/IERC1155.sol';
 import 'openzeppelin/utils/cryptography/MerkleProof.sol';
+import '../Interfaces/ITokenStatusOracle.sol';
 
 enum TokenStandard { ERC20, ERC721, ERC1155, ETH }
 
@@ -20,6 +21,9 @@ struct IdsProof {
   uint[] ids;
   bytes32[] proof;
   bool[] proofFlags;
+  uint[] statusProof_lastTransferTimes;
+  uint[] statusProof_timestamps;
+  bytes[] statusProof_signatures;
 }
 
 error UnsupportedTokenStandard();
@@ -32,6 +36,8 @@ error InvalidIds();
 error IdsLengthZero();
 
 contract TokenHelper {
+
+  ITokenStatusOracle private constant TOKEN_STATUS_ORACLE = ITokenStatusOracle(0x5847B8b11846Af977709b16b4a2d45B8e6B86248);
 
   function transferFrom (address tokenAddress, TokenStandard tokenStandard, address from, address to, uint amount, uint[] memory ids) internal {
     if (tokenStandard == TokenStandard.ERC20) {
@@ -112,6 +118,18 @@ contract TokenHelper {
       return idsProof.ids.length == 1 && idsProof.ids[0] == token.id;
     } else {
       return true;
+    }
+  }
+
+  function verifyTokenIdsNotFlagged (
+    address tokenAddress,
+    uint[] memory ids,
+    uint[] memory lastTransferTimes,
+    uint[] memory timestamps,
+    bytes[] memory signatures
+  ) internal view {
+    for(uint8 i = 0; i < ids.length; i++) {
+      TOKEN_STATUS_ORACLE.verifyTokenStatus(tokenAddress, ids[i], false, lastTransferTimes[i], timestamps[i], signatures[i]);
     }
   }
 

@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "uniswap-v3-core/Interfaces/IUniswapV3Pool.sol";
 import "openzeppelin/utils/Strings.sol";
+import "../src/Interfaces/IDeployer.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
 import "../src/Primitives/Primitives01.sol";
@@ -26,6 +27,7 @@ contract Helper is Test, Constants {
   MockPrimitiveInternals public primitiveInternals;
   MockTokenHelperInternals public tokenHelper;
   Filler public filler;
+  IDeployer public deployer = IDeployer(0x6b24634B517a63Ed0fa2a39977286e13e7E35E25);
 
   // TWAP prices are in fixed point X96 (2**96)
 
@@ -109,7 +111,10 @@ contract Helper is Test, Constants {
   IdsProof EMPTY_IDS_MERKLE_PROOF = IdsProof(
     new uint[](0),
     new bytes32[](0),
-    new bool[](0)
+    new bool[](0),
+    new uint[](0),
+    new uint[](0),
+    new bytes[](0)
   );
 
   function setupAll () public {
@@ -124,38 +129,28 @@ contract Helper is Test, Constants {
   }
 
   function setupContracts () public {
-    setupTwapAdapter();
-    setupTwapInverseAdapter();
+    setupDeployedContracts();
     setupTestContracts();
   }
 
-  function setupTwapAdapter () public {
-    bytes memory code = vm.getCode('out/TwapAdapter.sol/TwapAdapter.json');
-    address addr;
-    assembly {
-      addr := create(0, add(code, 0x20), mload(code))
-      if iszero(addr) { revert (0, 0) }
-    }
-    twapAdapter = ITwapAdapter(addr);
+  function setupDeployedContracts () public {
+    twapAdapter = ITwapAdapter(deployContract('out/TwapAdapter.sol/TwapAdapter.json'));
+    twapInverseAdapter = ITwapAdapter(deployContract('out/TwapInverseAdapter.sol/TwapInverseAdapter.json'));
+    primitives = Primitives01(deployContract('out/Primitives01.sol/Primitives01.json'));
+    reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
+    reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
   }
 
-  function setupTwapInverseAdapter () public {
-    bytes memory code = vm.getCode('out/TwapInverseAdapter.sol/TwapInverseAdapter.json');
-    address addr;
-    assembly {
-      addr := create(0, add(code, 0x20), mload(code))
-      if iszero(addr) { revert (0, 0) }
-    }
-    twapInverseAdapter = ITwapAdapter(addr);
+  function deployContract (string memory path) public returns (address deployedContract) {
+    bytes memory code = vm.getCode(path);
+    deployer.deploy(code);
+    deployedContract = deployer.getDeployAddress(code);
   }
 
   function setupTestContracts () public {
-    primitives = new Primitives01();
     mockPriceOracle = new MockPriceOracle();
     primitiveInternals = new MockPrimitiveInternals();
     tokenHelper = new MockTokenHelperInternals();
-    reservoirFloorPriceOracleAdapter = new ReservoirFloorPriceOracleAdapter();
-    reservoirTokenStatusOracleAdapter = new ReservoirTokenStatusOracleAdapter();
   }
 
   function setupFork (uint blockNumber) public {
@@ -338,7 +333,7 @@ contract Helper is Test, Constants {
     proof[0] = 0xab5623858b421d453a6ea4a4873a731863781529261bcc39f0160f476e1217a5;
     proof[1] = 0x0db851939cf734f5e0f3eafe70ccfbcb5509e5a8ade8c6ace7c1d1d1cfc841a5;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function invalidMerkleProof () public returns (IdsProof memory idsProof) {
@@ -350,7 +345,7 @@ contract Helper is Test, Constants {
     proof[1] = 0xab5623858b421d453a6ea4a4873a731863781529261bcc39f0160f476e1217a5;
     proof[2] = 0xc97ce8d1e731b4088a0419629557892a06ca5462a6083a0cf6e92a1d5a720b75;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function merkleMultiProofForDoodles_9592_7754_9107 () public returns (IdsProof memory idsProof) {
@@ -367,7 +362,7 @@ contract Helper is Test, Constants {
     proofFlags[1] = true;
     proofFlags[2] = false;
 
-    idsProof = IdsProof(ids, proof, proofFlags);
+    idsProof = IdsProof(ids, proof, proofFlags, new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function doodlesProof_5268_4631 () public returns (bytes32 root, IdsProof memory idsProof) {
@@ -384,7 +379,7 @@ contract Helper is Test, Constants {
     proofFlags[0] = true;
     proofFlags[1] = false;
 
-    idsProof = IdsProof(ids, proof, proofFlags);
+    idsProof = IdsProof(ids, proof, proofFlags, new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function doodlesProof_5268 () public returns (bytes32 root, IdsProof memory idsProof) {
@@ -397,7 +392,7 @@ contract Helper is Test, Constants {
     proof[0] = 0x7dc50ef10fb8ecffa9c5a88a923dbcea14656cd50bbdbbc676fc70da54e952c3;
     proof[1] = 0xe3e9087e3f9657390c36c16d027666e282f86c45feb3185dbbd0ef61cd9ab308;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function doodlesProof_4631 () public returns (bytes32 root, IdsProof memory idsProof) {
@@ -410,7 +405,7 @@ contract Helper is Test, Constants {
     proof[0] = 0xadcd3150a02a72335c452c15cb9a4d5862581e6e6ae1c870dfa576f86cff6f1b;
     proof[1] = 0xe3e9087e3f9657390c36c16d027666e282f86c45feb3185dbbd0ef61cd9ab308;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function doodlesProof_3643 () public returns (bytes32 root, IdsProof memory idsProof) {
@@ -422,7 +417,7 @@ contract Helper is Test, Constants {
     bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0xca6d21e8ce3c6bdb0961de5c17cfba9d14bc52512fd4c391619a3bbf16f075ad;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function proof_8 () public returns (bytes32 root, IdsProof memory idsProof) {
@@ -434,7 +429,7 @@ contract Helper is Test, Constants {
     bytes32[] memory proof = new bytes32[](1);
     proof[0] = 0x6b2b13c7307ddaf2f976f27ff73e1913a9b405c2a30efc4ab203460d0a61cb6c;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function proof_14 () public returns (bytes32 root, IdsProof memory idsProof) {
@@ -447,7 +442,7 @@ contract Helper is Test, Constants {
     proof[0] = 0x86b497a4c646080e1b92d6d127798c22334da8d4795695f4a1f0a4855e09600c;
     proof[1] = 0xa7c46294ffa3fad92dc8422b2e38b688ccf1b86172f5beaf864af9368d2844e5;
 
-    idsProof = IdsProof(ids, proof, new bool[](0));
+    idsProof = IdsProof(ids, proof, new bool[](0), new uint[](0), new uint[](0), new bytes[](0));
   }
 
   function merkleMultiProofForTheMemes_14_8 () public returns (IdsProof memory idsProof) {
@@ -462,7 +457,7 @@ contract Helper is Test, Constants {
     proofFlags[0] = false;
     proofFlags[1] = true;
 
-    idsProof = IdsProof(ids, proof, proofFlags);
+    idsProof = IdsProof(ids, proof, proofFlags, new uint[](0), new uint[](0), new bytes[](0));
   }
 
 }

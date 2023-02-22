@@ -7,10 +7,7 @@ import "./Helper.sol";
 contract ReservoirTokenStatusOracleAdapter_getBool is Test, Helper  {
 
   function setUp () public {
-    // setupAll();
-
-    // TMP FOR OFFLINE
-    setupTestContracts();
+    setupAll();
   }
 
   // valid signed message should return isFlagged status bool
@@ -45,9 +42,9 @@ contract ReservoirTokenStatusOracleAdapter_getBool is Test, Helper  {
   }
 
   // when max valid time is exceeded, revert with ExceedsValidTime()
-  function test_SKIP_ReservoirTokenStatusOracleAdapter_getBool_exceedsValidTime () public {
-    // TODO: set this with the right cheatcode
-    // vm.setBlocktime(1676843903 + 1);
+  function testReservoirTokenStatusOracleAdapter_getBool_exceedsValidTime () public {
+    // timestamp of signed message + MAX_SECONDS_VALID + 1s
+    vm.warp(1676851559 + 3600 + 1);
 
     address contractAddr = 0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e;
     uint tokenId = 1155;

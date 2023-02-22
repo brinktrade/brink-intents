@@ -25,7 +25,7 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
     IdsProof memory idsProof = IdsProof(
-      ids, new bytes32[](0), new bool[](0)
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
     assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, idsProof), true);
   }
@@ -47,7 +47,7 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
     IdsProof memory idsProof = IdsProof(
-      ids, new bytes32[](0), new bool[](0)
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
     assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), true);
   }
@@ -57,7 +57,7 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     uint[] memory ids = new uint[](1);
     ids[0] = 789;
     IdsProof memory idsProof = IdsProof(
-      ids, new bytes32[](0), new bool[](0)
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
     assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), false);
   }
@@ -68,7 +68,7 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     ids[0] = 476;
     ids[1] = 789;
     IdsProof memory idsProof = IdsProof(
-      ids, new bytes32[](0), new bool[](0)
+      ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
     assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), false);
   }
