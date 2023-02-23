@@ -318,8 +318,6 @@ contract Primitives01 is TokenHelper {
       revert InvalidTokenOutIds();
     }
 
-    // TODO: additional verification for tokenOutIds here (flagged NFT oracle)
-
     transferFrom(tokenIn.addr, tokenIn.standard, owner, recipient, tokenInAmount, tokenInIdsProof.ids);
 
     uint initialTokenOutBalance;
