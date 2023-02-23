@@ -12,7 +12,7 @@ contract Primitives01_getSwapAmount is Test, Helper  {
 
   function testGetSwapAmount_notInverse () public {
     // 180 USDC -> 0.11616095431445347 ETH
-    uint o = primitiveInternals.getSwapAmount(
+    uint o = primitives.getSwapAmount(
       twapAdapter,
       abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000)),
       180 * 10**6
@@ -22,7 +22,7 @@ contract Primitives01_getSwapAmount is Test, Helper  {
 
   function testGetSwapAmount_inverse () public {
     // 0.15 ETH -> 232.436106 USDC
-    uint o = primitiveInternals.getSwapAmount(
+    uint o = primitives.getSwapAmount(
       twapInverseAdapter,
       abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000)),
       15 * 10**16
