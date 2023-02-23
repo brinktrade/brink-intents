@@ -145,15 +145,13 @@ contract Primitives01 is TokenHelper {
     uint feeMinTokenOut,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut));
-    console.log("tokenOutAmountRequired: %s", tokenOutAmountRequired);
     _fillSwap(
       tokenIn,
       tokenOut,
       owner,
       data.recipient,
       tokenInAmount,
-      tokenOutAmountRequired,
+      getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut)),
       data.tokenInIdsProof,
       data.tokenOutIdsProof,
       data.fillCall
@@ -172,20 +170,17 @@ contract Primitives01 is TokenHelper {
     uint feeMinTokenIn,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenInAmountRequired = getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn));
-    console.log("tokenInAmountRequired: %s", tokenInAmountRequired);
-    // _fillSwap(
-    //   tokenIn,
-    //   tokenOut,
-    //   owner,
-    //   data.recipient,
-    //   tokenInAmountRequired,
-    //   tokenOutAmount,
-    //   data.tokenInId,
-    //   data.tokenInIdsProof,
-    //   data.tokenOutIdsProof,
-    //   data.fillCall
-    // );
+    _fillSwap(
+      tokenIn,
+      tokenOut,
+      owner,
+      data.recipient,
+      getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn)),
+      tokenOutAmount,
+      data.tokenInIdsProof,
+      data.tokenOutIdsProof,
+      data.fillCall
+    );
   }
 
   // fill all or part of a swap for tokenIn -> tokenOut. Price curve calculates output based on input

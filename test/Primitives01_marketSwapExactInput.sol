@@ -12,24 +12,34 @@ contract Primitives01_marketSwapExactInput is Test, Helper  {
     setupTrader1();
   }
 
-  function testMarketSwapExactInput_erc20 () public {
+  function testMarketSwapExactInput () public {
     vm.prank(TRADER_1);
     USDC_ERC20.approve(address(primitives), 1450_000000);
 
-    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, 1_000000000000000000, new uint[](0));
+    bytes memory twapAdapterParams = abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000));
+    uint usdcInAmount = 1450_000000;
+    uint24 feePercent = 10000; // 1%
+    uint feeMin = 0; // no minimum fixed fee
+
+    uint expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
+    int intWethOutAmount = int(expectedRequiredWethOutAmount);
+    
+    // fill with exact expectedRequiredWethOutAmount. for a real market swap, filler could provide an additional amount as buffer for
+    // price movement to avoid revert
+    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, expectedRequiredWethOutAmount, new uint[](0));
 
     startBalances(address(filler));
     startBalances(TRADER_1);
 
     primitives.marketSwapExactInput(
       twapAdapter,
-      abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000)),
+      twapAdapterParams,
       TRADER_1,
       USDC_Token,
       WETH_Token,
-      1450_000000,
-      10000, // 1%
-      0, // no minimum fixed fee
+      usdcInAmount,
+      feePercent,
+      feeMin,
       UnsignedMarketSwapData(
         address(filler),
         EMPTY_IDS_PROOF,
@@ -43,8 +53,8 @@ contract Primitives01_marketSwapExactInput is Test, Helper  {
 
     assertEq(diffBalance(USDC, TRADER_1), -1450_000000);
     assertEq(diffBalance(USDC, address(filler)), 1450_000000);
-    assertEq(diffBalance(WETH, TRADER_1), 1_000000000000000000);
-    assertEq(diffBalance(WETH, address(filler)), -1_000000000000000000);
+    assertEq(diffBalance(WETH, TRADER_1), intWethOutAmount);
+    assertEq(diffBalance(WETH, address(filler)), -intWethOutAmount);
   }
 
 }
