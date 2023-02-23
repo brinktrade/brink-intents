@@ -109,7 +109,7 @@ contract Helper is Test, Constants {
   uint[] public trackingDoodlesIds;
   uint[] public trackingMemesIds;
 
-  IdsProof EMPTY_IDS_MERKLE_PROOF = IdsProof(
+  IdsProof EMPTY_IDS_PROOF = IdsProof(
     new uint[](0),
     new bytes32[](0),
     new bool[](0),

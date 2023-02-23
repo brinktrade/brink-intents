@@ -12,12 +12,12 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
 
   // when given an ERC20 token with no merkle root, should return true
   function testVerifyTokenIds_noMerkleRoot_erc20 () public {
-    assertEq(tokenHelper.verifyTokenIds_internal(USDC_Token, EMPTY_IDS_MERKLE_PROOF), true);
+    assertEq(tokenHelper.verifyTokenIds_internal(USDC_Token, EMPTY_IDS_PROOF), true);
   }
 
   // when given an ERC721 token with no merkle root, should return true
   function testVerifyTokenIds_noMerkleRoot_erc721 () public {
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, EMPTY_IDS_MERKLE_PROOF), true);
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, EMPTY_IDS_PROOF), true);
   }
 
   // when given a token with no merkle root or token.id, should return true
@@ -75,7 +75,7 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
 
   // when given a token with id and zero merkle proof ids, should return false
   function testVerifyTokenIds_tokenWithId_zeroMerkleProofIds () public {
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, EMPTY_IDS_MERKLE_PROOF), false);
+    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, EMPTY_IDS_PROOF), false);
   }
 
   // when given a token that disallows flagged with valid signatures for status proof, should return true
