@@ -24,13 +24,11 @@ error InvalidTokenOutIds();
 
 struct UnsignedTransferData {
   address recipient;
-  uint id;
   IdsProof idsProof;
 }
 
 struct UnsignedMarketSwapData {
   address recipient;
-  uint tokenInId;
   IdsProof tokenInIdsProof;
   IdsProof tokenOutIdsProof;
   Call fillCall;
@@ -147,20 +145,17 @@ contract Primitives01 is TokenHelper {
     uint feeMinTokenOut,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenOutAmountRequired = _getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut));
-    console.log("tokenOutAmountRequired: %s", tokenOutAmountRequired);
-    // _fillSwap(
-    //   tokenIn,
-    //   tokenOut,
-    //   owner,
-    //   data.recipient,
-    //   tokenInAmount,
-    //   tokenOutAmountRequired,
-    //   data.tokenInId,
-    //   data.tokenInIdsProof,
-    //   data.tokenOutIdsProof,
-    //   data.fillCall
-    // );
+    _fillSwap(
+      tokenIn,
+      tokenOut,
+      owner,
+      data.recipient,
+      tokenInAmount,
+      getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut)),
+      data.tokenInIdsProof,
+      data.tokenOutIdsProof,
+      data.fillCall
+    );
   }
 
   // given an exact tokenOut amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
@@ -175,20 +170,17 @@ contract Primitives01 is TokenHelper {
     uint feeMinTokenIn,
     UnsignedMarketSwapData memory data
   ) public {
-    uint tokenInAmountRequired = _getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn));
-    console.log("tokenInAmountRequired: %s", tokenInAmountRequired);
-    // _fillSwap(
-    //   tokenIn,
-    //   tokenOut,
-    //   owner,
-    //   data.recipient,
-    //   tokenInAmountRequired,
-    //   tokenOutAmount,
-    //   data.tokenInId,
-    //   data.tokenInIdsProof,
-    //   data.tokenOutIdsProof,
-    //   data.fillCall
-    // );
+    _fillSwap(
+      tokenIn,
+      tokenOut,
+      owner,
+      data.recipient,
+      getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn)),
+      tokenOutAmount,
+      data.tokenInIdsProof,
+      data.tokenOutIdsProof,
+      data.fillCall
+    );
   }
 
   // fill all or part of a swap for tokenIn -> tokenOut. Price curve calculates output based on input
@@ -318,8 +310,6 @@ contract Primitives01 is TokenHelper {
       revert InvalidTokenOutIds();
     }
 
-    // TODO: additional verification for tokenOutIds here (flagged NFT oracle)
-
     transferFrom(tokenIn.addr, tokenIn.standard, owner, recipient, tokenInAmount, tokenInIdsProof.ids);
 
     uint initialTokenOutBalance;
@@ -345,13 +335,13 @@ contract Primitives01 is TokenHelper {
     // TODO: implement
   }
 
-  function _getSwapAmount (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount) internal returns (uint token1Amount) {
+  function getSwapAmount (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount) public view returns (uint token1Amount) {
     uint priceX96 = priceOracle.getUint256(priceOracleParams);
     token1Amount = priceX96 * token0Amount / Q96;
   }
 
-  function _getSwapAmountWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount, int24 feePercent, int feeMin) internal returns (uint token1Amount) {
-    token1Amount = _getSwapAmount(priceOracle, priceOracleParams, token0Amount);
+  function getSwapAmountWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount, int24 feePercent, int feeMin) public view returns (uint token1Amount) {
+    token1Amount = getSwapAmount(priceOracle, priceOracleParams, token0Amount);
     int feeAmount = int(token1Amount.mulDiv(int(feePercent).abs(), 10**6)) * _sign(feePercent);
     if (feeAmount.abs() < feeMin.abs()) {
       feeAmount = feeMin;

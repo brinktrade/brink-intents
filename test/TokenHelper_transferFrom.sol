@@ -15,7 +15,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
     vm.prank(USDC_WHALE);
     USDC_ERC20.approve(address(tokenHelper), 1800_000000);
 
-    tokenHelper.transferFrom_internal(USDC, TokenStandard.ERC20, USDC_WHALE, RANDOM_1, 1800_000000, EMPTY_IDS_MERKLE_PROOF.ids);
+    tokenHelper.transferFrom_internal(USDC, TokenStandard.ERC20, USDC_WHALE, RANDOM_1, 1800_000000, EMPTY_IDS_PROOF.ids);
 
     assertEq(USDC_ERC20.balanceOf(RANDOM_1), 1800_000000);
   }
@@ -65,7 +65,7 @@ contract TokenHelper_transferFrom is Test, Helper  {
   // when called with an unsupported token standard, should revert with UnsupportedTokenStandard()
   function testTransferFrom_unsupportedTokenStandard () public {
     vm.expectRevert(UnsupportedTokenStandard.selector);
-    tokenHelper.transferFrom_internal(address(0), TokenStandard.ETH, ETH_WHALE, RANDOM_1, 0, EMPTY_IDS_MERKLE_PROOF.ids);
+    tokenHelper.transferFrom_internal(address(0), TokenStandard.ETH, ETH_WHALE, RANDOM_1, 0, EMPTY_IDS_PROOF.ids);
   }
 
 }

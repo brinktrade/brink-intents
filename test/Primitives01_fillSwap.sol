@@ -29,8 +29,8 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       1450_000000,
       1_000000000000000000,
-      EMPTY_IDS_MERKLE_PROOF,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
+      EMPTY_IDS_PROOF,
       Call(address(filler), fillCall)
     );
 
@@ -53,7 +53,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     uint[] memory ids = new uint[](2);
     ids[0] = 3643;
     ids[1] = 3206;
-    IdsProof memory inIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory inIds = EMPTY_IDS_PROOF;
     inIds.ids = ids;
 
     startBalances(address(filler));
@@ -67,7 +67,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       2,
       500_000000,
       inIds,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       Call(address(filler), fillCall)
     );
 
@@ -94,7 +94,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     ids[1] = 4631;
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, DOODLES, TokenStandard.ERC721, TRADER_1, 0, ids);
 
-    IdsProof memory outIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
     outIds.ids = ids;
 
     startBalances(address(filler));
@@ -107,7 +107,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       500_000000,
       2,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
@@ -145,7 +145,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       1,
       500_000000,
       idsIn,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       Call(address(filler), fillCall)
     );
 
@@ -182,7 +182,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       500_000000,
       2,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
@@ -209,7 +209,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     ids[0] = 14;
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, THE_MEMES, TokenStandard.ERC1155, TRADER_1, 3, ids);
 
-    IdsProof memory outIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
     outIds.ids = ids;
 
     startBalances(address(filler));
@@ -222,7 +222,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       60_000000,
       3,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
@@ -247,7 +247,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     ids[1] = 14;
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, THE_MEMES, TokenStandard.ERC1155, TRADER_1, 0, ids);
 
-    IdsProof memory outIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
     outIds.ids = ids;
 
     startBalances(address(filler));
@@ -260,7 +260,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       60_000000,
       2,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
@@ -297,7 +297,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       60_000000,
       2,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
@@ -325,7 +325,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       1,
       500_000000,
       idsIn,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       Call(address(filler), '')
     );
   }
@@ -343,7 +343,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       1,
       500_000000,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       idsOut,
       Call(address(filler), '')
     );
@@ -358,7 +358,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     ids[0] = 3643; // already owned by TRADER_1
     ids[1] = 4631;
 
-    IdsProof memory outIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
     outIds.ids = ids;
 
     vm.expectRevert(NftIdAlreadyOwned.selector);
@@ -369,7 +369,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       500_000000,
       2,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), '')
     );
@@ -390,8 +390,8 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       1450_000000,
       2_000000000000000000, // requires 2 WETH, but fillCall only transfers 1 WETH
-      EMPTY_IDS_MERKLE_PROOF,
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
+      EMPTY_IDS_PROOF,
       Call(address(filler), fillCall)
     );
   }
@@ -406,7 +406,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     ids[1] = 4631;
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, DOODLES, TokenStandard.ERC721, TRADER_1, 0, ids);
 
-    IdsProof memory outIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
     outIds.ids = ids;
 
     startBalances(address(filler));
@@ -420,7 +420,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       500_000000,
       3, // requires 3 ids but fillCall only provides 2
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
@@ -436,7 +436,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     ids[1] = 14;
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, THE_MEMES, TokenStandard.ERC1155, TRADER_1, 0, ids);
 
-    IdsProof memory outIds = EMPTY_IDS_MERKLE_PROOF;
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
     outIds.ids = ids;
 
     vm.expectRevert(abi.encodeWithSelector(NotEnoughTokenReceived.selector, 2));
@@ -447,7 +447,7 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       60_000000,
       3, // requires 3 ids but fillCall only provides 2
-      EMPTY_IDS_MERKLE_PROOF,
+      EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)
     );
