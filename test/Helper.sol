@@ -7,6 +7,7 @@ import "openzeppelin/utils/Strings.sol";
 import "../src/Interfaces/IDeployer.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
+import "../src/PriceCurves/FlatPriceCurve.sol";
 import "../src/Primitives/Primitives01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
@@ -20,6 +21,7 @@ contract Helper is Test, Constants {
 
   ITwapAdapter public twapAdapter;
   ITwapAdapter public twapInverseAdapter;
+  FlatPriceCurve public flatPriceCurve;
   Primitives01 public primitives;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
   ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
@@ -137,6 +139,7 @@ contract Helper is Test, Constants {
   function setupDeployedContracts () public {
     twapAdapter = ITwapAdapter(deployContract('out/TwapAdapter.sol/TwapAdapter.json'));
     twapInverseAdapter = ITwapAdapter(deployContract('out/TwapInverseAdapter.sol/TwapInverseAdapter.json'));
+    flatPriceCurve = FlatPriceCurve(deployContract('out/FlatPriceCurve.sol/FlatPriceCurve.json'));
     primitives = Primitives01(deployContract('out/Primitives01.sol/Primitives01.json'));
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));

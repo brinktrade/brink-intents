@@ -194,15 +194,13 @@ contract Primitives01 is TokenHelper {
     IPriceCurve priceCurve,
     UnsignedLimitSwapData memory data
   ) public {
-    _checkUnsignedLimitSwapData(tokenIn, data);
-
     // TODO: state resolution for tokenInAmount and basePrice modification
 
     // get amount of output already filled. for a new limitSwap this will be 0
-    uint outputFilled = _getLimitSwapOutputFilled(id);
+    uint filledTokenInAmount = _getLimitSwapFilledTokenInAmount(id);
 
     // get the amount of tokenOut required for the requested tokenIn amount
-    uint tokenOutAmountRequired = priceCurve.getOutput(tokenInAmount, basePrice, outputFilled, data.tokenInAmount);
+    uint tokenOutAmountRequired = priceCurve.getOutput(tokenInAmount, basePrice, filledTokenInAmount, data.tokenInAmount);
 
     _fillSwap(
       tokenIn,
@@ -273,19 +271,6 @@ contract Primitives01 is TokenHelper {
 
   }
 
-  function _checkUnsignedLimitSwapData (Token memory token, UnsignedLimitSwapData memory unsignedData) private pure {
-    if (token.idsMerkleRoot != bytes32(0)) {
-      if (unsignedData.tokenInIdsProof.ids.length == 0) {
-        revert MerkleProofsRequired();
-      }
-      if (unsignedData.tokenInIdsProof.ids.length != unsignedData.tokenInAmount) {
-        revert MerkleProofAndAmountMismatch();
-      }
-
-      // TODO: revert on duplicate merkle proof ids!!!!
-    }
-  }
-
   function _checkUnsignedTransferData (Token memory token, uint amount, UnsignedTransferData memory unsignedData) private pure {
     if (token.idsMerkleRoot != bytes32(0) && unsignedData.idsProof.ids.length != amount) {
       revert MerkleProofAndAmountMismatch();
@@ -349,8 +334,9 @@ contract Primitives01 is TokenHelper {
     token1Amount = uint(int(token1Amount) + feeAmount);
   }
 
-  function _getLimitSwapOutputFilled (bytes32 limitSwapId) internal returns (uint outputFilled) {
+  function _getLimitSwapFilledTokenInAmount (bytes32 limitSwapId) internal view returns (uint filledTokenInAmount) {
     // TODO: implement
+    return 0;
   }
 
   function _sign (int n) internal pure returns (int8 sign) {
