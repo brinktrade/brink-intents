@@ -31,6 +31,9 @@ contract Helper is Test, Constants {
   Filler public filler;
   IDeployer public deployer = IDeployer(0x6b24634B517a63Ed0fa2a39977286e13e7E35E25);
 
+  // 2**96
+  uint256 public constant Q96 = 0x1000000000000000000000000;
+
   // TWAP prices are in fixed point X96 (2**96)
 
   // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH

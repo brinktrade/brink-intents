@@ -20,7 +20,7 @@ contract FlatPriceCurve is IPriceCurve {
       revert MaxInputExceeded(remainingInput);
     }
 
-    output = remainingInput * basePriceX96 / Q96;
+    output = input * basePriceX96 / Q96;
   }
 
 }

@@ -15,9 +15,9 @@ contract FlatPriceCurve_getOutput is Test, Helper  {
       10_000000000000000000,
       MAGIC_TWAP_PRICE_ETH_USDC_1000_0,
       9_000000000000000000,
-      1_000000000000000000 // 1 ETH
+      950000000000000000 // 0.95 ETH
     );
-    assertEq(output, 1549574046); // ~1549.57 USDC
+    assertEq(output, 1472095343); // ~1549.57 USDC
   }
 
   function testFlatPriceCurve_getOutput_maxInputExceeded () public {
