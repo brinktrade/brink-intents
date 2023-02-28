@@ -16,6 +16,8 @@ contract Primitives01_requireBitNotUsed is Test, Helper  {
 
   function testRequireBitNotUsed_bitUsed () public {
     primitives.useBit(0, 1);
+
+    vm.expectRevert(BitUsed.selector);
     primitives.requireBitNotUsed(0, 1);
   }
 

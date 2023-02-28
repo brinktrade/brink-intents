@@ -2,12 +2,12 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/console.sol";
-
 import "openzeppelin/utils/math/Math.sol";
 import "openzeppelin/utils/math/SignedMath.sol";
 import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
+import "../Libraries/Bit.sol";
 import "../TokenHelper/TokenHelper.sol";
 
 error NftIdAlreadyOwned();
@@ -21,6 +21,8 @@ error Uint256LowerBoundNotMet(uint256 oraclePrice);
 error Uint256UpperBoundNotMet(uint256 oraclePrice);
 error InvalidTokenInIds();
 error InvalidTokenOutIds();
+error BitUsed();
+error BitNotUsed();
 
 struct UnsignedTransferData {
   address recipient;
@@ -61,17 +63,23 @@ contract Primitives01 is TokenHelper {
 
   // require bitmapIndex/bit not to be used
   function requireBitNotUsed (uint bitmapIndex, uint bit) public {
-
+    uint256 bitmap = Bit.loadUint(Bit.bitmapPtr(bitmapIndex));
+    if (bitmap & bit != 0) {
+      revert BitUsed();
+    }
   }
 
   // require bitmapIndex/bit to be used
   function requireBitUsed (uint bitmapIndex, uint bit) public {
-
+    uint256 bitmap = Bit.loadUint(Bit.bitmapPtr(bitmapIndex));
+    if (bitmap & bit == 0) {
+      revert BitNotUsed();
+    }
   }
 
   // set bitmapIndex/bit to used. Requires bit not to be used
   function useBit (uint bitmapIndex, uint bit) public {
-    
+    Bit.useBit(bitmapIndex, bit);
   }
 
   // require block <= current block
