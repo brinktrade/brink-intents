@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+import "./StrategyBase.sol";
+
 error BadOrderIndex();
 error BadUnsignedCallForPrimitive(uint primitiveIndex);
 
@@ -24,12 +26,7 @@ struct Primitive {
   bool requiresUnsignedCall;
 }
 
-struct Call {
-  address targetContract;
-  bytes data;
-}
-
-contract StrategyTarget01 {
+contract StrategyTarget01 is StrategyBase {
 
   /// @dev Execute an order within a signed array of orders
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
