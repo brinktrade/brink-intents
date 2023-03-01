@@ -1,10 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+error BadOrderIndex();
+error BadUnsignedCallForPrimitive(uint primitiveIndex);
+
+/// @param primitiveTarget Contract address where primitive functions will be executed
+/// @param orders Array of allowed orders
+/// @param beforeCalls Array of primitive calls to execute before order execution
+/// @param afterCalls Array of primitive calls to execute after order execution
+struct Strategy {
+  address primitiveTarget;
+  Order[] orders;
+  Call[] beforeCalls;
+  Call[] afterCalls;
+}
+
+struct Order {
+  Primitive[] primitives;
+}
+
+struct Primitive {
+  bytes data;
+  bool requiresUnsignedCall;
+}
+
+struct Call {
+  address targetContract;
+  bytes data;
+}
+
 contract StrategyTarget01 {
-  
-  error BadOrderIndex();
-  error BadUnsignedCallForPrimitive(uint primitiveIndex);
 
   /// @dev Execute an order within a signed array of orders
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
@@ -60,30 +85,5 @@ contract StrategyTarget01 {
         revert(0, returndatasize())
       }
     }
-  }
-
-  /// @param primitiveTarget Contract address where primitive functions will be executed
-  /// @param orders Array of allowed orders
-  /// @param beforeCalls Array of primitive calls to execute before order execution
-  /// @param afterCalls Array of primitive calls to execute after order execution
-  struct Strategy {
-    address primitiveTarget;
-    Order[] orders;
-    Call[] beforeCalls;
-    Call[] afterCalls;
-  }
-
-  struct Order {
-    Primitive[] primitives;
-  }
-
-  struct Primitive {
-    bytes data;
-    bool requiresUnsignedCall;
-  }
-
-  struct Call {
-    address targetContract;
-    bytes data;
   }
 }
