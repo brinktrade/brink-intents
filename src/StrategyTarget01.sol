@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
 import "./StrategyBase.sol";
 
 error BadOrderIndex();
@@ -53,7 +54,16 @@ contract StrategyTarget01 is StrategyBase {
         if (unsignedCall.length == 0) {
           revert BadUnsignedCallForPrimitive(i);
         }
-        primitiveCallData = abi.encodePacked(primitive.data, unsignedCall);
+
+        bytes memory signedData = primitive.data;
+
+        // change length of signedData to ignore the last bytes32
+        assembly {
+          mstore(add(signedData, 0x0), sub(mload(signedData), 0x20))
+        }
+
+        // concat signed and unsigned call bytes
+        primitiveCallData = bytes.concat(signedData, unsignedCall);
       } else {
         primitiveCallData = primitive.data;
       }

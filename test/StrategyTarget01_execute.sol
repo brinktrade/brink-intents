@@ -46,7 +46,8 @@ contract StrategyTarget01_execute is Test, Helper  {
         WETH_Token,
         usdcInAmount,
         feePercent,
-        feeMin
+        feeMin,
+        new bytes(0) // add an empty dynamic bytes, which will be overwritten by UnsignedMarketSwapData
       ),
       true
     );
@@ -55,12 +56,15 @@ contract StrategyTarget01_execute is Test, Helper  {
     orders[0] = Order(primitives_order0);
 
     bytes[] memory unsignedCalls = new bytes[](1);
-    unsignedCalls[0] = abi.encode(UnsignedMarketSwapData(
+
+    // encode the UnsignedMarketSwapData.
+    // don't wrap in UnsignedMarketSwapData() struct type because this adds additional data that will break the call
+    unsignedCalls[0] = abi.encode(
       address(filler),
       EMPTY_IDS_PROOF,
       EMPTY_IDS_PROOF,
       Call(address(filler), fillCall)
-    ));
+    );
 
     Strategy memory strategy = Strategy(
       address(primitives),
@@ -74,15 +78,6 @@ contract StrategyTarget01_execute is Test, Helper  {
 
     vm.prank(TRADER_1);
     USDC_ERC20.approve(address(strategyTarget), 1450_000000);
-
-
-
-
-    // IN PROGRESS: this is reverting now at marketSwapExactInput() fn, probably because of unsigned call data encoding.
-    // need to compare this calldata to the test that is passing to figure out the problem
-
-
-
 
     strategyTarget.execute(
       strategy,
