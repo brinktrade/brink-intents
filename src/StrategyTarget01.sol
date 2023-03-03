@@ -5,7 +5,7 @@ import "forge-std/console.sol";
 import "./StrategyBase.sol";
 
 error BadOrderIndex();
-error BadUnsignedCallForPrimitive(uint primitiveIndex);
+error UnsignedCallRequired();
 
 /// @param primitiveTarget Contract address where primitive functions will be executed
 /// @param orders Array of allowed orders
@@ -50,9 +50,8 @@ contract StrategyTarget01 is StrategyBase {
       Primitive calldata primitive = strategy.orders[orderIndex].primitives[i];
       bytes memory primitiveCallData;
       if (primitive.requiresUnsignedCall) {
-        bytes calldata unsignedCall = unsignedCalls[nextUnsignedCall];
-        if (unsignedCall.length == 0) {
-          revert BadUnsignedCallForPrimitive(i);
+        if (nextUnsignedCall >= unsignedCalls.length) {
+          revert UnsignedCallRequired();
         }
 
         bytes memory signedData = primitive.data;
@@ -63,7 +62,8 @@ contract StrategyTarget01 is StrategyBase {
         }
 
         // concat signed and unsigned call bytes
-        primitiveCallData = bytes.concat(signedData, unsignedCall);
+        primitiveCallData = bytes.concat(signedData, unsignedCalls[nextUnsignedCall]);
+        nextUnsignedCall++;
       } else {
         primitiveCallData = primitive.data;
       }
