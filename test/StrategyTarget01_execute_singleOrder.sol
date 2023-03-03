@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract StrategyTarget01_execute is Test, Helper  {
+contract StrategyTarget01_execute_singleOrder is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
