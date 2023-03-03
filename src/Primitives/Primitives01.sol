@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/console.sol";
 import "openzeppelin/utils/math/Math.sol";
 import "openzeppelin/utils/math/SignedMath.sol";
+import "../StrategyBase.sol";
 import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
@@ -48,12 +49,7 @@ struct UnsignedStakeProofData {
   bytes stakerSignature;
 }
 
-struct Call {
-  address targetContract;
-  bytes data;
-}
-
-contract Primitives01 is TokenHelper {
+contract Primitives01 is TokenHelper, StrategyBase {
   using Math for uint256;
   using SignedMath for int256;
 

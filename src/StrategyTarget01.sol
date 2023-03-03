@@ -1,10 +1,33 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
-contract StrategyTarget01 {
-  
-  error BadOrderIndex();
-  error BadUnsignedCallForPrimitive(uint primitiveIndex);
+import "forge-std/console.sol";
+import "./StrategyBase.sol";
+
+error BadOrderIndex();
+error UnsignedCallRequired();
+
+/// @param primitiveTarget Contract address where primitive functions will be executed
+/// @param orders Array of allowed orders
+/// @param beforeCalls Array of primitive calls to execute before order execution
+/// @param afterCalls Array of primitive calls to execute after order execution
+struct Strategy {
+  address primitiveTarget;
+  Order[] orders;
+  Call[] beforeCalls;
+  Call[] afterCalls;
+}
+
+struct Order {
+  Primitive[] primitives;
+}
+
+struct Primitive {
+  bytes data;
+  bool requiresUnsignedCall;
+}
+
+contract StrategyTarget01 is StrategyBase {
 
   /// @dev Execute an order within a signed array of orders
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
@@ -27,11 +50,20 @@ contract StrategyTarget01 {
       Primitive calldata primitive = strategy.orders[orderIndex].primitives[i];
       bytes memory primitiveCallData;
       if (primitive.requiresUnsignedCall) {
-        bytes calldata unsignedCall = unsignedCalls[nextUnsignedCall];
-        if (unsignedCall.length == 0) {
-          revert BadUnsignedCallForPrimitive(i);
+        if (nextUnsignedCall >= unsignedCalls.length) {
+          revert UnsignedCallRequired();
         }
-        primitiveCallData = abi.encodePacked(primitive.data, unsignedCall);
+
+        bytes memory signedData = primitive.data;
+
+        // change length of signedData to ignore the last bytes32
+        assembly {
+          mstore(add(signedData, 0x0), sub(mload(signedData), 0x20))
+        }
+
+        // concat signed and unsigned call bytes
+        primitiveCallData = bytes.concat(signedData, unsignedCalls[nextUnsignedCall]);
+        nextUnsignedCall++;
       } else {
         primitiveCallData = primitive.data;
       }
@@ -60,30 +92,5 @@ contract StrategyTarget01 {
         revert(0, returndatasize())
       }
     }
-  }
-
-  /// @param primitiveTarget Contract address where primitive functions will be executed
-  /// @param orders Array of allowed orders
-  /// @param beforeCalls Array of primitive calls to execute before order execution
-  /// @param afterCalls Array of primitive calls to execute after order execution
-  struct Strategy {
-    address primitiveTarget;
-    Order[] orders;
-    Call[] beforeCalls;
-    Call[] afterCalls;
-  }
-
-  struct Order {
-    Primitive[] primitives;
-  }
-
-  struct Primitive {
-    bytes data;
-    bool requiresUnsignedCall;
-  }
-
-  struct Call {
-    address targetContract;
-    bytes data;
   }
 }
