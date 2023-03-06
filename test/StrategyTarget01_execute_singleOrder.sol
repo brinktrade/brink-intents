@@ -73,6 +73,8 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
       new Call[](0)
     );
 
+    UnsignedData memory unsignedData = UnsignedData(0, unsignedCalls);
+
     startBalances(address(filler));
     startBalances(TRADER_1);
 
@@ -81,8 +83,7 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
 
     strategyTarget.execute(
       strategy,
-      0, // order0
-      unsignedCalls
+      unsignedData
     );
 
     endBalances(address(filler));

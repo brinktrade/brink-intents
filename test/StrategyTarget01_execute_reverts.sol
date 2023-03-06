@@ -26,8 +26,10 @@ contract StrategyTarget01_execute_reverts is Test, Helper  {
     vm.expectRevert(BadOrderIndex.selector);
     strategyTarget.execute(
       strategy,
-      1, // strategy only has order0, index 1 is out of bounds
-      new bytes[](0)
+      UnsignedData(
+        1, // strategy only has order0, index 1 is out of bounds
+        new bytes[](0)
+      )
     );
   }
 
@@ -47,8 +49,10 @@ contract StrategyTarget01_execute_reverts is Test, Helper  {
     vm.expectRevert(UnsignedCallRequired.selector);
     strategyTarget.execute(
       strategy,
-      0,
-      new bytes[](0) // no unsigned call provided
+      UnsignedData(
+        0,
+        new bytes[](0) // no unsigned call provided
+      )
     );
   }
 

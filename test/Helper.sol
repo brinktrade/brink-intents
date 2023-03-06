@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "uniswap-v3-core/Interfaces/IUniswapV3Pool.sol";
 import "openzeppelin/utils/Strings.sol";
+import "./Interfaces/IAccount.sol";
+import "./Interfaces/IAccountFactory.sol";
 import "../src/StrategyTarget01.sol";
 import "../src/Interfaces/IDeployer.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
@@ -32,6 +34,7 @@ contract Helper is Test, Constants {
   MockTokenHelperInternals public tokenHelper;
   Filler public filler;
   IDeployer public deployer = IDeployer(0x6b24634B517a63Ed0fa2a39977286e13e7E35E25);
+  IAccountFactory public accountFactory = IAccountFactory(0xe925f84cA9Dd5b3844fC424861D7bDf9485761B6);
 
   // 2**96
   uint256 public constant Q96 = 0x1000000000000000000000000;
@@ -125,6 +128,10 @@ contract Helper is Test, Constants {
     new bytes[](0)
   );
 
+  address public proxy0_signerAddress;
+  bytes32 public proxy0_signerPrivateKey;
+  IAccount public proxy0_account;
+
   function setupAll () public {
     // setup with default fork
     setupAll(BLOCK_JAN_25_2023);
@@ -134,11 +141,18 @@ contract Helper is Test, Constants {
     setupFork(blockNumber);
     setupContracts();
     setupNftIds();
+    setupAccountProxies();
   }
 
   function setupContracts () public {
     setupDeployedContracts();
     setupTestContracts();
+  }
+
+  function setupAccountProxies () public {
+    proxy0_signerAddress = address(0x6399ae010188F36e469FB6E62C859dDFc558328A);
+    proxy0_signerPrivateKey = bytes32(0x5ac261a7a88c443034b23abf64ae9e222613e63d4c20ad13e057129b15753b86);
+    proxy0_account = IAccount(accountFactory.deployAccount(proxy0_signerAddress));
   }
 
   function setupDeployedContracts () public {
@@ -247,14 +261,26 @@ contract Helper is Test, Constants {
     return int(_balances[1]) - int(_balances[0]);
   }
 
-  // Seeds filler contract with:
+  function setupFiller () public {
+    filler = new Filler();
+    assetSeed0(address(filler));
+  }
+
+  function setupTrader1 () public {
+    assetSeed1(TRADER_1);
+  }
+
+  function setupProxy0 () public {
+    assetSeed1(proxy0_signerAddress);
+  }
+
+  // Seeds account with:
   //    ETH:       32_500000000000000000
   //    WETH:      13_500000000000000000
   //    USDC:      128000_000000
   //    DOODLES:   5268, 4631, 3989
   //    THE_MEMES: [8]:5, [14]:7, [55]:13
-  function setupFiller () public {
-    filler = new Filler();
+  function assetSeed0 (address account) public {
     uint[] memory doodlesIds = new uint[](3);
     doodlesIds[0] = 5268;
     doodlesIds[1] = 4631;
@@ -268,7 +294,7 @@ contract Helper is Test, Constants {
     memesAmounts[1] = 7;
     memesAmounts[2] = 13;
     seedAssets(
-      address(filler),
+      account,
       32_500000000000000000,
       13_500000000000000000,
       128_000_000000,
@@ -278,13 +304,13 @@ contract Helper is Test, Constants {
     );
   }
 
-  // Seeds TRADER_1 with:
+  // Seeds account with:
   //    ETH:       8_000000000000000000
   //    WETH:      2_000000000000000000
   //    USDC:      10_000_000000
   //    DOODLES:   3643, 3206
   //    THE_MEMES: [8]:2, [14]:3
-  function setupTrader1 () public {
+  function assetSeed1 (address account) public {
     uint[] memory doodlesIds = new uint[](2);
     doodlesIds[0] = 3643;
     doodlesIds[1] = 3206;
@@ -295,7 +321,7 @@ contract Helper is Test, Constants {
     memesAmounts[0] = 2;
     memesAmounts[1] = 3;
     seedAssets(
-      TRADER_1,
+      account,
       8_000000000000000000,
       2_000000000000000000,
       10_000_000000,

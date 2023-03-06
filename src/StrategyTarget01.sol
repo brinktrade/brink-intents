@@ -27,30 +27,33 @@ struct Primitive {
   bool requiresUnsignedCall;
 }
 
+struct UnsignedData {
+  uint8 orderIndex;
+  bytes[] calls;
+}
+
 contract StrategyTarget01 is StrategyBase {
 
   /// @dev Execute an order within a signed array of orders
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
   /// @param strategy Strategy signed by owner [signed]
-  /// @param orderIndex Index of the order to execute [unsigned]
-  /// @param unsignedCalls Array of bytes data provided for the order's primitive functions that require unsigned calls [unsigned]
+  /// @param unsignedData Unsigned calldata [unsigned]
   function execute(
     Strategy calldata strategy,
-    uint8 orderIndex,
-    bytes[] calldata unsignedCalls
+    UnsignedData calldata unsignedData
   ) external {
-    if (orderIndex >= strategy.orders.length) {
+    if (unsignedData.orderIndex >= strategy.orders.length) {
       revert BadOrderIndex();
     }
 
     _delegateCallsWithRevert(strategy.beforeCalls);
 
     uint8 nextUnsignedCall = 0;
-    for (uint8 i = 0; i < strategy.orders[orderIndex].primitives.length; i++) {
-      Primitive calldata primitive = strategy.orders[orderIndex].primitives[i];
+    for (uint8 i = 0; i < strategy.orders[unsignedData.orderIndex].primitives.length; i++) {
+      Primitive calldata primitive = strategy.orders[unsignedData.orderIndex].primitives[i];
       bytes memory primitiveCallData;
       if (primitive.requiresUnsignedCall) {
-        if (nextUnsignedCall >= unsignedCalls.length) {
+        if (nextUnsignedCall >= unsignedData.calls.length) {
           revert UnsignedCallRequired();
         }
 
@@ -62,7 +65,7 @@ contract StrategyTarget01 is StrategyBase {
         }
 
         // concat signed and unsigned call bytes
-        primitiveCallData = bytes.concat(signedData, unsignedCalls[nextUnsignedCall]);
+        primitiveCallData = bytes.concat(signedData, unsignedData.calls[nextUnsignedCall]);
         nextUnsignedCall++;
       } else {
         primitiveCallData = primitive.data;
