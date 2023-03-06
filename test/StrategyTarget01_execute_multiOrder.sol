@@ -120,8 +120,10 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     vm.expectRevert(BitNotUsed.selector);
     strategyTarget.execute(
       strategy,
-      1, // order0
-      unsignedCalls_fillOrder1
+      UnsignedData(
+        1, // order0
+        unsignedCalls_fillOrder1
+      )
     );
 
     // track balances and execute the USDC->WETH order
@@ -129,8 +131,10 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     startBalances(TRADER_1);
     strategyTarget.execute(
       strategy,
-      0, // order0
-      unsignedCalls_fillOrder0
+      UnsignedData(
+        0, // order0
+        unsignedCalls_fillOrder0
+      )
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
@@ -144,8 +148,10 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     startBalances(TRADER_1);
     strategyTarget.execute(
       strategy,
-      1, // order0
-      unsignedCalls_fillOrder1
+      UnsignedData(
+        1, // order0
+        unsignedCalls_fillOrder1
+      )
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
