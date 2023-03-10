@@ -194,15 +194,20 @@ contract Primitives01 is TokenHelper, StrategyBase {
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenInAmount,
-    uint basePrice,
     IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
     UnsignedLimitSwapData memory data
   ) public {
     // get and update filled tokenIn amount for the swap
     uint filledTokenInAmount = getLimitSwapFilledAmount(id);
 
     // get the amount of tokenOut required for the requested tokenIn amount
-    uint tokenOutAmountRequired = priceCurve.getOutput(tokenInAmount, basePrice, filledTokenInAmount, data.tokenInAmount);
+    uint tokenOutAmountRequired = priceCurve.getOutput(
+      tokenInAmount,
+      filledTokenInAmount,
+      data.tokenInAmount,
+      priceCurveParams
+    );
   
     filledTokenInAmount += data.tokenInAmount;
     _setLimitSwapFilledAmount(id, filledTokenInAmount);

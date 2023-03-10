@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+import "../Interfaces/IPriceCurve.sol";
 import "./PriceCurveBase.sol";
 
 // linear curve defined as:
 // y = mx + b
 // where x=input and y=price
 
-contract LinearPriceCurve {
+contract LinearPriceCurve is IPriceCurve {
 
   uint256 internal constant Q96 = 0x1000000000000000000000000;
 

@@ -33,8 +33,8 @@ contract Primitives01_limitSwap is Test, Helper  {
       USDC_Token,
       WETH_Token,
       usdcInputAmount,
-      MAGIC_TWAP_PRICE_USDC_ETH_1000_0,
       flatPriceCurve,
+      abi.encode(MAGIC_TWAP_PRICE_USDC_ETH_1000_0),
       UnsignedLimitSwapData(
         address(filler),
         usdcInputAmount,
@@ -77,8 +77,8 @@ contract Primitives01_limitSwap is Test, Helper  {
       USDC_Token,
       WETH_Token,
       usdcInputAmount,
-      MAGIC_TWAP_PRICE_USDC_ETH_1000_0,
       flatPriceCurve,
+      abi.encode(MAGIC_TWAP_PRICE_USDC_ETH_1000_0),
       UnsignedLimitSwapData(
         address(filler),
         usdcInputAmount / 2,
