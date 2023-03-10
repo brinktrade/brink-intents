@@ -2,8 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "../Interfaces/IPriceCurve.sol";
-
-error MaxInputExceeded(uint remainingInput);
+import "./PriceCurveBase.sol";
 
 contract FlatPriceCurve is IPriceCurve {
 
