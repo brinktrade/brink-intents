@@ -11,6 +11,7 @@ import "../src/Interfaces/IDeployer.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
 import "../src/PriceCurves/FlatPriceCurve.sol";
+import "../src/PriceCurves/LinearPriceCurve.sol";
 import "../src/Primitives/Primitives01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
@@ -25,6 +26,7 @@ contract Helper is Test, Constants {
   ITwapAdapter public twapAdapter;
   ITwapAdapter public twapInverseAdapter;
   FlatPriceCurve public flatPriceCurve;
+  LinearPriceCurve public linearPriceCurve;
   Primitives01 public primitives;
   StrategyTarget01 public strategyTarget;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
@@ -159,6 +161,7 @@ contract Helper is Test, Constants {
     twapAdapter = ITwapAdapter(deployContract('out/TwapAdapter.sol/TwapAdapter.json'));
     twapInverseAdapter = ITwapAdapter(deployContract('out/TwapInverseAdapter.sol/TwapInverseAdapter.json'));
     flatPriceCurve = FlatPriceCurve(deployContract('out/FlatPriceCurve.sol/FlatPriceCurve.json'));
+    linearPriceCurve = LinearPriceCurve(deployContract('out/LinearPriceCurve.sol/LinearPriceCurve.json'));
     primitives = Primitives01(deployContract('out/Primitives01.sol/Primitives01.json'));
     strategyTarget = StrategyTarget01(deployContract('out/StrategyTarget01.sol/StrategyTarget01.json'));
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));

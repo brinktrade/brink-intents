@@ -2,8 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "../Interfaces/IPriceCurve.sol";
-
-error MaxInputExceeded(uint remainingInput);
+import "./PriceCurveBase.sol";
 
 contract FlatPriceCurve is IPriceCurve {
 
@@ -11,14 +10,16 @@ contract FlatPriceCurve is IPriceCurve {
 
   function getOutput (
     uint totalInput,
-    uint basePriceX96,
     uint filledInput,
-    uint input
+    uint input,
+    bytes memory curveParams
   ) public pure returns (uint output) {
     uint remainingInput = totalInput - filledInput;
     if (input > remainingInput) {
       revert MaxInputExceeded(remainingInput);
     }
+
+    uint basePriceX96 = abi.decode(curveParams, (uint));
 
     output = input * basePriceX96 / Q96;
   }
