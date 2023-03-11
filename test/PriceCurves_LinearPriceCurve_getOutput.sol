@@ -74,6 +74,14 @@ contract PriceCurves_LinearPriceCurve_getOutput is Test, Helper  {
     assertEq(output1, NFT_ETH_0_2_X96/Q96);
   }
 
-  // TODO: MaxInputExceeded error test
+  function testLinearPriceCurve_getOutput_maxInputExceeded () public {
+    vm.expectRevert(abi.encodeWithSelector(MaxInputExceeded.selector, 2));
+    linearPriceCurve.getOutput(
+      10, // 10 total
+      8,  // 8 filled
+      3, // reverts because only 2 remaining
+      new bytes(0)
+    );
+  }
 
 }
