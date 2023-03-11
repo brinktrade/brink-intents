@@ -1,38 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
-import "../Interfaces/IPriceCurve.sol";
 import "./PriceCurveBase.sol";
 
 // quadratic curve defined as:
 // y = ax^2 + b
 // where x=input and y=price
 
-// contract QuadraticPriceCurve is IPriceCurve {
-contract QuadraticPriceCurve {
+contract QuadraticPriceCurve is PriceCurveBase {
 
-  uint256 internal constant Q96 = 0x1000000000000000000000000;
-
-  function getOutput (
-    uint totalInput,
-    uint filledInput,
-    uint input,
-    bytes memory curveParams
-  ) public pure returns (uint output) {
-    uint remainingInput = totalInput - filledInput;
-    if (input > remainingInput) {
-      revert MaxInputExceeded(remainingInput);
-    }
-
+  function calcOutput (uint input, bytes memory curveParams) public pure override returns (uint output) {
     (int a, int b) = abi.decode(curveParams, (int, int));
-
-    uint filledOutput = calcOutput(filledInput, a, b);
-    uint totalOutput = calcOutput(filledInput + input, a, b);
-
-    output = totalOutput - filledOutput;
-  }
-
-  function calcOutput (uint input, int a, int b) public pure returns (uint output) {
     uint priceX96 = uint(a * int(input)**2 + b) / Q96;
     output = input * priceX96 / Q96;
   }
@@ -48,9 +26,11 @@ contract QuadraticPriceCurve {
    *
    * the curve is multiplied by Q96 to maintain precision
    */
-  function calcCurveParams (int totalInput, int priceX96_0, int priceX96_1) public pure returns (int a, int b) {
-    a = (priceX96_0 - priceX96_1) * int(Q96) / (3 * totalInput - 3 * totalInput**2);
-    b = priceX96_0 * int(Q96) - a;
+  function calcCurveParams (bytes memory curvePriceData) public pure override returns (bytes memory curveParams) {
+    (int totalInput, int priceX96_0, int priceX96_1) = abi.decode(curvePriceData, (int, int, int));
+    int a = (priceX96_0 - priceX96_1) * int(Q96) / (3 * totalInput - 3 * totalInput**2);
+    int b = priceX96_0 * int(Q96) - a;
+    curveParams = abi.encode(a, b);
   }
 
 }

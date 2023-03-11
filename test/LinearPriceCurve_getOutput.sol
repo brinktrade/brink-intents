@@ -16,11 +16,10 @@ contract LinearPriceCurve_getOutput is Test, Helper  {
 
     uint total = 1000 * 10**18;
 
-    // m and b could be calculated off-chain
-    (int m, int b) = linearPriceCurve.calcCurveParams(
-      int(total), int(ETH_USDC_1500_X96), int(ETH_USDC_1600_X96)
+    // curveParams could also be calculated off-chain
+    bytes memory curveParams = linearPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(ETH_USDC_1500_X96), int(ETH_USDC_1600_X96))
     );
-    bytes memory curveParams = abi.encode(m, b);
 
     uint output0 = linearPriceCurve.getOutput(
       total,
@@ -36,7 +35,7 @@ contract LinearPriceCurve_getOutput is Test, Helper  {
       total,
       999 * 10**18,
       1 * 10**18,
-      abi.encode(m, b)
+      curveParams
     );
     
     // approaching ~1,600 USDC out
@@ -50,10 +49,9 @@ contract LinearPriceCurve_getOutput is Test, Helper  {
 
     uint total = 15; // 15 NFT's in
 
-    (int m, int b) = linearPriceCurve.calcCurveParams(
-      int(total), int(NFT_ETH_0_1_X96), int(NFT_ETH_0_2_X96)
+    bytes memory curveParams = linearPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(NFT_ETH_0_1_X96), int(NFT_ETH_0_2_X96))
     );
-    bytes memory curveParams = abi.encode(m, b);
 
     uint output0 = linearPriceCurve.getOutput(
       total,
@@ -69,7 +67,7 @@ contract LinearPriceCurve_getOutput is Test, Helper  {
       total,
       14,
       1,
-      abi.encode(m, b)
+      curveParams
     );
     
     // last NFT input should be exactly price1

@@ -16,11 +16,10 @@ contract QuadraticPriceCurve_getOutput is Test, Helper  {
 
     uint total = 1000 * 10**18;
 
-    // a and b could be calculated off-chain
-    (int a, int b) = quadraticPriceCurve.calcCurveParams(
-      int(total), int(ETH_USDC_1500_X96), int(ETH_USDC_1600_X96)
+    // curveParams could also be calculated off-chain
+    bytes memory curveParams = quadraticPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(ETH_USDC_1500_X96), int(ETH_USDC_1600_X96))
     );
-    bytes memory curveParams = abi.encode(a, b);
 
     uint output0 = quadraticPriceCurve.getOutput(
       total,
@@ -50,10 +49,9 @@ contract QuadraticPriceCurve_getOutput is Test, Helper  {
 
     uint total = 15; // 15 NFT's in
 
-    (int a, int b) = quadraticPriceCurve.calcCurveParams(
-      int(total), int(NFT_ETH_0_1_X96), int(NFT_ETH_0_2_X96)
+    bytes memory curveParams = quadraticPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(NFT_ETH_0_1_X96), int(NFT_ETH_0_2_X96))
     );
-    bytes memory curveParams = abi.encode(a, b);
 
     uint output0 = quadraticPriceCurve.getOutput(
       total,
@@ -69,7 +67,7 @@ contract QuadraticPriceCurve_getOutput is Test, Helper  {
       total,
       14,
       1,
-      abi.encode(a, b)
+      curveParams
     );
     
     // last NFT input should be exactly price1
