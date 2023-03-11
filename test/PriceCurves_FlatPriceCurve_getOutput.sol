@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract FlatPriceCurve_getOutput is Test, Helper  {
+contract PriceCurves_FlatPriceCurve_getOutput is Test, Helper  {
 
   function setUp () public {
     setupAll();
