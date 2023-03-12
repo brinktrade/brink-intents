@@ -8,8 +8,6 @@ error MaxInputExceeded(uint remainingInput);
 abstract contract PriceCurveBase is IPriceCurve {
 
   uint256 public constant Q96 = 0x1000000000000000000000000;
-  uint256 public constant Q64 = 0x10000000000000000;
-  // uint256 public constant Q64 = 0x100;
 
   function getOutput (
     uint totalInput,
