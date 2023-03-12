@@ -74,6 +74,40 @@ contract PriceCurves_LinearPriceCurve_getOutput is Test, Helper  {
     assertEq(output1, NFT_ETH_0_2_X96/Q96);
   }
 
+  // testing with large price input values, should not overflow
+  function testLinearPriceCurve_largePriceInput_getOutput () public {
+    uint price0 = 1 * 10**18 * 10**18 * Q96;
+    uint price1 = 2 * 10**18 * 10**18 * Q96;
+    uint total = 15;
+
+    bytes memory curveParams = linearPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(price0), int(price1))
+    );
+
+    uint output0 = linearPriceCurve.getOutput(total, 0, 1, curveParams);
+    assertEq(output0, price0/Q96);
+
+    uint output1 = linearPriceCurve.getOutput(total, 14, 1, curveParams);
+    assertEq(output1, price1/Q96);
+  }
+
+  // testing with large total value, should not overflow
+  function testLinearPriceCurve_largeTotal_getOutput () public {
+    uint price0 = 10;
+    uint price1 = 25;
+    uint total = 15 * 10**28;
+
+    bytes memory curveParams = linearPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(price0), int(price1))
+    );
+
+    uint output0 = linearPriceCurve.getOutput(total, 0, 1, curveParams);
+    assertEq(output0, price0/Q96);
+
+    uint output1 = linearPriceCurve.getOutput(total, total-1, 1, curveParams);
+    assertEq(output1, price1/Q96);
+  }
+
   function testLinearPriceCurve_getOutput_maxInputExceeded () public {
     vm.expectRevert(abi.encodeWithSelector(MaxInputExceeded.selector, 2));
     linearPriceCurve.getOutput(

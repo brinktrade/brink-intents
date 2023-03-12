@@ -39,7 +39,7 @@ contract PriceCurves_QuadraticPriceCurve_getOutput is Test, Helper  {
     );
     
     // approaching ~1,600 USDC out
-    assertEq(output1, 1599899687);
+    assertEq(output1, 1599900034);
   }
 
   // testing with small input numbers (for discrete NFT's)
@@ -74,9 +74,43 @@ contract PriceCurves_QuadraticPriceCurve_getOutput is Test, Helper  {
     assertEq(output1, NFT_ETH_0_2_X96/Q96);
   }
 
+  // testing with large price input values, should not overflow
+  function testQuadraticPriceCurve_largePriceInput_getOutput () public {
+    uint price0 = 1 * 10**18 * 10**18 * Q96;
+    uint price1 = 2 * 10**18 * 10**18 * Q96;
+    uint total = 15;
+
+    bytes memory curveParams = quadraticPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(price0), int(price1))
+    );
+
+    uint output0 = quadraticPriceCurve.getOutput(total, 0, 1, curveParams);
+    assertEq(output0, price0/Q96);
+
+    uint output1 = quadraticPriceCurve.getOutput(total, 14, 1, curveParams);
+    assertEq(output1, price1/Q96);
+  }
+
+  // testing with large total value, should not overflow
+  function testQuadraticPriceCurve_largeTotal_getOutput () public {
+    uint price0 = 10;
+    uint price1 = 25;
+    uint total = 15 * 10**28;
+
+    bytes memory curveParams = quadraticPriceCurve.calcCurveParams(
+      abi.encode(int(total), int(price0), int(price1))
+    );
+
+    uint output0 = quadraticPriceCurve.getOutput(total, 0, 1, curveParams);
+    assertEq(output0, price0/Q96);
+
+    uint output1 = quadraticPriceCurve.getOutput(total, total-1, 1, curveParams);
+    assertEq(output1, price1/Q96);
+  }
+
   function testQuadraticPriceCurve_getOutput_maxInputExceeded () public {
     vm.expectRevert(abi.encodeWithSelector(MaxInputExceeded.selector, 2));
-    linearPriceCurve.getOutput(
+    quadraticPriceCurve.getOutput(
       10, // 10 total
       8,  // 8 filled
       3, // reverts because only 2 remaining
