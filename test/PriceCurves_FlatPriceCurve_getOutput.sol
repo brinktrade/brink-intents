@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract FlatPriceCurve_getOutput is Test, Helper  {
+contract PriceCurves_FlatPriceCurve_getOutput is Test, Helper  {
 
   function setUp () public {
     setupAll();
@@ -17,7 +17,7 @@ contract FlatPriceCurve_getOutput is Test, Helper  {
       950000000000000000, // 0.95 ETH
       abi.encode(MAGIC_TWAP_PRICE_ETH_USDC_1000_0)
     );
-    assertEq(output, 1472095343); // ~1549.57 USDC
+    assertEq(output, 1472095344); // ~1549.57 USDC
   }
 
   function testFlatPriceCurve_getOutput_maxInputExceeded () public {

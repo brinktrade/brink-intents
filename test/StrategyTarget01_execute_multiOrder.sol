@@ -63,8 +63,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
         WETH_Token,
         DOODLES_Token,
         5*10**17, // 0.5 WETH
-        1,
         flatPriceCurve,
+        abi.encode(1),
         new bytes(0) // add an empty dynamic bytes, which will be overwritten by UnsignedLimitSwapData
       ),
       true

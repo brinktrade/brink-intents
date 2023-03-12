@@ -4,25 +4,25 @@ pragma solidity ^0.8.13;
 import "./PriceCurveBase.sol";
 import "./CurveMath.sol";
 
-// linear curve defined as:
-// y = ax + b
+// quadratic curve defined as:
+// y = ax^2 + b
 // where x=input and y=price
 
-contract LinearPriceCurve is PriceCurveBase, CurveMath {
+contract QuadraticPriceCurve is PriceCurveBase, CurveMath {
 
   function calcOutput (uint input, bytes memory curveParams) public pure override returns (uint output) {
     (int a, int b, uint multiplier) = abi.decode(curveParams, (int, int, uint));
-    uint priceX96 = uint(a * int(input) + b) / multiplier;
+    uint priceX96 = uint(a * int(input)**2 + b) / multiplier;
     output = input * priceX96 / Q96;
   }
 
   /** 
-   * calc a and b for a linear curve (y = ax + b)
+   * calc a and b for a quadratic curve (y = ax^2 + b)
    *
    * unit 1 on this curve will sell for p0
    * unit T-1 on this curve will sell for p1
    *
-   * a = (p1 - p0) / (2*T - 2)
+   * a = (p0 - p1) / (3*T - 3*T^2)
    * b = p0 - a
    *
    * the curve is multiplied by `multiplier` to maintain precision
@@ -31,8 +31,8 @@ contract LinearPriceCurve is PriceCurveBase, CurveMath {
    */
   function calcCurveParams (bytes memory curvePriceData) public pure override returns (bytes memory curveParams) {
     (int totalInput, int priceX96_0, int priceX96_1) = abi.decode(curvePriceData, (int, int, int));
-    int n = priceX96_1 - priceX96_0;
-    int d = 2 * totalInput - 2;
+    int n = priceX96_0 - priceX96_1;
+    int d = 3 * totalInput - 3 * totalInput**2;
     uint multiplier = calcMultiplier(n, d);
     int a = n * int(multiplier) / d;
     int b = priceX96_0 * int(multiplier) - a;
