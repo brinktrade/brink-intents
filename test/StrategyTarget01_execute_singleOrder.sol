@@ -69,8 +69,8 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
     Strategy memory strategy = Strategy(
       address(primitives),
       orders,
-      new Call[](0),
-      new Call[](0)
+      new bytes[](0),
+      new bytes[](0)
     );
 
     UnsignedData memory unsignedData = UnsignedData(0, unsignedCalls);

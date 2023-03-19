@@ -14,8 +14,8 @@ error UnsignedCallRequired();
 struct Strategy {
   address primitiveTarget;
   Order[] orders;
-  Call[] beforeCalls;
-  Call[] afterCalls;
+  bytes[] beforeCalls;
+  bytes[] afterCalls;
 }
 
 struct Order {
@@ -46,7 +46,7 @@ contract StrategyTarget01 is StrategyBase {
       revert BadOrderIndex();
     }
 
-    _delegateCallsWithRevert(strategy.beforeCalls);
+    _delegateCallsWithRevert(strategy.primitiveTarget, strategy.beforeCalls);
 
     uint8 nextUnsignedCall = 0;
     for (uint8 i = 0; i < strategy.orders[unsignedData.orderIndex].primitives.length; i++) {
@@ -76,12 +76,15 @@ contract StrategyTarget01 is StrategyBase {
       }));
     }
 
-    _delegateCallsWithRevert(strategy.afterCalls);
+    _delegateCallsWithRevert(strategy.primitiveTarget, strategy.afterCalls);
   }
 
-  function _delegateCallsWithRevert (Call[] calldata calls) internal {
+  function _delegateCallsWithRevert (address targetContract, bytes[] calldata calls) internal {
     for (uint8 i = 0; i < calls.length; i++) {
-      _delegateCallWithRevert(calls[i]);
+      _delegateCallWithRevert(Call({
+        targetContract: targetContract,
+        data: calls[i]
+      }));
     }
   }
 
