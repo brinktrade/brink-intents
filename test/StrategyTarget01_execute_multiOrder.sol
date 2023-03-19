@@ -105,8 +105,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     Strategy memory strategy = Strategy(
       address(primitives),
       orders,
-      new Call[](0),
-      new Call[](0)
+      new bytes[](0),
+      new bytes[](0)
     );
 
     // approve for both orders
