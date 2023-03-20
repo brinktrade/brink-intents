@@ -199,7 +199,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
     UnsignedLimitSwapData memory data
   ) public {
     // get and update filled tokenIn amount for the swap
-    uint filledTokenInAmount = getLimitSwapFilledAmount(id);
+    uint filledTokenInAmount = getLimitSwapFilledAmount(id, tokenInAmount);
 
     // get the amount of tokenOut required for the requested tokenIn amount
     uint tokenOutAmountRequired = priceCurve.getOutput(
@@ -210,7 +210,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
     );
   
     filledTokenInAmount += data.tokenInAmount;
-    _setLimitSwapFilledAmount(id, filledTokenInAmount);
+    _setLimitSwapFilledAmount(id, filledTokenInAmount, tokenInAmount);
 
     _fillSwap(
       tokenIn,
@@ -338,14 +338,22 @@ contract Primitives01 is TokenHelper, StrategyBase {
     token1Amount = uint(int(token1Amount) + feeAmount);
   }
 
-  function getLimitSwapFilledAmount (bytes32 limitSwapId) public view returns (uint filledAmount) {
-    bytes32 position = keccak256(abi.encode(limitSwapId, "filledAmount"));
-    assembly { filledAmount := sload(position) } 
+  function getLimitSwapFilledAmount (bytes32 limitSwapId, uint totalAmount) public view returns (uint filledAmount) {
+    filledAmount = getLimitSwapFilledPercent(limitSwapId) * totalAmount / Q96;
   }
 
-  function _setLimitSwapFilledAmount (bytes32 limitSwapId, uint filledAmount) internal {
-    bytes32 position = keccak256(abi.encode(limitSwapId, "filledAmount"));
-    assembly { sstore(position, filledAmount) } 
+  function getLimitSwapFilledPercent (bytes32 limitSwapId) public view returns (uint FilledPercent) {
+    bytes32 position = keccak256(abi.encode(limitSwapId, "FilledPercent"));
+    assembly { FilledPercent := sload(position) } 
+  }
+
+  function _setLimitSwapFilledAmount (bytes32 limitSwapId, uint filledAmount, uint totalAmount) internal {
+    _setLimitSwapFilledPercent(limitSwapId, filledAmount * Q96 / totalAmount);
+  }
+
+  function _setLimitSwapFilledPercent (bytes32 limitSwapId, uint filledPercent) internal {
+    bytes32 position = keccak256(abi.encode(limitSwapId, "FilledPercent"));
+    assembly { sstore(position, filledPercent) } 
   }
 
   function _sign (int n) internal pure returns (int8 sign) {
