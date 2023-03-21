@@ -23,7 +23,7 @@ contract Primitives01_limitSwap is Test, Helper  {
 
     bytes32 limitSwapId = keccak256("123");
 
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId), 0);
+    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, usdcInputAmount), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
@@ -47,7 +47,7 @@ contract Primitives01_limitSwap is Test, Helper  {
     endBalances(address(filler));
     endBalances(TRADER_1);
 
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId), usdcInputAmount);
+    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, usdcInputAmount), usdcInputAmount);
     
     assertEq(diffBalance(USDC, TRADER_1), -int(usdcInputAmount));
     assertEq(diffBalance(USDC, address(filler)), int(usdcInputAmount));
@@ -66,7 +66,7 @@ contract Primitives01_limitSwap is Test, Helper  {
 
     bytes32 limitSwapId = keccak256("123");
 
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId), 0);
+    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, usdcInputAmount), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
@@ -91,7 +91,7 @@ contract Primitives01_limitSwap is Test, Helper  {
     endBalances(address(filler));
     endBalances(TRADER_1);
 
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId), usdcInputAmount / 2);
+    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, usdcInputAmount), usdcInputAmount / 2);
     
     assertEq(diffBalance(USDC, TRADER_1), -int(usdcInputAmount / 2));
     assertEq(diffBalance(USDC, address(filler)), int(usdcInputAmount / 2));
