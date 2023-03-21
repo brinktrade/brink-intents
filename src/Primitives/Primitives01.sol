@@ -39,7 +39,7 @@ struct UnsignedMarketSwapData {
 
 struct UnsignedLimitSwapData {
   address recipient;
-  uint tokenInAmount;
+  uint amount;
   IdsProof tokenInIdsProof;
   IdsProof tokenOutIdsProof;
   Call fillCall;
@@ -187,8 +187,8 @@ contract Primitives01 is TokenHelper, StrategyBase {
     );
   }
 
-  // fill all or part of a swap for tokenIn -> tokenOut. Price curve calculates output based on input
-  function limitSwap (
+  // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenInAmount. Price curve calculates output based on input
+  function limitSwapExactInput (
     bytes32 id,
     address owner,
     Token memory tokenIn,
@@ -205,11 +205,11 @@ contract Primitives01 is TokenHelper, StrategyBase {
     uint tokenOutAmountRequired = priceCurve.getOutput(
       tokenInAmount,
       filledTokenInAmount,
-      data.tokenInAmount,
+      data.amount,
       priceCurveParams
     );
   
-    filledTokenInAmount += data.tokenInAmount;
+    filledTokenInAmount += data.amount;
     _setLimitSwapFilledAmount(id, filledTokenInAmount, tokenInAmount);
 
     _fillSwap(
@@ -217,8 +217,47 @@ contract Primitives01 is TokenHelper, StrategyBase {
       tokenOut,
       owner,
       data.recipient,
-      data.tokenInAmount,
+      data.amount,
       tokenOutAmountRequired,
+      data.tokenInIdsProof,
+      data.tokenOutIdsProof,
+      data.fillCall
+    );
+  }
+
+  // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenOutAmount. Price curve calculates input based on output
+  function limitSwapExactOutput (
+    bytes32 id,
+    address owner,
+    Token memory tokenIn,
+    Token memory tokenOut,
+    uint tokenOutAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    UnsignedLimitSwapData memory data
+  ) public {
+    // get and update filled tokenOut amount for the swap
+    uint filledTokenOutAmount = getLimitSwapFilledAmount(id, tokenOutAmount);
+
+    // get the amount of tokenIn required for the requested tokenOut amount.
+    // the getOutput() function is used to calculate the input amount, because the price curve is inverted
+    uint tokenInAmountRequired = priceCurve.getOutput(
+      tokenOutAmount,
+      filledTokenOutAmount,
+      data.amount,
+      priceCurveParams
+    );
+  
+    filledTokenOutAmount += data.amount;
+    _setLimitSwapFilledAmount(id, filledTokenOutAmount, tokenOutAmount);
+
+    _fillSwap(
+      tokenIn,
+      tokenOut,
+      owner,
+      data.recipient,
+      data.amount,
+      tokenInAmountRequired,
       data.tokenInIdsProof,
       data.tokenOutIdsProof,
       data.fillCall
@@ -342,9 +381,9 @@ contract Primitives01 is TokenHelper, StrategyBase {
     filledAmount = getLimitSwapFilledPercent(limitSwapId) * totalAmount / Q96;
   }
 
-  function getLimitSwapFilledPercent (bytes32 limitSwapId) public view returns (uint FilledPercent) {
-    bytes32 position = keccak256(abi.encode(limitSwapId, "FilledPercent"));
-    assembly { FilledPercent := sload(position) } 
+  function getLimitSwapFilledPercent (bytes32 limitSwapId) public view returns (uint filledPercent) {
+    bytes32 position = keccak256(abi.encode(limitSwapId, "filledPercent"));
+    assembly { filledPercent := sload(position) } 
   }
 
   function _setLimitSwapFilledAmount (bytes32 limitSwapId, uint filledAmount, uint totalAmount) internal {
@@ -352,7 +391,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
   }
 
   function _setLimitSwapFilledPercent (bytes32 limitSwapId, uint filledPercent) internal {
-    bytes32 position = keccak256(abi.encode(limitSwapId, "FilledPercent"));
+    bytes32 position = keccak256(abi.encode(limitSwapId, "filledPercent"));
     assembly { sstore(position, filledPercent) } 
   }
 
