@@ -25,6 +25,7 @@ error InvalidTokenOutIds();
 error BitUsed();
 error BitNotUsed();
 error SwapIdsAreEqual();
+error InvalidSwapIdsLength();
 
 struct UnsignedTransferData {
   address recipient;
@@ -299,8 +300,18 @@ contract Primitives01 is TokenHelper, StrategyBase {
 
   // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
   // Should be used for swaps with the same pairs, i.e. A->B and A->B
-  function bindLimitSwapFills (bytes32[] memory swapsIds) public {
-    
+  function bindLimitSwapFills (bytes32[] memory swapIds) public {
+    if (swapIds.length < 2) {
+      revert InvalidSwapIdsLength();
+    }
+
+    uint swap0Fill = getLimitSwapFilledPercent(swapIds[0]);
+    for (uint8 i = 1; i < swapIds.length; i++) {
+      if (swapIds[i] == swapIds[0]) {
+        revert SwapIdsAreEqual();
+      }
+      _setLimitSwapFilledPercent(swapIds[i], swap0Fill);
+    }
   }
 
   // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
