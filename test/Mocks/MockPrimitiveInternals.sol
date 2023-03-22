@@ -7,4 +7,8 @@ contract MockPrimitiveInternals is Primitives01 {
   function fillSwap (Token memory tokenIn, Token memory tokenOut, address owner, address recipient, uint tokenInAmount, uint tokenOutAmount, IdsProof memory tokenInIdsProof, IdsProof memory tokenOutIdsProof, Call memory fillCall) external {
     _fillSwap(tokenIn, tokenOut, owner, recipient, tokenInAmount, tokenOutAmount, tokenInIdsProof, tokenOutIdsProof, fillCall);
   }
+
+  function setLimitSwapFilledAmount(bytes32 limitSwapId, uint filledAmount, uint totalAmount) external {
+    _setLimitSwapFilledAmount(limitSwapId, filledAmount, totalAmount);
+  }
 }

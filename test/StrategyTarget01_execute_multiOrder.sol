@@ -57,7 +57,7 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     );
     primitives_order1[1] = Primitive(
       abi.encodeWithSelector(
-        Primitives01.limitSwap.selector,
+        Primitives01.limitSwapExactInput.selector,
         keccak256("123"),
         TRADER_1,
         WETH_Token,

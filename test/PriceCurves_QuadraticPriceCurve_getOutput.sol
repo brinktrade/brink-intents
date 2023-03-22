@@ -91,21 +91,25 @@ contract PriceCurves_QuadraticPriceCurve_getOutput is Test, Helper  {
     assertEq(output1, price1/Q96);
   }
 
-  // testing with large total value, should not overflow
+  // testing with large total value and small price values, should not overflow
   function testQuadraticPriceCurve_largeTotal_getOutput () public {
-    uint price0 = 10;
-    uint price1 = 25;
-    uint total = 15 * 10**28;
+    uint price0 = 10 * Q96 / 10**(18-6);
+    uint price1 = 25 * Q96 / 10**(18-6);
+    uint total = 15_000_000_000_000 * 10**18;
+
+    uint input = 1 * 10**18;
 
     bytes memory curveParams = quadraticPriceCurve.calcCurveParams(
       abi.encode(int(total), int(price0), int(price1))
     );
 
-    uint output0 = quadraticPriceCurve.getOutput(total, 0, 1, curveParams);
-    assertEq(output0, price0/Q96);
+    // first 1 (10**18) input, should be swapped at price0
+    uint output0 = quadraticPriceCurve.getOutput(total, 0, input, curveParams);
+    assertEq(output0/input, price0/Q96);
 
-    uint output1 = quadraticPriceCurve.getOutput(total, total-1, 1, curveParams);
-    assertEq(output1, price1/Q96);
+    // last 1 (10**18) input, should be swapped at a price approaching price1
+    uint output1 = quadraticPriceCurve.getOutput(total, total-input, input, curveParams);
+    assertEq(output1/input, (price1-1)/Q96);
   }
 
   function testQuadraticPriceCurve_getOutput_maxInputExceeded () public {

@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_limitSwap is Test, Helper  {
+contract Primitives01_limitSwapExactInput is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -12,7 +12,7 @@ contract Primitives01_limitSwap is Test, Helper  {
     setupTrader1();
   }
 
-  function testLimitSwap_full () public {
+  function testLimitSwapExactInput_full () public {
     uint usdcInputAmount = 1450_000000;
 
     vm.prank(TRADER_1);
@@ -27,7 +27,7 @@ contract Primitives01_limitSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitives.limitSwap(
+    primitives.limitSwapExactInput(
       limitSwapId,
       TRADER_1,
       USDC_Token,
@@ -55,7 +55,7 @@ contract Primitives01_limitSwap is Test, Helper  {
     assertEq(diffBalance(WETH, address(filler)), -int(wethOutputAmount));
   }
 
-  function testLimitSwap_partial () public {
+  function testLimitSwapExactInput_partial () public {
     uint usdcInputAmount = 1450_000000;
 
     vm.prank(TRADER_1);
@@ -71,7 +71,7 @@ contract Primitives01_limitSwap is Test, Helper  {
     startBalances(TRADER_1);
 
     // fill 50%
-    primitives.limitSwap(
+    primitives.limitSwapExactInput(
       limitSwapId,
       TRADER_1,
       USDC_Token,

@@ -3,16 +3,27 @@ pragma solidity ^0.8.13;
 
 import "openzeppelin/utils/math/SignedMath.sol";
 
+import "forge-std/console.sol";
+
 contract CurveMath {
   using SignedMath for int256;
 
+  // calculates a multiplier to use when dividing two integers to maximize precision while avoiding arithmetic overflow
   function calcMultiplier (int numerator, int denominator) public pure returns (uint multiplier) {
     multiplier = 1;
-    int8 magDiff = int8(
-      int(magnitude(numerator.abs())) - int(magnitude(denominator.abs()))
-    );
+    // calc the magnitudes of the numerator and denominator
+    uint8 nMag = uint8(magnitude(numerator.abs()));
+    uint8 dMag = uint8(magnitude(denominator.abs()));
+
+    // calc the difference in numerator and denominator magnitudes
+    int8 magDiff = int8(int8(nMag) - int8(dMag));
+
+    // if the the numerator is not at least 18 orders of magnitude larger than the denominator
     if (magDiff < 18) {
-      multiplier = 10**(uint8(18-magDiff));
+      // set the multiplier magnitude so that the numerator mag + multiplier mag is 18 greater than the denominator mag.
+      // if numerator mag + multiplier mag is greater than 75, set the multiplier mag to 75 - numerator mag, to prevent overflow.
+      uint8 mMag = minUint8(uint8(18 - magDiff), 75 - nMag);
+      multiplier = 10**mMag;
     }
   }
   
@@ -44,6 +55,10 @@ contract CurveMath {
       }
     }
     return result;
+  }
+
+  function minUint8(uint8 a, uint8 b) public pure returns (uint8) {
+    return a < b ? a : b;
   }
 
 }
