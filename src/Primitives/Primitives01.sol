@@ -256,8 +256,8 @@ contract Primitives01 is TokenHelper, StrategyBase {
       tokenOut,
       owner,
       data.recipient,
-      data.amount,
       tokenInAmountRequired,
+      data.amount,
       data.tokenInIdsProof,
       data.tokenOutIdsProof,
       data.fillCall
@@ -378,7 +378,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
   }
 
   function getLimitSwapFilledAmount (bytes32 limitSwapId, uint totalAmount) public view returns (uint filledAmount) {
-    filledAmount = getLimitSwapFilledPercent(limitSwapId) * totalAmount / Q96;
+    filledAmount = getLimitSwapFilledPercent(limitSwapId).mulDiv(totalAmount, Q96);
   }
 
   function getLimitSwapFilledPercent (bytes32 limitSwapId) public view returns (uint filledPercent) {
@@ -387,7 +387,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
   }
 
   function _setLimitSwapFilledAmount (bytes32 limitSwapId, uint filledAmount, uint totalAmount) internal {
-    _setLimitSwapFilledPercent(limitSwapId, filledAmount * Q96 / totalAmount);
+    _setLimitSwapFilledPercent(limitSwapId, filledAmount.mulDiv(Q96, totalAmount) + 1);
   }
 
   function _setLimitSwapFilledPercent (bytes32 limitSwapId, uint filledPercent) internal {
