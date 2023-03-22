@@ -335,12 +335,8 @@ contract Primitives01 is TokenHelper, StrategyBase {
     IdsProof memory tokenOutIdsProof,
     Call memory fillCall
   ) internal {
-    if (!verifyTokenIds(tokenIn, tokenInIdsProof)) {
-      revert InvalidTokenInIds();
-    }
-    if (!verifyTokenIds(tokenOut, tokenOutIdsProof)) {
-      revert InvalidTokenOutIds();
-    }
+    verifyTokenIds(tokenIn, tokenInIdsProof);
+    verifyTokenIds(tokenOut, tokenOutIdsProof);
 
     transferFrom(tokenIn.addr, tokenIn.standard, owner, recipient, tokenInAmount, tokenInIdsProof.ids);
 
