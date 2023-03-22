@@ -33,7 +33,10 @@ error MerkleProofsRequired();
 error ERC1155IdNotProvided();
 error OwnerHasNft();
 error InvalidIds();
+error IdMismatch();
 error IdsLengthZero();
+error DuplicateIds();
+error InvalidMerkleProof();
 
 contract TokenHelper {
 
@@ -111,10 +114,10 @@ contract TokenHelper {
     }
   }
 
-  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal view returns (bool valid) {
+  function verifyTokenIds (Token memory token, IdsProof memory idsProof) internal view {
     // if token specifies a single id, verify that one proof id is provided that matches
     if (token.id > 0 && !(idsProof.ids.length == 1 && idsProof.ids[0] == token.id)) {
-      return false;
+      revert IdMismatch();
     }
 
     // if token specifies a merkle root for ids, verify merkle proofs provided for the ids
@@ -127,7 +130,26 @@ contract TokenHelper {
         token.idsMerkleRoot
       )
     ) {
-      return false;
+      revert InvalidMerkleProof();
+    }
+
+    // if token is ERC721 or ERC1155 and does not specify a merkleRoot or Id, verify that no duplicate ids are provided
+    if (
+      (
+        token.standard == TokenStandard.ERC721 ||
+        token.standard == TokenStandard.ERC1155
+      ) &&
+      token.idsMerkleRoot == bytes32(0) &&
+      token.id == 0 &&
+      idsProof.ids.length > 1
+    ) {
+      for (uint8 i=0; i<idsProof.ids.length; i++) {
+        for (uint8 j=i+1; j<idsProof.ids.length; j++) {
+          if (idsProof.ids[i] == idsProof.ids[j]) {
+            revert DuplicateIds();
+          }
+        }
+      }
     }
 
     // if token has disallowFlagged=true, verify status proofs provided for the ids
@@ -140,8 +162,6 @@ contract TokenHelper {
         idsProof.statusProof_signatures
       );
     }
-    
-    return true;
   }
 
   function verifyTokenIdsNotFlagged (

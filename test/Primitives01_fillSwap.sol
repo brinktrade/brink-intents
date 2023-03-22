@@ -311,12 +311,12 @@ contract Primitives01_fillSwap is Test, Helper  {
     assertEq(diffBalance(THE_MEMES, 8, address(filler)), -2);
   }
 
-  // InvalidTokenInIds() error
-  function testFillSwap_InvalidTokenInIds () public {
+  // InvalidMerkleProof() error
+  function testFillSwap_InvalidMerkleProof_tokenIn () public {
     (,IdsProof memory idsIn) = doodlesProof_3643();
     idsIn.ids[0] = 1111;
 
-    vm.expectRevert(InvalidTokenInIds.selector);
+    vm.expectRevert(InvalidMerkleProof.selector);
     primitiveInternals.fillSwap(
       DOODLES_Token_5268_4631_3643,
       USDC_Token,
@@ -330,12 +330,12 @@ contract Primitives01_fillSwap is Test, Helper  {
     );
   }
 
-  // InvalidTokenOutIds() error
-  function testFillSwap_InvalidTokenOutIds () public {
+  // InvalidMerkleProof() error
+  function testFillSwap_InvalidMerkleProof_tokenOut () public {
     (,IdsProof memory idsOut) = doodlesProof_3643();
     idsOut.ids[0] = 1111;
 
-    vm.expectRevert(InvalidTokenOutIds.selector);
+    vm.expectRevert(InvalidMerkleProof.selector);
     primitiveInternals.fillSwap(
       USDC_Token,
       DOODLES_Token_5268_4631_3643,
@@ -447,6 +447,69 @@ contract Primitives01_fillSwap is Test, Helper  {
       address(filler),
       60_000000,
       3, // requires 3 ids but fillCall only provides 2
+      EMPTY_IDS_PROOF,
+      outIds,
+      Call(address(filler), fillCall)
+    );
+  }
+
+  // erc20 to erc721 (any id) swap, filler provides duplicate ids
+  function testFillSwap_duplicateIdsInFillCall_erc721 () public {
+    vm.prank(TRADER_1);
+    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+
+    // fill with 5268
+    uint[] memory fillIds = new uint[](1);
+    fillIds[0] = 5268;
+    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, DOODLES, TokenStandard.ERC721, TRADER_1, 0, fillIds);
+
+    // filler provides two ids, both 5268
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
+    outIds.ids = new uint[](2);
+    outIds.ids[0] = 5268;
+    outIds.ids[1] = 5268;
+
+    vm.expectRevert(DuplicateIds.selector);
+    primitiveInternals.fillSwap(
+      USDC_Token,
+      DOODLES_Token,
+      TRADER_1,
+      address(filler),
+      500_000000,
+      2,
+      EMPTY_IDS_PROOF,
+      outIds,
+      Call(address(filler), fillCall)
+    );
+  }
+
+  // erc20 to erc1155 (any id), filler provides duplicate ids
+  function testFillSwap_duplicateIdsInFillCall_erc1155 () public {
+    vm.prank(TRADER_1);
+    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+
+    // fill with 1 of id=8
+    uint[] memory ids = new uint[](2);
+    ids[0] = 8;
+    bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, THE_MEMES, TokenStandard.ERC1155, TRADER_1, 0, ids);
+
+    // filler provides 2 ids, both 8
+    IdsProof memory outIds = EMPTY_IDS_PROOF;
+    outIds.ids = new uint[](2);
+    outIds.ids[0] = 8;
+    outIds.ids[1] = 8;
+
+    startBalances(address(filler));
+    startBalances(TRADER_1);
+
+    vm.expectRevert(DuplicateIds.selector);
+    primitiveInternals.fillSwap(
+      USDC_Token,
+      THE_MEMES_Token,
+      TRADER_1,
+      address(filler),
+      60_000000,
+      2,
       EMPTY_IDS_PROOF,
       outIds,
       Call(address(filler), fillCall)

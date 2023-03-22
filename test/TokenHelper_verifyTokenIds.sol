@@ -10,59 +10,63 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     setupAll();
   }
 
-  // when given an ERC20 token with no merkle root, should return true
+  // when given an ERC20 token with no merkle root, should not revert
   function testVerifyTokenIds_noMerkleRoot_erc20 () public {
-    assertEq(tokenHelper.verifyTokenIds_internal(USDC_Token, EMPTY_IDS_PROOF), true);
+    tokenHelper.verifyTokenIds_internal(USDC_Token, EMPTY_IDS_PROOF);
   }
 
-  // when given an ERC721 token with no merkle root, should return true
+  // when given an ERC721 token with no merkle root, should not revert
   function testVerifyTokenIds_noMerkleRoot_erc721 () public {
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, EMPTY_IDS_PROOF), true);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token, EMPTY_IDS_PROOF);
   }
 
-  // when given a token with no merkle root or token.id, should return true
+  // when given a token with no merkle root or token.id, should not revert
   function testVerifyTokenIds_noMerkleRoot_noTokenId () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
     IdsProof memory idsProof = IdsProof(
       ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token, idsProof), true);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token, idsProof);
   }
 
-  // when given a token with a merkle root and a valid proof, should return true
+  // when given a token with a merkle root and a valid proof, should not revert
   function testVerifyTokenIds_withMerkleRoot_validProof () public {  
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, merkleProofForDoodle9107()), true);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, merkleProofForDoodle9107());
   }
 
-  // when given a token with a merkle root and an invalid proof, should return false
+  // when given a token with a merkle root and an invalid proof, should revert with InvalidMerkleProof()
   function testVerifyTokenIds_withMerkleRoot_invalidProof () public {
     IdsProof memory idsProof = merkleProofForDoodle9107();
     idsProof.ids[0] = 476; // not in proof
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, idsProof), false);
+
+    vm.expectRevert(InvalidMerkleProof.selector);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_With_Merkle_Root, idsProof);
   }
 
-  // when given a token with id and matching merkleProofIds, should return true
+  // when given a token with id and matching merkleProofIds, should not revert
   function testVerifyTokenIds_tokenWithId_matchingMerkleProofIds () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
     IdsProof memory idsProof = IdsProof(
       ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), true);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof);
   }
 
-  // when given a token with id and unmatching merkleProofIds, should return false
+  // when given a token with id and unmatching merkleProofIds, should revert with IdMismatch()
   function testVerifyTokenIds_tokenWithId_unmatchingMerkleProofIds () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 789;
     IdsProof memory idsProof = IdsProof(
       ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), false);
+
+    vm.expectRevert(IdMismatch.selector);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof);
   }
 
-  // when given a token with id and more than one merkle proof ids, should return false
+  // when given a token with id and more than one merkle proof ids, should revert with IdMismatch()
   function testVerifyTokenIds_tokenWithId_multipleMerkleProofIds () public {
     uint[] memory ids = new uint[](2);
     ids[0] = 476;
@@ -70,15 +74,17 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     IdsProof memory idsProof = IdsProof(
       ids, new bytes32[](0), new bool[](0), new uint[](0), new uint[](0), new bytes[](0)
     );
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof), false);
+    vm.expectRevert(IdMismatch.selector);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, idsProof);
   }
 
-  // when given a token with id and zero merkle proof ids, should return false
+  // when given a token with id and zero merkle proof ids, should revert with IdMismatch()
   function testVerifyTokenIds_tokenWithId_zeroMerkleProofIds () public {
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, EMPTY_IDS_PROOF), false);
+    vm.expectRevert(IdMismatch.selector);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_476, EMPTY_IDS_PROOF);
   }
 
-  // when given a token that disallows flagged with valid signatures for status proof, should return true
+  // when given a token that disallows flagged with valid signatures for status proof, should not revert
   function testVerifyTokenIds_disallowFlagged_validSignatures () public {
     uint[] memory ids = new uint[](1);
     ids[0] = 476;
@@ -88,7 +94,7 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     idsProof.statusProof_lastTransferTimes[0] = 1676959331;
     idsProof.statusProof_timestamps[0] = 1677101603;
     idsProof.statusProof_signatures[0] = hex"64a07dbfacabcc58f056278bd8784b87f012c0805bbc022f99958182bb20d6c226bfbca2839fa33bdb412dce7944c1891d88fd55d747848cf0f72de6857f0d7c1b";
-    assertEq(tokenHelper.verifyTokenIds_internal(DOODLES_Token_DisallowFlagged, idsProof), true);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token_DisallowFlagged, idsProof);
   }
 
   // when given a token that disallows flagged with invalid signatures for status proof, should revert
@@ -102,6 +108,26 @@ contract TokenHelper_verifyTokenIds is Test, Helper  {
     // will revert with ExceedsValidTime() because timestamp for status proof is 0
     vm.expectRevert(ExceedsValidTime.selector);
     tokenHelper.verifyTokenIds_internal(DOODLES_Token_DisallowFlagged, idsProof);
+  }
+
+  function testVerifyTokenIds_duplicates_noMerkleRoot_erc721 () public {
+    IdsProof memory idsProof = EMPTY_IDS_PROOF;
+    idsProof.ids = new uint[](2);
+    idsProof.ids[0] = 476;
+    idsProof.ids[1] = 476;
+    
+    vm.expectRevert(DuplicateIds.selector);
+    tokenHelper.verifyTokenIds_internal(DOODLES_Token, idsProof);
+  }
+
+  function testVerifyTokenIds_duplicates_noMerkleRoot_erc1155 () public {
+    IdsProof memory idsProof = EMPTY_IDS_PROOF;
+    idsProof.ids = new uint[](2);
+    idsProof.ids[0] = 8;
+    idsProof.ids[1] = 8;
+
+    vm.expectRevert(DuplicateIds.selector);
+    tokenHelper.verifyTokenIds_internal(THE_MEMES_Token, idsProof);
   }
 
 }
