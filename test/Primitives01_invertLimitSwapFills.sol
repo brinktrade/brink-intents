@@ -4,64 +4,57 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_limitSwap is Test, Helper  {
+contract Primitives01_invertLimitSwapFills is Test, Helper  {
+
+  bytes32 id0;
+  bytes32 id1;
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
     setupFiller();
     setupTrader1();
+    id0 = keccak256("0000");
+    id1 = keccak256("1111");
   }
 
-  function testInvertLimitSwapFills () public {
-    // uint wethInputAmount = 1450_000000;
+  // when swap0 is 2/3 filled, sets swap1 to 1/3 filled
+  function testInvertLimitSwapFills_from_2_3 () public {
+    primitiveInternals.setLimitSwapFilledAmount(id0, 2, 3);
+    primitiveInternals.invertLimitSwapFills(id0, id1);
+    assertEq(primitiveInternals.getLimitSwapFilledAmount(id1, 3), 1);
+  }
 
-    // vm.prank(TRADER_1);
-    // USDC_ERC20.approve(address(primitives), usdcInputAmount);
+  // when swap0 is 1/100 filled, sets swap1 to 99/100 filled
+  function testInvertLimitSwapFills_from_1_100 () public {
+    primitiveInternals.setLimitSwapFilledAmount(id0, 1, 100);
+    primitiveInternals.invertLimitSwapFills(id0, id1);
+    assertEq(primitiveInternals.getLimitSwapFilledAmount(id1, 100), 99);
+  }
 
-    // uint wethOutputAmount = usdcInputAmount * MAGIC_TWAP_PRICE_USDC_ETH_1000_0 / Q96;
-    // bytes memory fillCall50Percent = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, wethOutputAmount / 4, new uint[](0));
+  // when swap0 is 99/100 filled, sets swap1 to 1/100 filled
+  function testInvertLimitSwapFills_from_99_100 () public {
+    primitiveInternals.setLimitSwapFilledAmount(id0, 99, 100);
+    primitiveInternals.invertLimitSwapFills(id0, id1);
+    assertEq(primitiveInternals.getLimitSwapFilledAmount(id1, 100), 1);
+  }
 
-    // bytes32 limitSwapId = keccak256("123");
+  // when swap0 is 0% filled, sets swap1 to 100% filled
+  function testInvertLimitSwapFills_from_0 () public {
+    primitiveInternals.invertLimitSwapFills(id0, id1);
+    assertEq(primitiveInternals.getLimitSwapFilledAmount(id1, 1000), 1000);
+  }
 
-    // assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, usdcInputAmount), 0);
-    // startBalances(address(filler));
-    // startBalances(TRADER_1);
+  // when swap0 is 100% filled, sets swap1 to 0% filled
+  function testInvertLimitSwapFills_from_100 () public {
+    primitiveInternals.setLimitSwapFilledAmount(id0, 1000, 1000);
+    primitiveInternals.invertLimitSwapFills(id0, id1);
+    assertEq(primitiveInternals.getLimitSwapFilledAmount(id1, 1000), 0);
+  }
 
-    // // fill 25%
-    // primitives.limitSwap(
-    //   limitSwapId,
-    //   TRADER_1,
-    //   WETH_Token,
-    //   DOODLES_Token,
-    //   usdcInputAmount,
-    //   flatPriceCurve,
-    //   abi.encode(MAGIC_TWAP_PRICE_USDC_ETH_1000_0),
-    //   UnsignedLimitSwapData(
-    //     address(filler),
-    //     usdcInputAmount / 4,
-    //     EMPTY_IDS_PROOF,
-    //     EMPTY_IDS_PROOF,
-    //     Call(address(filler), fillCall50Percent)
-    //   )
-    // );
-
-
-    // // D0 -> 1.2 ETH
-    // // D1 -> 1.3 ETH
-    // // 1.29 ETH -> D1
-    // // 1.19 ETH -> D0
-
-
-
-    // endBalances(address(filler));
-    // endBalances(TRADER_1);
-
-    // assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, usdcInputAmount), usdcInputAmount / 4);
-    
-    // assertEq(diffBalance(USDC, TRADER_1), -int(usdcInputAmount / 4));
-    // assertEq(diffBalance(USDC, address(filler)), int(usdcInputAmount / 4));
-    // assertEq(diffBalance(WETH, TRADER_1), int(wethOutputAmount / 4));
-    // assertEq(diffBalance(WETH, address(filler)), -int(wethOutputAmount / 4));
+  // when swap0 and swap1 are the same, should revert with SwapIdsAreEqual()
+  function testInvertLimitSwapFills_sameIds () public {
+    vm.expectRevert(SwapIdsAreEqual.selector);
+    primitiveInternals.invertLimitSwapFills(id0, id0);
   }
 
 }

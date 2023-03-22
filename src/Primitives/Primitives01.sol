@@ -24,6 +24,7 @@ error InvalidTokenInIds();
 error InvalidTokenOutIds();
 error BitUsed();
 error BitNotUsed();
+error SwapIdsAreEqual();
 
 struct UnsignedTransferData {
   address recipient;
@@ -278,7 +279,22 @@ contract Primitives01 is TokenHelper, StrategyBase {
   // if swap0 fill amount decreases, increase fill amount for swap1 by the same amount.
   // Should be used for swaps with opposite pairs, i.e. A->B and B->A
   function invertLimitSwapFills (bytes32 swap0, bytes32 swap1) public {
-    
+    if (swap0 == swap1) {
+      revert SwapIdsAreEqual();
+    }
+
+    uint swap1Fill;
+    {
+      uint swap0Fill = getLimitSwapFilledPercent(swap0);
+      if (swap0Fill == 0) {
+        swap1Fill = Q96;
+      } else if (swap0Fill >= Q96) {
+        swap1Fill = 0;
+      } else {
+        swap1Fill = Q96 - swap0Fill + 1;
+      }
+    }
+    _setLimitSwapFilledPercent(swap1, swap1Fill);
   }
 
   // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
