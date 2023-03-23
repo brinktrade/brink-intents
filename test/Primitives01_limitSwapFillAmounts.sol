@@ -10,33 +10,30 @@ contract Primitives01_limitSwapFillAmounts is Test, Helper  {
 
   using Math for uint;
 
-  bytes32 id;
-
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
     setupFiller();
     setupTrader1();
-    id = keccak256("12345");
   }
 
   function testLimitSwapFillAmounts_precision_2_3 () public {
-    primitiveInternals.setLimitSwapFilledAmount(id, 2, 3);
-    assertEq(primitiveInternals.getLimitSwapFilledAmount(id, 3), 2);
+    primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 2, 3);
+    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 3), 2);
   }
 
   function testLimitSwapFillAmounts_precision_29_30 () public {
-    primitiveInternals.setLimitSwapFilledAmount(id, 2999, 3000);
-    assertEq(primitiveInternals.getLimitSwapFilledAmount(id, 3000), 2999);
+    primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 2999, 3000);
+    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 3000), 2999);
   }
 
   function testLimitSwapFillAmounts_precision_largeDenominator () public {
-    primitiveInternals.setLimitSwapFilledAmount(id, 1, 10**9);
-    assertEq(primitiveInternals.getLimitSwapFilledAmount(id, 10**9), 1);
+    primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 1, 10**9);
+    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 10**9), 1);
   }
 
   function testLimitSwapFillAmounts_precision_largeNumbers () public {
-    primitiveInternals.setLimitSwapFilledAmount(id, 2 * 10**26, 3 * 10**26);
-    assertEq(primitiveInternals.getLimitSwapFilledAmount(id, 3 * 10**26), 2 * 10**26);
+    primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 2 * 10**26, 3 * 10**26);
+    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 3 * 10**26), 2 * 10**26);
   }
 
 }

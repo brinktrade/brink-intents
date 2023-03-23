@@ -132,6 +132,8 @@ contract Helper is Test, Constants {
     new bytes[](0)
   );
 
+  FillStateParams DEFAULT_FILL_STATE_PARAMS = FillStateParams(12345, 0, true);
+
   address public proxy0_signerAddress;
   bytes32 public proxy0_signerPrivateKey;
   IAccount public proxy0_account;
@@ -284,13 +286,14 @@ contract Helper is Test, Constants {
   //    ETH:       32_500000000000000000
   //    WETH:      13_500000000000000000
   //    USDC:      128000_000000
-  //    DOODLES:   5268, 4631, 3989
+  //    DOODLES:   5268, 4631, 3989, 1170
   //    THE_MEMES: [8]:5, [14]:7, [55]:13
   function assetSeed0 (address account) public {
-    uint[] memory doodlesIds = new uint[](3);
+    uint[] memory doodlesIds = new uint[](4);
     doodlesIds[0] = 5268;
     doodlesIds[1] = 4631;
     doodlesIds[2] = 3989;
+    doodlesIds[3] = 1170;
     uint[] memory memesIds = new uint[](3);
     memesIds[0] = 8;
     memesIds[1] = 14;

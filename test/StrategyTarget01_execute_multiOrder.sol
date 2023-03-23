@@ -58,13 +58,13 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     primitives_order1[1] = Primitive(
       abi.encodeWithSelector(
         Primitives01.limitSwapExactInput.selector,
-        keccak256("123"),
         TRADER_1,
         WETH_Token,
         DOODLES_Token,
         5*10**17, // 0.5 WETH
         flatPriceCurve,
         abi.encode(1),
+        DEFAULT_FILL_STATE_PARAMS,
         new bytes(0) // add an empty dynamic bytes, which will be overwritten by UnsignedLimitSwapData
       ),
       true
@@ -121,7 +121,7 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     strategyTarget.execute(
       strategy,
       UnsignedData(
-        1, // order0
+        1, // order1
         unsignedCalls_fillOrder1
       )
     );
@@ -149,7 +149,7 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     strategyTarget.execute(
       strategy,
       UnsignedData(
-        1, // order0
+        1, // order1
         unsignedCalls_fillOrder1
       )
     );
