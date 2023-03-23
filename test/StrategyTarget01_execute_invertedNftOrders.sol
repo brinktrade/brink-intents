@@ -6,12 +6,8 @@ import "./Helper.sol";
 
 contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
-  function setUp () public {
-    setupAll(BLOCK_FEB_12_2023);
-  }
-
   /*
-    test for an inverted NFT market making (aka "range order"):
+    tests for an inverted NFT market making (aka "range order"):
 
     Market make 6 DOODLE's, from range from 0.8 ETH -> 1.3 ETH, w/ spread fee of 0.05 ETH,
     Assume current "floor" is 1.2, so start with buy side at 1.1 ETH, and sell side at 1.25 ETH 
@@ -19,19 +15,31 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     order_0: limitSwapExactOutput linearCurve(1.3 ETH -> 0.8 ETH) -> 6 DOODLES, start at 1.1 ETH -> 1 DOODLES
     order_1: limitSwapExactInput 6 DOODLES -> linearCurve(0.85 ETH -> 1.35 ETH), start at 1 DOODLES -> 1.25 ETH
   */
-  function testExecute_invertedNftOrders () public {
+  
+  function setUp () public {
+    setupAll(BLOCK_FEB_12_2023);
     setupFiller();
     setupTrader1();
+  }
 
-    Strategy memory strategy;
+  function createInvertedNftStrategy () public returns (
+    Strategy memory strategy,
+    uint nftTotal,
+    uint ethTotal,
+    bytes memory nftBuyCurveParams,
+    bytes memory nftSellCurveParams,
+    FillStateParams memory nftBuyFillStateParams,
+    FillStateParams memory nftSellFillStateParams
+  ) {
+    strategy;
 
     uint nftTotal = 6;
     uint ethTotal = 66 * 10**17; // 6.6 ETH
       
-    bytes memory nftBuyCurveParams;
-    bytes memory nftSellCurveParams;
-    FillStateParams memory nftBuyFillStateParams = DEFAULT_FILL_STATE_PARAMS;
-    FillStateParams memory nftSellFillStateParams = DEFAULT_FILL_STATE_PARAMS;
+    nftBuyCurveParams;
+    nftSellCurveParams;
+    nftBuyFillStateParams = DEFAULT_FILL_STATE_PARAMS;
+    nftSellFillStateParams = DEFAULT_FILL_STATE_PARAMS;
 
     {
       {
@@ -116,7 +124,19 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     WETH_ERC20.approve(address(strategyTarget), ethTotal);
     vm.prank(TRADER_1);
     DOODLES_ERC721.setApprovalForAll(address(strategyTarget), true);
+  }
 
+  function testExecute_invertedNftOrders_buyAndSell () public {
+    (
+      Strategy memory strategy,
+      uint nftTotal,
+      uint ethTotal,
+      bytes memory nftBuyCurveParams,
+      bytes memory nftSellCurveParams,
+      FillStateParams memory nftBuyFillStateParams,
+      FillStateParams memory nftSellFillStateParams
+    ) = createInvertedNftStrategy();
+    
     // fill an NFT "buy" for TRADER_1
     bytes[] memory unsignedFillCalls = new bytes[](1);
     uint[] memory ids = new uint[](1);
