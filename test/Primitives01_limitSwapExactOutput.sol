@@ -102,7 +102,6 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
 
     // "calcOutput" calcs the weth input based on 2 out of 3 NFT output
     uint wethPartialInput = linearPriceCurve.calcOutput(nftPartialOutput, curveParams);
-    console.log("wethPartialInput: %s", wethPartialInput);
 
     vm.prank(TRADER_1);
     WETH_ERC20.approve(address(primitives), wethPartialInput);

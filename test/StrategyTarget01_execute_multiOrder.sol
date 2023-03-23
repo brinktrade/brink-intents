@@ -121,7 +121,7 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     strategyTarget.execute(
       strategy,
       UnsignedData(
-        1, // order0
+        1, // order1
         unsignedCalls_fillOrder1
       )
     );
@@ -149,7 +149,7 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     strategyTarget.execute(
       strategy,
       UnsignedData(
-        1, // order0
+        1, // order1
         unsignedCalls_fillOrder1
       )
     );

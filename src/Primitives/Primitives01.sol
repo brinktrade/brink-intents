@@ -431,7 +431,6 @@ contract Primitives01 is TokenHelper, StrategyBase {
   function _setFillPercentX96 (FillStateParams memory fillStateParams, uint fillPercentX96) internal {
     int8 i = fillStateParams.sign ? int8(1) : -1;
     int j = fillStateParams.sign ? int(0) : int(Q96);
-    console.logInt((i * int128(fillStateParams.startX96) + j - int(fillPercentX96)) * i);
     _setFillState(
       fillStateParams.id,
       (i * int128(fillStateParams.startX96) + j - int(fillPercentX96)) * -1
