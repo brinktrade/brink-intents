@@ -282,46 +282,6 @@ contract Primitives01 is TokenHelper, StrategyBase {
 
   }
 
-  // TODO: re-implement these using the FillStateParams struct, or remove them
-
-  // // invert the allowed swap amount states between two limit swaps.
-  // // if swap0 fill amount decreases, increase fill amount for swap1 by the same amount.
-  // // Should be used for swaps with opposite pairs, i.e. A->B and B->A
-  // function invertLimitSwapFills (bytes32 swap0, bytes32 swap1) public {
-  //   if (swap0 == swap1) {
-  //     revert SwapIdsAreEqual();
-  //   }
-
-  //   uint swap1Fill;
-  //   {
-  //     uint swap0Fill = getFillState(swap0);
-  //     if (swap0Fill == 0) {
-  //       swap1Fill = Q96;
-  //     } else if (swap0Fill >= Q96) {
-  //       swap1Fill = 0;
-  //     } else {
-  //       swap1Fill = Q96 - swap0Fill + 1;
-  //     }
-  //   }
-  //   _setFillState(swap1, swap1Fill);
-  // }
-
-  // // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
-  // // Should be used for swaps with the same pairs, i.e. A->B and A->B
-  // function bindLimitSwapFills (bytes32[] memory swapIds) public {
-  //   if (swapIds.length < 2) {
-  //     revert InvalidSwapIdsLength();
-  //   }
-
-  //   uint swap0Fill = getFillState(swapIds[0]);
-  //   for (uint8 i = 1; i < swapIds.length; i++) {
-  //     if (swapIds[i] == swapIds[0]) {
-  //       revert SwapIdsAreEqual();
-  //     }
-  //     _setFillState(swapIds[i], swap0Fill);
-  //   }
-  // }
-
   // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
   // // incentivizes initialization of the auction with initializerFee
   // function dutchAuction (bytes32 id, Token memory tokenA, Token memory tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) public {
