@@ -53,20 +53,18 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     doodleIdsProof.ids[1] = 4631;
     doodleIdsProof.ids[2] = 3989;
 
-    bytes32 limitSwapId = keccak256("123");
-
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, nftTotalOutput), 0);
+    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
     primitives.limitSwapExactOutput(
-      limitSwapId,
       TRADER_1,
       WETH_Token,
       DOODLES_Token,
       nftTotalOutput,
       linearPriceCurve,
       curveParams,
+      DEFAULT_FILL_STATE_PARAMS,
       UnsignedLimitSwapData(
         address(filler),
         nftTotalOutput,
@@ -79,7 +77,7 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     endBalances(address(filler));
     endBalances(TRADER_1);
 
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, nftTotalOutput), nftTotalOutput);
+    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), nftTotalOutput);
     
     assertEq(diffBalance(WETH, TRADER_1), -int(wethTotalInput));
     assertEq(diffBalance(WETH, address(filler)), int(wethTotalInput));
@@ -124,20 +122,18 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     doodleIdsProof.ids[0] = 5268;
     doodleIdsProof.ids[1] = 4631;
 
-    bytes32 limitSwapId = keccak256("123");
-
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, nftTotalOutput), 0);
+    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
     primitives.limitSwapExactOutput(
-      limitSwapId,
       TRADER_1,
       WETH_Token,
       DOODLES_Token,
       nftTotalOutput,
       linearPriceCurve,
       curveParams,
+      DEFAULT_FILL_STATE_PARAMS,
       UnsignedLimitSwapData(
         address(filler),
         nftPartialOutput,
@@ -151,7 +147,7 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     endBalances(TRADER_1);
 
     // expect fill percent to be 2/3, so fill amount when given total NFT output of 3 should return 2
-    assertEq(primitives.getLimitSwapFilledAmount(limitSwapId, nftTotalOutput), nftPartialOutput);
+    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), nftPartialOutput);
     
     // trader should have wethPartialInput less WETH
     assertEq(diffBalance(WETH, TRADER_1), -int(wethPartialInput));

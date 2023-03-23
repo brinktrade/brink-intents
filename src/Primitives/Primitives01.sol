@@ -27,6 +27,12 @@ error BitNotUsed();
 error SwapIdsAreEqual();
 error InvalidSwapIdsLength();
 
+struct FillStateParams {
+  uint64 id;
+  uint128 startX96;
+  bool sign;
+}
+
 struct UnsignedTransferData {
   address recipient;
   IdsProof idsProof;
@@ -191,17 +197,17 @@ contract Primitives01 is TokenHelper, StrategyBase {
 
   // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenInAmount. Price curve calculates output based on input
   function limitSwapExactInput (
-    bytes32 id,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenInAmount,
     IPriceCurve priceCurve,
     bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams,
     UnsignedLimitSwapData memory data
   ) public {
     // get and update filled tokenIn amount for the swap
-    uint filledTokenInAmount = getLimitSwapFilledAmount(id, tokenInAmount);
+    uint filledTokenInAmount = getFillAmount(fillStateParams, tokenInAmount);
 
     // get the amount of tokenOut required for the requested tokenIn amount
     uint tokenOutAmountRequired = priceCurve.getOutput(
@@ -212,7 +218,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
     );
   
     filledTokenInAmount += data.amount;
-    _setLimitSwapFilledAmount(id, filledTokenInAmount, tokenInAmount);
+    _setFillAmount(fillStateParams, filledTokenInAmount, tokenInAmount);
 
     _fillSwap(
       tokenIn,
@@ -229,17 +235,17 @@ contract Primitives01 is TokenHelper, StrategyBase {
 
   // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenOutAmount. Price curve calculates input based on output
   function limitSwapExactOutput (
-    bytes32 id,
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
     uint tokenOutAmount,
     IPriceCurve priceCurve,
     bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams,
     UnsignedLimitSwapData memory data
   ) public {
     // get and update filled tokenOut amount for the swap
-    uint filledTokenOutAmount = getLimitSwapFilledAmount(id, tokenOutAmount);
+    uint filledTokenOutAmount = getFillAmount(fillStateParams, tokenOutAmount);
 
     // get the amount of tokenIn required for the requested tokenOut amount.
     // the getOutput() function is used to calculate the input amount, because the price curve is inverted
@@ -251,7 +257,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
     );
   
     filledTokenOutAmount += data.amount;
-    _setLimitSwapFilledAmount(id, filledTokenOutAmount, tokenOutAmount);
+    _setFillAmount(fillStateParams, filledTokenOutAmount, tokenOutAmount);
 
     _fillSwap(
       tokenIn,
@@ -276,43 +282,45 @@ contract Primitives01 is TokenHelper, StrategyBase {
 
   }
 
-  // invert the allowed swap amount states between two limit swaps.
-  // if swap0 fill amount decreases, increase fill amount for swap1 by the same amount.
-  // Should be used for swaps with opposite pairs, i.e. A->B and B->A
-  function invertLimitSwapFills (bytes32 swap0, bytes32 swap1) public {
-    if (swap0 == swap1) {
-      revert SwapIdsAreEqual();
-    }
+  // TODO: re-implement these using the FillStateParams struct, or remove them
 
-    uint swap1Fill;
-    {
-      uint swap0Fill = getLimitSwapFilledPercent(swap0);
-      if (swap0Fill == 0) {
-        swap1Fill = Q96;
-      } else if (swap0Fill >= Q96) {
-        swap1Fill = 0;
-      } else {
-        swap1Fill = Q96 - swap0Fill + 1;
-      }
-    }
-    _setLimitSwapFilledPercent(swap1, swap1Fill);
-  }
+  // // invert the allowed swap amount states between two limit swaps.
+  // // if swap0 fill amount decreases, increase fill amount for swap1 by the same amount.
+  // // Should be used for swaps with opposite pairs, i.e. A->B and B->A
+  // function invertLimitSwapFills (bytes32 swap0, bytes32 swap1) public {
+  //   if (swap0 == swap1) {
+  //     revert SwapIdsAreEqual();
+  //   }
 
-  // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
-  // Should be used for swaps with the same pairs, i.e. A->B and A->B
-  function bindLimitSwapFills (bytes32[] memory swapIds) public {
-    if (swapIds.length < 2) {
-      revert InvalidSwapIdsLength();
-    }
+  //   uint swap1Fill;
+  //   {
+  //     uint swap0Fill = getFillState(swap0);
+  //     if (swap0Fill == 0) {
+  //       swap1Fill = Q96;
+  //     } else if (swap0Fill >= Q96) {
+  //       swap1Fill = 0;
+  //     } else {
+  //       swap1Fill = Q96 - swap0Fill + 1;
+  //     }
+  //   }
+  //   _setFillState(swap1, swap1Fill);
+  // }
 
-    uint swap0Fill = getLimitSwapFilledPercent(swapIds[0]);
-    for (uint8 i = 1; i < swapIds.length; i++) {
-      if (swapIds[i] == swapIds[0]) {
-        revert SwapIdsAreEqual();
-      }
-      _setLimitSwapFilledPercent(swapIds[i], swap0Fill);
-    }
-  }
+  // // binds the fill amounts of multiple swaps together, such that if one swap is filled, the other swaps will be set to the same fill amount.
+  // // Should be used for swaps with the same pairs, i.e. A->B and A->B
+  // function bindLimitSwapFills (bytes32[] memory swapIds) public {
+  //   if (swapIds.length < 2) {
+  //     revert InvalidSwapIdsLength();
+  //   }
+
+  //   uint swap0Fill = getFillState(swapIds[0]);
+  //   for (uint8 i = 1; i < swapIds.length; i++) {
+  //     if (swapIds[i] == swapIds[0]) {
+  //       revert SwapIdsAreEqual();
+  //     }
+  //     _setFillState(swapIds[i], swap0Fill);
+  //   }
+  // }
 
   // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
   // // incentivizes initialization of the auction with initializerFee
@@ -400,22 +408,39 @@ contract Primitives01 is TokenHelper, StrategyBase {
     token1Amount = uint(int(token1Amount) + feeAmount);
   }
 
-  function getLimitSwapFilledAmount (bytes32 limitSwapId, uint totalAmount) public view returns (uint filledAmount) {
-    filledAmount = getLimitSwapFilledPercent(limitSwapId).mulDiv(totalAmount, Q96);
+  function getFillAmount (FillStateParams memory fillStateParams, uint totalAmount) public view returns (uint fillAmount) {
+    fillAmount = getFillPercentX96(fillStateParams).mulDiv(totalAmount, Q96);
   }
 
-  function getLimitSwapFilledPercent (bytes32 limitSwapId) public view returns (uint filledPercent) {
-    bytes32 position = keccak256(abi.encode(limitSwapId, "filledPercent"));
-    assembly { filledPercent := sload(position) } 
+  function getFillPercentX96 (FillStateParams memory fillStateParams) public view returns (uint fillPercent) {
+    int fillState = getFillState(fillStateParams.id);
+    int8 i = fillStateParams.sign ? int8(1) : -1;
+    int j = fillStateParams.sign ? int(0) : int(Q96);
+    fillPercent = uint((fillState + int128(fillStateParams.startX96)) * i + j);
   }
 
-  function _setLimitSwapFilledAmount (bytes32 limitSwapId, uint filledAmount, uint totalAmount) internal {
-    _setLimitSwapFilledPercent(limitSwapId, filledAmount.mulDiv(Q96, totalAmount) + 1);
+  function getFillState (uint64 fillStateId) public view returns (int fillState) {
+    bytes32 position = keccak256(abi.encode(fillStateId, "fillState"));
+    assembly { fillState := sload(position) } 
   }
 
-  function _setLimitSwapFilledPercent (bytes32 limitSwapId, uint filledPercent) internal {
-    bytes32 position = keccak256(abi.encode(limitSwapId, "filledPercent"));
-    assembly { sstore(position, filledPercent) } 
+  function _setFillAmount (FillStateParams memory fillStateParams, uint fillAmount, uint totalAmount) internal {
+    _setFillPercentX96(fillStateParams, fillAmount.mulDiv(Q96, totalAmount) + 1);
+  }
+
+  function _setFillPercentX96 (FillStateParams memory fillStateParams, uint fillPercentX96) internal {
+    int8 i = fillStateParams.sign ? int8(1) : -1;
+    int j = fillStateParams.sign ? int(0) : int(Q96);
+    console.logInt((i * int128(fillStateParams.startX96) + j - int(fillPercentX96)) * i);
+    _setFillState(
+      fillStateParams.id,
+      (i * int128(fillStateParams.startX96) + j - int(fillPercentX96)) * -1
+    );
+  }
+
+  function _setFillState (uint64 fillStateId, int fillState) internal {
+    bytes32 position = keccak256(abi.encode(fillStateId, "fillState"));
+    assembly { sstore(position, fillState) } 
   }
 
   function _sign (int n) internal pure returns (int8 sign) {

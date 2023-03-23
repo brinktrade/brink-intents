@@ -132,6 +132,8 @@ contract Helper is Test, Constants {
     new bytes[](0)
   );
 
+  FillStateParams DEFAULT_FILL_STATE_PARAMS = FillStateParams(12345, 0, true);
+
   address public proxy0_signerAddress;
   bytes32 public proxy0_signerPrivateKey;
   IAccount public proxy0_account;
