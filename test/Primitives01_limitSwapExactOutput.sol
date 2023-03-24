@@ -53,7 +53,7 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     doodleIdsProof.ids[1] = 4631;
     doodleIdsProof.ids[2] = 3989;
 
-    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), 0);
+    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
@@ -77,7 +77,7 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     endBalances(address(filler));
     endBalances(TRADER_1);
 
-    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), nftTotalOutput);
+    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), nftTotalOutput);
     
     assertEq(diffBalance(WETH, TRADER_1), -int(wethTotalInput));
     assertEq(diffBalance(WETH, address(filler)), int(wethTotalInput));
@@ -121,7 +121,7 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     doodleIdsProof.ids[0] = 5268;
     doodleIdsProof.ids[1] = 4631;
 
-    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), 0);
+    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
@@ -146,7 +146,7 @@ contract Primitives01_limitSwapExactOutput is Test, Helper  {
     endBalances(TRADER_1);
 
     // expect fill percent to be 2/3, so fill amount when given total NFT output of 3 should return 2
-    assertEq(primitives.getFillAmount(DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), nftPartialOutput);
+    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, nftTotalOutput), nftPartialOutput);
     
     // trader should have wethPartialInput less WETH
     assertEq(diffBalance(WETH, TRADER_1), -int(wethPartialInput));

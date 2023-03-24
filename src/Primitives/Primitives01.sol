@@ -10,6 +10,7 @@ import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
 import "../Libraries/Bit.sol";
 import "../TokenHelper/TokenHelper.sol";
+import "../Utils/LimitSwapIO.sol";
 
 error NftIdAlreadyOwned();
 error NotEnoughNftReceived();
@@ -26,12 +27,6 @@ error BitUsed();
 error BitNotUsed();
 error SwapIdsAreEqual();
 error InvalidSwapIdsLength();
-
-struct FillStateParams {
-  uint64 id;
-  uint128 startX96;
-  bool sign;
-}
 
 struct UnsignedTransferData {
   address recipient;
@@ -57,11 +52,9 @@ struct UnsignedStakeProofData {
   bytes stakerSignature;
 }
 
-contract Primitives01 is TokenHelper, StrategyBase {
+contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
   using Math for uint256;
   using SignedMath for int256;
-
-  uint256 internal constant Q96 = 0x1000000000000000000000000;
 
   ICallExecutor constant CALL_EXECUTOR_V2 = ICallExecutor(0x6FE756B9C61CF7e9f11D96740B096e51B64eBf13);
 
@@ -195,7 +188,8 @@ contract Primitives01 is TokenHelper, StrategyBase {
     );
   }
 
-  // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenInAmount. Price curve calculates output based on input
+  // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenInAmount.
+  // Price curve calculates output based on input
   function limitSwapExactInput (
     address owner,
     Token memory tokenIn,
@@ -206,19 +200,18 @@ contract Primitives01 is TokenHelper, StrategyBase {
     FillStateParams memory fillStateParams,
     UnsignedLimitSwapData memory data
   ) public {
-    // get and update filled tokenIn amount for the swap
-    uint filledTokenInAmount = getFillAmount(fillStateParams, tokenInAmount);
+    int fillStateX96 = getFillStateX96(fillStateParams.id);
+    uint filledInput = getFilledAmount(fillStateParams, fillStateX96, tokenInAmount);
 
-    // get the amount of tokenOut required for the requested tokenIn amount
-    uint tokenOutAmountRequired = priceCurve.getOutput(
-      tokenInAmount,
-      filledTokenInAmount,
+    uint tokenOutAmountRequired = limitSwapExactInput_getOutput(
       data.amount,
+      filledInput,
+      tokenInAmount,
+      priceCurve,
       priceCurveParams
     );
-  
-    filledTokenInAmount += data.amount;
-    _setFillAmount(fillStateParams, filledTokenInAmount, tokenInAmount);
+
+    _setFillAmount(fillStateParams, filledInput + data.amount, tokenInAmount);
 
     _fillSwap(
       tokenIn,
@@ -233,7 +226,8 @@ contract Primitives01 is TokenHelper, StrategyBase {
     );
   }
 
-  // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenOutAmount. Price curve calculates input based on output
+  // fill all or part of a swap for tokenIn -> tokenOut, with exact tokenOutAmount.
+  // Price curve calculates input based on output
   function limitSwapExactOutput (
     address owner,
     Token memory tokenIn,
@@ -244,20 +238,18 @@ contract Primitives01 is TokenHelper, StrategyBase {
     FillStateParams memory fillStateParams,
     UnsignedLimitSwapData memory data
   ) public {
-    // get and update filled tokenOut amount for the swap
-    uint filledTokenOutAmount = getFillAmount(fillStateParams, tokenOutAmount);
+    int fillStateX96 = getFillStateX96(fillStateParams.id);
+    uint filledOutput = getFilledAmount(fillStateParams, fillStateX96, tokenOutAmount);
 
-    // get the amount of tokenIn required for the requested tokenOut amount.
-    // the getOutput() function is used to calculate the input amount, because the price curve is inverted
-    uint tokenInAmountRequired = priceCurve.getOutput(
-      tokenOutAmount,
-      filledTokenOutAmount,
+    uint tokenInAmountRequired = limitSwapExactOutput_getInput(
       data.amount,
+      filledOutput,
+      tokenOutAmount,
+      priceCurve,
       priceCurveParams
     );
-  
-    filledTokenOutAmount += data.amount;
-    _setFillAmount(fillStateParams, filledTokenOutAmount, tokenOutAmount);
+
+    _setFillAmount(fillStateParams, filledOutput + data.amount, tokenOutAmount);
 
     _fillSwap(
       tokenIn,
@@ -368,18 +360,7 @@ contract Primitives01 is TokenHelper, StrategyBase {
     token1Amount = uint(int(token1Amount) + feeAmount);
   }
 
-  function getFillAmount (FillStateParams memory fillStateParams, uint totalAmount) public view returns (uint fillAmount) {
-    fillAmount = getFillPercentX96(fillStateParams).mulDiv(totalAmount, Q96);
-  }
-
-  function getFillPercentX96 (FillStateParams memory fillStateParams) public view returns (uint fillPercent) {
-    int fillState = getFillState(fillStateParams.id);
-    int8 i = fillStateParams.sign ? int8(1) : -1;
-    int j = fillStateParams.sign ? int(0) : int(Q96);
-    fillPercent = uint((fillState + int128(fillStateParams.startX96)) * i + j);
-  }
-
-  function getFillState (uint64 fillStateId) public view returns (int fillState) {
+  function getFillStateX96 (uint64 fillStateId) public view returns (int fillState) {
     bytes32 position = keccak256(abi.encode(fillStateId, "fillState"));
     assembly { fillState := sload(position) } 
   }
