@@ -6,34 +6,36 @@ import "./Helper.sol";
 
 import "openzeppelin/utils/math/Math.sol";
 
-contract Primitives01_limitSwapFillAmounts is Test, Helper  {
+contract LimitSwapIO_getFilledAmount is Test, Helper  {
 
   using Math for uint;
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
-    setupFiller();
-    setupTrader1();
   }
 
   function testLimitSwapFillAmounts_precision_2_3 () public {
     primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 2, 3);
-    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 3), 2);
+    int fillStateX96 = primitiveInternals.getFillStateX96(DEFAULT_FILL_STATE_PARAMS.id);
+    assertEq(primitiveInternals.getFilledAmount(DEFAULT_FILL_STATE_PARAMS, fillStateX96, 3), 2);
   }
 
   function testLimitSwapFillAmounts_precision_29_30 () public {
     primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 2999, 3000);
-    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 3000), 2999);
+    int fillStateX96 = primitiveInternals.getFillStateX96(DEFAULT_FILL_STATE_PARAMS.id);
+    assertEq(primitiveInternals.getFilledAmount(DEFAULT_FILL_STATE_PARAMS, fillStateX96, 3000), 2999);
   }
 
   function testLimitSwapFillAmounts_precision_largeDenominator () public {
     primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 1, 10**9);
-    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 10**9), 1);
+    int fillStateX96 = primitiveInternals.getFillStateX96(DEFAULT_FILL_STATE_PARAMS.id);
+    assertEq(primitiveInternals.getFilledAmount(DEFAULT_FILL_STATE_PARAMS, fillStateX96, 10**9), 1);
   }
 
   function testLimitSwapFillAmounts_precision_largeNumbers () public {
     primitiveInternals.setFillAmount(DEFAULT_FILL_STATE_PARAMS, 2 * 10**26, 3 * 10**26);
-    assertEq(primitiveInternals.getFillAmount(DEFAULT_FILL_STATE_PARAMS, 3 * 10**26), 2 * 10**26);
+    int fillStateX96 = primitiveInternals.getFillStateX96(DEFAULT_FILL_STATE_PARAMS.id);
+    assertEq(primitiveInternals.getFilledAmount(DEFAULT_FILL_STATE_PARAMS, fillStateX96, 3 * 10**26), 2 * 10**26);
   }
 
 }

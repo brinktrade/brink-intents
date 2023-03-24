@@ -269,6 +269,80 @@ contract Helper is Test, Constants {
     return int(_balances[1]) - int(_balances[0]);
   }
 
+  function limitSwap_loadFillStateX96 (address account, FillStateParams memory fillStateParams) public returns (int fillStateX96) {
+    fillStateX96 = int(uint(vm.load(account, keccak256(abi.encode(fillStateParams.id, "fillState")))));
+  }
+
+  function limitSwap_loadFilledAmount (address account, FillStateParams memory fillStateParams, uint total) public returns (uint filledAmount) {
+    int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
+    filledAmount = primitives.getFilledAmount(fillStateParams, fillStateX96, total);
+  }
+
+  function limitSwap_loadUnfilledAmount (address account, FillStateParams memory fillStateParams, uint total) public returns (uint unfilledAmount) {
+    int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
+    unfilledAmount = primitives.getUnfilledAmount(fillStateParams, fillStateX96, total);
+  }
+
+  function limitSwapExactInput_loadOutput (
+    address account,
+    uint input,
+    uint tokenInAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams
+  ) public returns (uint output) {
+    int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
+    uint filledInput = primitives.getFilledAmount(fillStateParams, fillStateX96, tokenInAmount);
+    output = primitives.limitSwapExactInput_getOutput(
+      input,
+      filledInput,
+      tokenInAmount,
+      priceCurve,
+      priceCurveParams
+    );
+  }
+
+  function limitSwapExactInput_loadInput (
+    address account,
+    uint output,
+    uint tokenInAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams
+  ) public returns (uint input) {
+    revert("NOT IMPLMENTED");
+  }
+
+  function limitSwapExactOutput_loadOutput (
+    address account,
+    uint output,
+    uint tokenInAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams
+  ) public returns (uint input) {
+    revert("NOT IMPLMENTED");
+  }
+
+  function limitSwapExactOutput_loadInput (
+    address account,
+    uint output,
+    uint tokenOutAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams
+  ) public returns (uint input) {
+    int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
+    uint filledOutput = primitives.getFilledAmount(fillStateParams, fillStateX96, tokenOutAmount);
+    input = primitives.limitSwapExactOutput_getInput(
+      output,
+      filledOutput,
+      tokenOutAmount,
+      priceCurve,
+      priceCurveParams
+    );
+  }
+
   function setupFiller () public {
     filler = new Filler();
     assetSeed0(address(filler));
