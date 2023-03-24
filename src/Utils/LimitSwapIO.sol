@@ -23,6 +23,9 @@ contract LimitSwapIO {
     IPriceCurve priceCurve,
     bytes memory priceCurveParams
   ) public pure returns (uint output) {
+    if (filledInput >= tokenInAmount) {
+      return 0;
+    }
     output = priceCurve.getOutput(
       tokenInAmount,
       filledInput,
@@ -50,6 +53,10 @@ contract LimitSwapIO {
     IPriceCurve priceCurve,
     bytes memory priceCurveParams
   ) public pure returns (uint input) {
+    if (filledOutput >= tokenOutAmount) {
+      return 0;
+    }
+
     // the getOutput() function is used to calculate the input amount,
     // because for `limitSwapExactOutput` the price curve is inverted
     input = priceCurve.getOutput(

@@ -389,7 +389,7 @@ contract Helper is Test, Constants {
 
   // Seeds account with:
   //    ETH:       8_000000000000000000
-  //    WETH:      2_000000000000000000
+  //    WETH:      5_000000000000000000
   //    USDC:      10_000_000000
   //    DOODLES:   3643, 3206
   //    THE_MEMES: [8]:2, [14]:3
@@ -406,7 +406,7 @@ contract Helper is Test, Constants {
     seedAssets(
       account,
       8_000000000000000000,
-      2_000000000000000000,
+      5_000000000000000000,
       10_000_000000,
       doodlesIds,
       memesIds,

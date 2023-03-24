@@ -15,6 +15,14 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     order_0: limitSwapExactOutput linearCurve(1.3 ETH -> 0.8 ETH) -> 6 DOODLES, start at 1.1 ETH -> 1 DOODLES
     order_1: limitSwapExactInput 6 DOODLES -> linearCurve(0.85 ETH -> 1.35 ETH), start at 1 DOODLES -> 1.25 ETH
   */
+
+  bytes nftBuyCurveParams;
+  bytes nftSellCurveParams;
+  FillStateParams nftBuyFillStateParams;
+  FillStateParams nftSellFillStateParams;
+
+  uint nftTotal = 6;
+  uint ethTotal = 66 * 10**17; // 6.6 ETH
   
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -22,20 +30,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     setupTrader1();
   }
 
-  function createInvertedNftStrategy () public returns (
-    Strategy memory strategy,
-    uint nftTotal,
-    uint ethTotal,
-    bytes memory nftBuyCurveParams,
-    bytes memory nftSellCurveParams,
-    FillStateParams memory nftBuyFillStateParams,
-    FillStateParams memory nftSellFillStateParams
-  ) {
-    strategy;
-
-    uint nftTotal = 6;
-    uint ethTotal = 66 * 10**17; // 6.6 ETH
-      
+  function createInvertedNftStrategy () public returns (Strategy memory strategy) {      
     nftBuyCurveParams;
     nftSellCurveParams;
     nftBuyFillStateParams = DEFAULT_FILL_STATE_PARAMS;
@@ -62,14 +57,16 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       }
 
       {
+        // start the buy side at 33% of the curve (4 of 6 NFT's remaining to buy)
         nftBuyFillStateParams.id = 123;
-        nftBuyFillStateParams.startX96 = uint128(2 * Q96 / 6) + 1; // start at 33% of the curve (4 of 6 NFT's remaining to buy)
+        nftBuyFillStateParams.startX96 = uint128(2 * Q96 / 6) + 1; // +1 to avoid rounding errors
         nftBuyFillStateParams.sign = true; 
       }
 
       {
+        // start the sell side at 66% of the curve (2 of 6 NFT's remaining to sell)
         nftSellFillStateParams.id = 123;
-        nftSellFillStateParams.startX96 = uint128(4 * Q96 / 6) + 1; // start at 66% of the curve (2 of 6 NFT's remaining to sell)
+        nftSellFillStateParams.startX96 = uint128(2 * Q96 / 6);  // don't add 1 for inverted
         nftSellFillStateParams.sign = false; // inverts the calculation of fillPercent, so 33% fillState = 66% (100% - 33%)
       }
 
@@ -85,7 +82,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
           linearPriceCurve,
           nftBuyCurveParams,
           nftBuyFillStateParams,
-          new bytes(0) // add an empty dynamic bytes, which will be overwritten by UnsignedLimitSwapData
+          new bytes(0)
         ),
         true
       );
@@ -102,7 +99,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
           linearPriceCurve,
           nftSellCurveParams,
           nftSellFillStateParams,
-          new bytes(0) // add an empty dynamic bytes, which will be overwritten by UnsignedLimitSwapData
+          new bytes(0)
         ),
         true
       );
@@ -127,15 +124,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
   }
 
   function testExecute_invertedNftOrders_buyAndSell () public {
-    (
-      Strategy memory strategy,
-      uint nftTotal,
-      uint ethTotal,
-      bytes memory nftBuyCurveParams,
-      bytes memory nftSellCurveParams,
-      FillStateParams memory nftBuyFillStateParams,
-      FillStateParams memory nftSellFillStateParams
-    ) = createInvertedNftStrategy();
+    Strategy memory strategy = createInvertedNftStrategy();
     
     // fill an NFT "buy" for TRADER_1
     bytes[] memory unsignedFillCalls = new bytes[](1);
@@ -153,6 +142,12 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
         abi.encodeWithSelector(filler.fill.selector, DOODLES, TokenStandard.ERC721, TRADER_1, 0, ids)
       )
     );
+
+    uint nftBuyPrice = buyPrice(1);
+    uint nftSellPrice = sellPrice(1);
+    assertEq(nftBuyPrice, 11 * 10**17); // 1.1 ETH
+    assertEq(nftSellPrice, 125 * 10**16); // 1.25 ETH
+
     startBalances(address(filler));
     startBalances(TRADER_1);
     strategyTarget.execute(
@@ -164,10 +159,15 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
-    assertEq(diffBalance(WETH, TRADER_1), -11 * 10**17);        // paid 1.1 ETH
-    assertEq(diffBalance(WETH, address(filler)), 11 * 10**17);
+    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyPrice));           // paid 1.1 ETH
+    assertEq(diffBalance(WETH, address(filler)), int(nftBuyPrice));
     assertEq(diffBalance(DOODLES, TRADER_1), 1);                // received 1 DOODLES
     assertEq(diffBalance(DOODLES, address(filler)), -1);
+
+    nftBuyPrice = buyPrice(1);
+    nftSellPrice = sellPrice(1);
+    assertEq(nftBuyPrice, 1 * 10**18); // 1 ETH
+    assertEq(nftSellPrice, 115 * 10**16); // 1.1 ETH
 
     // fill an NFT "sell" for TRADER_1, for the NFT that was just bought
     unsignedFillCalls[0] = abi.encode(
@@ -177,7 +177,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       EMPTY_IDS_PROOF,
       Call(
         address(filler),
-        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, 115 * 10**16, new bytes(0))
+        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, nftSellPrice, new bytes(0))
       )
     );
     startBalances(address(filler));
@@ -193,8 +193,86 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     endBalances(TRADER_1);
     assertEq(diffBalance(DOODLES, TRADER_1), -1);                 // sold 1 DOODLES
     assertEq(diffBalance(DOODLES, address(filler)), 1);
-    assertEq(diffBalance(WETH, TRADER_1), 115 * 10**16);          // received 1.15 ETH
-    assertEq(diffBalance(WETH, address(filler)), -115 * 10**16);
+    assertEq(diffBalance(WETH, TRADER_1), int(nftSellPrice));          // received 1.15 ETH
+    assertEq(diffBalance(WETH, address(filler)), -int(nftSellPrice));
+
+    // back to original prices
+    nftBuyPrice = buyPrice(1);
+    nftSellPrice = sellPrice(1);
+    assertEq(nftBuyPrice, 11 * 10**17); // 1.1 ETH
+    assertEq(nftSellPrice, 125 * 10**16); // 1.25 ETH
+  }
+
+  function testExecute_invertedNftOrders_buyAll () public {
+    Strategy memory strategy = createInvertedNftStrategy();
+    
+    // fill all NFT "buy" orders for TRADER_1
+    bytes[] memory unsignedFillCalls = new bytes[](1);
+    uint[] memory ids = new uint[](4);
+    ids[0] = 5268;
+    ids[1] = 4631;
+    ids[2] = 3989;
+    ids[3] = 1170;
+    IdsProof memory idsProof = EMPTY_IDS_PROOF;
+    idsProof.ids = ids;
+    unsignedFillCalls[0] = abi.encode(
+      address(filler),
+      4,
+      EMPTY_IDS_PROOF,
+      idsProof,
+      Call(
+        address(filler),
+        abi.encodeWithSelector(filler.fill.selector, DOODLES, TokenStandard.ERC721, TRADER_1, 0, ids)
+      )
+    );
+
+    uint nftBuyPrice_4 = buyPrice(4);
+    uint nftSellPrice_1 = sellPrice(1);
+    assertEq(nftBuyPrice_4, 38 * 10**17); // 3.8 ETH
+    assertEq(nftSellPrice_1, 125 * 10**16); // 1.25 ETH
+
+    startBalances(address(filler));
+    startBalances(TRADER_1);
+    strategyTarget.execute(
+      strategy,
+      UnsignedData(
+        0, // the "buy" NFT order (limitSwapExactOutput)
+        unsignedFillCalls
+      )
+    );
+    endBalances(address(filler));
+    endBalances(TRADER_1);
+    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyPrice_4));           // paid 3.8 ETH
+    assertEq(diffBalance(WETH, address(filler)), int(nftBuyPrice_4));
+    assertEq(diffBalance(DOODLES, TRADER_1), 4);                          // received 4 DOODLES
+    assertEq(diffBalance(DOODLES, address(filler)), -4);
+
+    uint nftBuyPrice = buyPrice(1);
+    uint nftSellPrice = sellPrice(1);
+    assertEq(nftBuyPrice, 0); // NO MORE BUYS
+    assertEq(nftSellPrice, 85 * 10**16); // 0.85 ETH
+  }
+
+  function buyPrice (uint nftAmount) public returns (uint price) {
+    price = limitSwapExactOutput_loadInput(
+      address(strategyTarget),
+      nftAmount,
+      nftTotal,
+      linearPriceCurve,
+      nftBuyCurveParams,
+      nftBuyFillStateParams
+    );
+  }
+
+  function sellPrice (uint nftAmount) public returns (uint price) {
+    price = limitSwapExactInput_loadOutput(
+      address(strategyTarget),
+      nftAmount,
+      nftTotal,
+      linearPriceCurve,
+      nftSellCurveParams,
+      nftSellFillStateParams
+    );
   }
 
 }
