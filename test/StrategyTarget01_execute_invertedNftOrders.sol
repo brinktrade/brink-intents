@@ -143,10 +143,10 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       )
     );
 
-    uint nftBuyPrice = buyPrice(1);
-    uint nftSellPrice = sellPrice(1);
-    assertEq(nftBuyPrice, 11 * 10**17); // 1.1 ETH
-    assertEq(nftSellPrice, 125 * 10**16); // 1.25 ETH
+    uint nftBuyCost = buyCost(1);
+    uint nftSellCost = sellCost(1);
+    assertEq(nftBuyCost, 11 * 10**17); // 1.1 ETH
+    assertEq(nftSellCost, 125 * 10**16); // 1.25 ETH
 
     startBalances(address(filler));
     startBalances(TRADER_1);
@@ -159,15 +159,15 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
-    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyPrice));           // paid 1.1 ETH
-    assertEq(diffBalance(WETH, address(filler)), int(nftBuyPrice));
+    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyCost));           // paid 1.1 ETH
+    assertEq(diffBalance(WETH, address(filler)), int(nftBuyCost));
     assertEq(diffBalance(DOODLES, TRADER_1), 1);                // received 1 DOODLES
     assertEq(diffBalance(DOODLES, address(filler)), -1);
 
-    nftBuyPrice = buyPrice(1);
-    nftSellPrice = sellPrice(1);
-    assertEq(nftBuyPrice, 1 * 10**18); // 1 ETH
-    assertEq(nftSellPrice, 115 * 10**16); // 1.1 ETH
+    nftBuyCost = buyCost(1);
+    nftSellCost = sellCost(1);
+    assertEq(nftBuyCost, 1 * 10**18); // 1 ETH
+    assertEq(nftSellCost, 115 * 10**16); // 1.1 ETH
 
     // fill an NFT "sell" for TRADER_1, for the NFT that was just bought
     unsignedFillCalls[0] = abi.encode(
@@ -177,7 +177,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       EMPTY_IDS_PROOF,
       Call(
         address(filler),
-        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, nftSellPrice, new bytes(0))
+        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, nftSellCost, new bytes(0))
       )
     );
     startBalances(address(filler));
@@ -193,14 +193,14 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     endBalances(TRADER_1);
     assertEq(diffBalance(DOODLES, TRADER_1), -1);                 // sold 1 DOODLES
     assertEq(diffBalance(DOODLES, address(filler)), 1);
-    assertEq(diffBalance(WETH, TRADER_1), int(nftSellPrice));          // received 1.15 ETH
-    assertEq(diffBalance(WETH, address(filler)), -int(nftSellPrice));
+    assertEq(diffBalance(WETH, TRADER_1), int(nftSellCost));          // received 1.15 ETH
+    assertEq(diffBalance(WETH, address(filler)), -int(nftSellCost));
 
     // back to original prices
-    nftBuyPrice = buyPrice(1);
-    nftSellPrice = sellPrice(1);
-    assertEq(nftBuyPrice, 11 * 10**17); // 1.1 ETH
-    assertEq(nftSellPrice, 125 * 10**16); // 1.25 ETH
+    nftBuyCost = buyCost(1);
+    nftSellCost = sellCost(1);
+    assertEq(nftBuyCost, 11 * 10**17); // 1.1 ETH
+    assertEq(nftSellCost, 125 * 10**16); // 1.25 ETH
   }
 
   function testExecute_invertedNftOrders_buyAll () public {
@@ -226,10 +226,10 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       )
     );
 
-    uint nftBuyPrice_4 = buyPrice(4);
-    uint nftSellPrice_1 = sellPrice(1);
-    assertEq(nftBuyPrice_4, 38 * 10**17); // 3.8 ETH
-    assertEq(nftSellPrice_1, 125 * 10**16); // 1.25 ETH
+    uint nftBuyCost_4 = buyCost(4);
+    uint nftSellCost_1 = sellCost(1);
+    assertEq(nftBuyCost_4, 38 * 10**17); // 3.8 ETH
+    assertEq(nftSellCost_1, 125 * 10**16); // 1.25 ETH
 
     startBalances(address(filler));
     startBalances(TRADER_1);
@@ -242,19 +242,19 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
-    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyPrice_4));           // paid 3.8 ETH
-    assertEq(diffBalance(WETH, address(filler)), int(nftBuyPrice_4));
+    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyCost_4));           // paid 3.8 ETH
+    assertEq(diffBalance(WETH, address(filler)), int(nftBuyCost_4));
     assertEq(diffBalance(DOODLES, TRADER_1), 4);                          // received 4 DOODLES
     assertEq(diffBalance(DOODLES, address(filler)), -4);
 
-    uint nftBuyPrice = buyPrice(1);
-    uint nftSellPrice = sellPrice(1);
-    assertEq(nftBuyPrice, 0); // NO MORE BUYS
-    assertEq(nftSellPrice, 85 * 10**16); // 0.85 ETH
+    uint nftBuyCost = buyCost(1);
+    uint nftSellCost = sellCost(1);
+    assertEq(nftBuyCost, 0); // NO MORE BUYS
+    assertEq(nftSellCost, 85 * 10**16); // 0.85 ETH
   }
 
-  function buyPrice (uint nftAmount) public returns (uint price) {
-    price = limitSwapExactOutput_loadInput(
+  function buyCost (uint nftAmount) public returns (uint cost) {
+    cost = limitSwapExactOutput_loadInput(
       address(strategyTarget),
       nftAmount,
       nftTotal,
@@ -264,8 +264,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
   }
 
-  function sellPrice (uint nftAmount) public returns (uint price) {
-    price = limitSwapExactInput_loadOutput(
+  function sellCost (uint nftAmount) public returns (uint cost) {
+    cost = limitSwapExactInput_loadOutput(
       address(strategyTarget),
       nftAmount,
       nftTotal,
