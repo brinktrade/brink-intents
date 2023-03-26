@@ -8,7 +8,11 @@ contract MockPrimitiveInternals is Primitives01 {
     _fillSwap(tokenIn, tokenOut, owner, recipient, tokenInAmount, tokenOutAmount, tokenInIdsProof, tokenOutIdsProof, fillCall);
   }
 
-  function setFillAmount(FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) external {
-    _setFillAmount(fillStateParams, filledAmount, totalAmount);
+  function setFilledAmount(FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) external {
+    _setFilledAmount(fillStateParams, filledAmount, totalAmount);
+  }
+
+  function setFilledPercentX96(FillStateParams memory fillStateParams, uint filledPercentX96) external {
+    _setFilledPercentX96(fillStateParams, filledPercentX96);
   }
 }

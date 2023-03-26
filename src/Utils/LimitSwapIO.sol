@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
 import "openzeppelin/utils/math/Math.sol";
 import "../Interfaces/IPriceCurve.sol";
 
@@ -22,7 +23,7 @@ contract LimitSwapIO {
     uint tokenInAmount,
     IPriceCurve priceCurve,
     bytes memory priceCurveParams
-  ) public pure returns (uint output) {
+  ) public view returns (uint output) {
     if (filledInput >= tokenInAmount) {
       return 0;
     }
@@ -68,20 +69,20 @@ contract LimitSwapIO {
   }
 
   // given fillState and total, return the amount unfilled
-  function getUnfilledAmount (FillStateParams memory fillStateParams, int fillStateX96, uint totalAmount) public pure returns (uint unfilledAmount) {
+  function getUnfilledAmount (FillStateParams memory fillStateParams, int fillStateX96, uint totalAmount) public view returns (uint unfilledAmount) {
     unfilledAmount = totalAmount - getFilledAmount(fillStateParams, fillStateX96, totalAmount);
   }
 
   // given fillState and total, return the amount filled
-  function getFilledAmount (FillStateParams memory fillStateParams, int fillStateX96, uint totalAmount) public pure returns (uint fillAmount) {
-    fillAmount = getFillPercentX96(fillStateParams, fillStateX96).mulDiv(totalAmount, Q96);
+  function getFilledAmount (FillStateParams memory fillStateParams, int fillStateX96, uint totalAmount) public view returns (uint filledAmount) {
+    filledAmount = getFilledPercentX96(fillStateParams, fillStateX96).mulDiv(totalAmount, Q96);
   }
 
   // given fillState, return the percent filled
-  function getFillPercentX96 (FillStateParams memory fillStateParams, int fillStateX96) public pure returns (uint fillPercentX96) {
+  function getFilledPercentX96 (FillStateParams memory fillStateParams, int fillStateX96) public view returns (uint filledPercentX96) {
     int8 i = fillStateParams.sign ? int8(1) : -1;
     int j = fillStateParams.sign ? int(0) : int(Q96);
-    fillPercentX96 = uint((fillStateX96 + int128(fillStateParams.startX96)) * i + j);
+    filledPercentX96 = uint((fillStateX96 + int128(fillStateParams.startX96)) * i + j);
   }
 
 }

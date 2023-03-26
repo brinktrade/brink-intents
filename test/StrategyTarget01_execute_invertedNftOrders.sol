@@ -253,6 +253,61 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     assertEq(nftSellCost, 85 * 10**16); // 0.85 ETH
   }
 
+  function testExecute_invertedNftOrders_sellAll () public {
+    Strategy memory strategy = createInvertedNftStrategy();
+    
+    // fill all NFT "sell" orders for TRADER_1
+    bytes[] memory unsignedFillCalls = new bytes[](1);
+    uint[] memory ids = new uint[](1);
+    ids[0] = 3643;
+    // ids[1] = 3206;
+    IdsProof memory idsProof = EMPTY_IDS_PROOF;
+    idsProof.ids = ids;
+
+    uint nftBuyCost_1 = buyCost(1);
+    uint nftSellCost_1 = sellCost(1);
+    uint nftSellCost_2 = sellCost(2);
+    console.log("nftBuyCost_1: %s", nftBuyCost_1);
+    console.log("nftSellCost_1: %s", nftSellCost_1);
+    // console.log("nftSellCost_2: %s", nftSellCost_2);
+    // assertEq(nftBuyCost_4, 38 * 10**17); // 3.8 ETH
+    // assertEq(nftSellCost_2, 125 * 10**16); // 1.25 ETH
+
+    unsignedFillCalls[0] = abi.encode(
+      address(filler),
+      1,
+      idsProof,
+      EMPTY_IDS_PROOF,
+      Call(
+        address(filler),
+        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, nftSellCost_1, new bytes(0))
+      )
+    );
+
+    startBalances(address(filler));
+    startBalances(TRADER_1);
+    strategyTarget.execute(
+      strategy,
+      UnsignedData(
+        1, // the "sell" NFT order (limitSwapExactInput)
+        unsignedFillCalls
+      )
+    );
+    endBalances(address(filler));
+    endBalances(TRADER_1);
+    // assertEq(diffBalance(DOODLES, TRADER_1), -2);                          // sold 2 DOODLES
+    // assertEq(diffBalance(DOODLES, address(filler)), 2);
+    // assertEq(diffBalance(WETH, TRADER_1), -int(nftSellCost_2));           // received ETH
+    // assertEq(diffBalance(WETH, address(filler)), int(nftSellCost_2));
+
+    nftBuyCost_1 = buyCost(1);
+    nftSellCost_1 = sellCost(1);
+    console.log("nftBuyCost_1: %s", nftBuyCost_1);
+    console.log("nftSellCost_1: %s", nftSellCost_1);
+    // assertEq(nftBuyCost, 13 * 10**17); // 1.3 ETH
+    // assertEq(nftSellCost, 0); // NO MORE SELLS
+  }
+
   function buyCost (uint nftAmount) public returns (uint cost) {
     cost = limitSwapExactOutput_loadInput(
       address(strategyTarget),
