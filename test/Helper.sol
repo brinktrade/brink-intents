@@ -16,6 +16,7 @@ import "../src/PriceCurves/QuadraticPriceCurve.sol";
 import "../src/Primitives/Primitives01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
+import "../src/Utils/LimitSwapIO.sol";
 import "./Mocks/MockPriceOracle.sol";
 import "./Mocks/MockPrimitiveInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
@@ -33,6 +34,7 @@ contract Helper is Test, Constants {
   StrategyTarget01 public strategyTarget;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
   ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
+  LimitSwapIO public limitSwapIO;
   MockPriceOracle public mockPriceOracle;
   MockPrimitiveInternals public primitiveInternals;
   MockTokenHelperInternals public tokenHelper;
@@ -171,6 +173,7 @@ contract Helper is Test, Constants {
     strategyTarget = StrategyTarget01(deployContract('out/StrategyTarget01.sol/StrategyTarget01.json'));
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
+    limitSwapIO = LimitSwapIO(deployContract('out/LimitSwapIO.sol/LimitSwapIO.json'));
   }
 
   function deployContract (string memory path) public returns (address deployedContract) {
@@ -389,7 +392,7 @@ contract Helper is Test, Constants {
 
   // Seeds account with:
   //    ETH:       8_000000000000000000
-  //    WETH:      2_000000000000000000
+  //    WETH:      5_000000000000000000
   //    USDC:      10_000_000000
   //    DOODLES:   3643, 3206
   //    THE_MEMES: [8]:2, [14]:3
@@ -406,7 +409,7 @@ contract Helper is Test, Constants {
     seedAssets(
       account,
       8_000000000000000000,
-      2_000000000000000000,
+      5_000000000000000000,
       10_000_000000,
       doodlesIds,
       memesIds,

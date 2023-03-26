@@ -211,7 +211,7 @@ contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
       priceCurveParams
     );
 
-    _setFillAmount(fillStateParams, filledInput + data.amount, tokenInAmount);
+    _setFilledAmount(fillStateParams, filledInput + data.amount, tokenInAmount);
 
     _fillSwap(
       tokenIn,
@@ -249,7 +249,7 @@ contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
       priceCurveParams
     );
 
-    _setFillAmount(fillStateParams, filledOutput + data.amount, tokenOutAmount);
+    _setFilledAmount(fillStateParams, filledOutput + data.amount, tokenOutAmount);
 
     _fillSwap(
       tokenIn,
@@ -365,16 +365,17 @@ contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
     assembly { fillState := sload(position) } 
   }
 
-  function _setFillAmount (FillStateParams memory fillStateParams, uint fillAmount, uint totalAmount) internal {
-    _setFillPercentX96(fillStateParams, fillAmount.mulDiv(Q96, totalAmount) + 1);
+  function _setFilledAmount (FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) internal {
+    _setFilledPercentX96(fillStateParams, filledAmount.mulDiv(Q96, totalAmount) + 1);
   }
 
-  function _setFillPercentX96 (FillStateParams memory fillStateParams, uint fillPercentX96) internal {
+  function _setFilledPercentX96 (FillStateParams memory fillStateParams, uint filledPercentX96) internal {
     int8 i = fillStateParams.sign ? int8(1) : -1;
     int j = fillStateParams.sign ? int(0) : int(Q96);
+    int8 k = fillStateParams.sign ? -1 : int8(1);
     _setFillState(
       fillStateParams.id,
-      (i * int128(fillStateParams.startX96) + j - int(fillPercentX96)) * -1
+      (i * int128(fillStateParams.startX96) + j - int(filledPercentX96)) * k
     );
   }
 
