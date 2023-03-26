@@ -123,9 +123,11 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     DOODLES_ERC721.setApprovalForAll(address(strategyTarget), true);
   }
 
+  // sell 1 DOODLE to TRADER_1, then buy the DOODLE from TRADER_1.
+  // TRADER_1 should profit exactly 0.05 ETH, and buy/sell prices should go back to the originals
   function testExecute_invertedNftOrders_buyAndSell () public {
     Strategy memory strategy = createInvertedNftStrategy();
-    
+
     // fill an NFT "buy" for TRADER_1
     bytes[] memory unsignedFillCalls = new bytes[](1);
     uint[] memory ids = new uint[](1);
@@ -159,9 +161,9 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
-    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyCost));           // paid 1.1 ETH
+    assertEq(diffBalance(WETH, TRADER_1), -int(nftBuyCost));          // paid 1.1 ETH
     assertEq(diffBalance(WETH, address(filler)), int(nftBuyCost));
-    assertEq(diffBalance(DOODLES, TRADER_1), 1);                // received 1 DOODLES
+    assertEq(diffBalance(DOODLES, TRADER_1), 1);                      // received 1 DOODLES
     assertEq(diffBalance(DOODLES, address(filler)), -1);
 
     nftBuyCost = buyCost(1);
@@ -258,29 +260,27 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     
     // fill all NFT "sell" orders for TRADER_1
     bytes[] memory unsignedFillCalls = new bytes[](1);
-    uint[] memory ids = new uint[](1);
+    uint[] memory ids = new uint[](2);
     ids[0] = 3643;
-    // ids[1] = 3206;
+    ids[1] = 3206;
     IdsProof memory idsProof = EMPTY_IDS_PROOF;
     idsProof.ids = ids;
 
     uint nftBuyCost_1 = buyCost(1);
     uint nftSellCost_1 = sellCost(1);
     uint nftSellCost_2 = sellCost(2);
-    console.log("nftBuyCost_1: %s", nftBuyCost_1);
-    console.log("nftSellCost_1: %s", nftSellCost_1);
-    // console.log("nftSellCost_2: %s", nftSellCost_2);
-    // assertEq(nftBuyCost_4, 38 * 10**17); // 3.8 ETH
-    // assertEq(nftSellCost_2, 125 * 10**16); // 1.25 ETH
+    assertEq(nftBuyCost_1, 11 * 10**17); // 1.1 ETH
+    assertEq(nftSellCost_1, 125 * 10**16); // 1.25 ETH
+    assertEq(nftSellCost_2, 26 * 10**17); // 2.6 (1.25 + 1.35) ETH
 
     unsignedFillCalls[0] = abi.encode(
       address(filler),
-      1,
+      2,
       idsProof,
       EMPTY_IDS_PROOF,
       Call(
         address(filler),
-        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, nftSellCost_1, new bytes(0))
+        abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, nftSellCost_2, new bytes(0))
       )
     );
 
@@ -295,17 +295,15 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
     endBalances(address(filler));
     endBalances(TRADER_1);
-    // assertEq(diffBalance(DOODLES, TRADER_1), -2);                          // sold 2 DOODLES
-    // assertEq(diffBalance(DOODLES, address(filler)), 2);
-    // assertEq(diffBalance(WETH, TRADER_1), -int(nftSellCost_2));           // received ETH
-    // assertEq(diffBalance(WETH, address(filler)), int(nftSellCost_2));
+    assertEq(diffBalance(DOODLES, TRADER_1), -2);                         // sold 2 DOODLES
+    assertEq(diffBalance(DOODLES, address(filler)), 2);
+    assertEq(diffBalance(WETH, TRADER_1), int(nftSellCost_2));           // received 2.6 ETH
+    assertEq(diffBalance(WETH, address(filler)), -int(nftSellCost_2));
 
     nftBuyCost_1 = buyCost(1);
     nftSellCost_1 = sellCost(1);
-    console.log("nftBuyCost_1: %s", nftBuyCost_1);
-    console.log("nftSellCost_1: %s", nftSellCost_1);
-    // assertEq(nftBuyCost, 13 * 10**17); // 1.3 ETH
-    // assertEq(nftSellCost, 0); // NO MORE SELLS
+    assertEq(nftBuyCost_1, 13 * 10**17); // 1.3 ETH
+    assertEq(nftSellCost_1, 0); // NO MORE SELLS
   }
 
   function buyCost (uint nftAmount) public returns (uint cost) {
