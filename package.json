@@ -1,6 +1,7 @@
 {
   "name": "@brinkninja/strategies",
   "version": "0.1.0",
+  "private": true,
   "dependencies": { },
   "scripts": {
     "build": "forge build",
