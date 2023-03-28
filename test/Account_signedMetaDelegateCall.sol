@@ -9,15 +9,13 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
+      setupFiller();
+      setupProxy0();
   }
 
   // test for signed metaDelegateCall
   function testAccount_signedMetaDelegateCall () public {
-    setupFiller();
-    setupProxy0();
-
-    Order[] memory orders;
-    int intWethOutAmount;
+    bytes memory strategyData;
     uint expectedRequiredWethOutAmount;
     {
       bytes memory twapAdapterParams = abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000));
@@ -25,10 +23,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
       uint24 feePercent = 10000; // 1%
       uint feeMin = 0; // no minimum fixed fee
 
-      expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
-      intWethOutAmount = int(expectedRequiredWethOutAmount);
-
-      orders = strategyBuilder.orders(
+      Order[] memory orders = strategyBuilder.orders(
         strategyBuilder.order(
           strategyBuilder.useBit(0, 1),
           strategyBuilder.marketSwapExactInput(
@@ -43,7 +38,13 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
           )
         )
       );
+      
+      strategyData = strategyBuilder.strategy(orders);
+
+      expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
     }
+
+    int intWethOutAmount = int(expectedRequiredWethOutAmount);
     
     // fill with exact expectedRequiredWethOutAmount. for a real market swap, filler could provide an additional amount as buffer for
     // price movement to avoid revert
@@ -60,8 +61,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
       Call(address(filler), fillCall)
     );
 
-    bytes memory data = strategyBuilder.strategy(orders, new Call[](0), new Call[](0));
-    bytes32 msgHash = messageHash(address(strategyTarget), data, address(proxy0_account));
+    bytes32 msgHash = messageHash(address(strategyTarget), strategyData, address(proxy0_account));
     bytes memory signature = signMessageHash(proxy0_signerPrivateKey, msgHash);
     bytes memory unsignedData = abi.encode(0, unsignedCalls);
 
@@ -71,7 +71,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     vm.prank(proxy0_signerAddress);
     USDC_ERC20.approve(address(proxy0_account), 1450_000000);
 
-    proxy0_account.metaDelegateCall(address(strategyTarget), data, signature, unsignedData);
+    proxy0_account.metaDelegateCall(address(strategyTarget), strategyData, signature, unsignedData);
 
     endBalances(address(filler));
     endBalances(proxy0_signerAddress);
@@ -81,34 +81,6 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     assertEq(diffBalance(WETH, proxy0_signerAddress), intWethOutAmount);
     assertEq(diffBalance(WETH, address(filler)), -intWethOutAmount);
   }
-
-  // function strategyExecuteData (
-  //   Order[] memory orders,
-  //   Call[] memory beforeCalls,
-  //   Call[] memory afterCalls
-  // ) public view returns (bytes memory data) {
-  //   // encode strategy data without using Strategy struct
-  //   bytes memory strategyData = abi.encode(
-  //     address(primitives),
-  //     orders,
-  //     beforeCalls,
-  //     afterCalls
-  //   );
-
-  //   // create a memory pointer to the encoded strategy data, which starts after 64 bytes (after the two pointers)
-  //   bytes32 strategyPtr = 0x0000000000000000000000000000000000000000000000000000000000000040;
-
-  //   // create a memory pointer to where unsigned data will be appended,
-  //   // which will be after 64 bytes (for the two pointers) plus the length of the encoded strategy
-  //   bytes32 unsignedDataPtr = bytes32(strategyData.length + 0x40); 
-
-  //   data = bytes.concat(
-  //     strategyTarget.execute.selector, // bytes4: fn selector
-  //     strategyPtr,        // bytes32: memory pointer to strategy data
-  //     unsignedDataPtr,    // bytes32: memory pointer to unsigned data
-  //     strategyData        // bytes: encoded strategy
-  //   );
-  // }
 
   function messageHash (
     address to,

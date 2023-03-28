@@ -16,6 +16,12 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01 {
   }
 
   function strategy (
+    Order[] memory orders
+  ) public view returns (bytes memory data) {
+    data = strategy(orders, new Call[](0), new Call[](0));
+  }
+
+  function strategy (
     Order[] memory orders,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
