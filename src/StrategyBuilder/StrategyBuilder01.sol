@@ -10,9 +10,11 @@ import "./UnsignedDataBuilder01.sol";
 
 contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBuilder01 {
 
+  address public immutable strategyTarget;
   address public immutable primitives;
 
-  constructor (address _primitives) {
+  constructor (address _strategyTarget, address _primitives) {
+    strategyTarget = _strategyTarget;
     primitives = _primitives;
   }
 
@@ -51,7 +53,6 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBu
   }
 
   function messageHash_metaDelegateCall (
-    address to,
     bytes memory data,
     address account,
     uint chainId
@@ -59,7 +60,7 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBu
     bytes32 dataHash = keccak256(
       abi.encode(
         keccak256("MetaDelegateCall(address to,bytes data)"), // META_DELEGATE_CALL_TYPEHASH
-        to,
+        strategyTarget,
         keccak256(data)
       )
     );

@@ -51,7 +51,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, proxy0_signerAddress, expectedRequiredWethOutAmount, new uint[](0));
 
     bytes32 msgHash = strategyBuilder.messageHash_metaDelegateCall(
-      address(strategyTarget), strategyData, address(proxy0_account), block.chainid
+      strategyData, address(proxy0_account), block.chainid
     );
     bytes memory signature = signMessageHash(proxy0_signerPrivateKey, msgHash);
 

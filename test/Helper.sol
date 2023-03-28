@@ -177,7 +177,10 @@ contract Helper is Test, Constants {
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
     limitSwapIO = LimitSwapIO(deployContract('out/LimitSwapIO.sol/LimitSwapIO.json'));
 
-    strategyBuilder = new StrategyBuilder01(address(primitives));
+    strategyBuilder = new StrategyBuilder01(
+      address(strategyTarget),
+      address(primitives)
+    );
   }
 
   function deployContract (string memory path) public returns (address deployedContract) {
