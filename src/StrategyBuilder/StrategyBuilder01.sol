@@ -50,4 +50,30 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBu
     );
   }
 
+  function messageHash_metaDelegateCall (
+    address to,
+    bytes memory data,
+    address account,
+    uint chainId
+  ) public view returns (bytes32 messageHash) {
+    bytes32 dataHash = keccak256(
+      abi.encode(
+        keccak256("MetaDelegateCall(address to,bytes data)"), // META_DELEGATE_CALL_TYPEHASH
+        to,
+        keccak256(data)
+      )
+    );
+    messageHash = keccak256(abi.encodePacked(
+      "\x19\x01",
+      keccak256(abi.encode(
+        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+        keccak256("BrinkAccount"),
+        keccak256("1"),
+        chainId,
+        account
+      )),
+      dataHash
+    ));
+  }
+
 }

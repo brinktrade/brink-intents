@@ -50,7 +50,9 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     // price movement to avoid revert
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, proxy0_signerAddress, expectedRequiredWethOutAmount, new uint[](0));
 
-    bytes32 msgHash = messageHash(address(strategyTarget), strategyData, address(proxy0_account));
+    bytes32 msgHash = strategyBuilder.messageHash_metaDelegateCall(
+      address(strategyTarget), strategyData, address(proxy0_account), block.chainid
+    );
     bytes memory signature = signMessageHash(proxy0_signerPrivateKey, msgHash);
 
     bytes memory unsignedData = strategyBuilder.unsignedData(
@@ -78,31 +80,6 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     assertEq(diffBalance(USDC, address(filler)), 1450_000000);
     assertEq(diffBalance(WETH, proxy0_signerAddress), intWethOutAmount);
     assertEq(diffBalance(WETH, address(filler)), -intWethOutAmount);
-  }
-
-  function messageHash (
-    address to,
-    bytes memory data,
-    address account
-  ) public view returns (bytes32 messageHash) {
-    bytes32 dataHash = keccak256(
-      abi.encode(
-        keccak256("MetaDelegateCall(address to,bytes data)"), // META_DELEGATE_CALL_TYPEHASH
-        to,
-        keccak256(data)
-      )
-    );
-    messageHash = keccak256(abi.encodePacked(
-      "\x19\x01",
-      keccak256(abi.encode(
-        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-        keccak256("BrinkAccount"),
-        keccak256("1"),
-        block.chainid,
-        account
-      )),
-      dataHash
-    ));
   }
 
   function signMessageHash (
