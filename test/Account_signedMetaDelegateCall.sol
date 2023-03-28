@@ -50,20 +50,18 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     // price movement to avoid revert
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, proxy0_signerAddress, expectedRequiredWethOutAmount, new uint[](0));
 
-    bytes[] memory unsignedCalls = new bytes[](1);
-
-    // encode the UnsignedMarketSwapData.
-    // don't wrap in UnsignedMarketSwapData() struct type because this adds additional data that will break the call
-    unsignedCalls[0] = abi.encode(
-      address(filler),
-      EMPTY_IDS_PROOF,
-      EMPTY_IDS_PROOF,
-      Call(address(filler), fillCall)
-    );
-
     bytes32 msgHash = messageHash(address(strategyTarget), strategyData, address(proxy0_account));
     bytes memory signature = signMessageHash(proxy0_signerPrivateKey, msgHash);
-    bytes memory unsignedData = abi.encode(0, unsignedCalls);
+
+    bytes memory unsignedData = strategyBuilder.unsignedData(
+      0, // orderIndex
+      strategyBuilder.unsignedMarketSwapData(
+        address(filler),
+        EMPTY_IDS_PROOF,
+        EMPTY_IDS_PROOF,
+        Call(address(filler), fillCall)
+      )
+    );
 
     startBalances(address(filler));
     startBalances(proxy0_signerAddress);

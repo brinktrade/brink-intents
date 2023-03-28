@@ -6,8 +6,9 @@ import "../TokenHelper/TokenHelper.sol";
 import "../StrategyTarget01.sol";
 import "./OrderBuilder01.sol";
 import "./PrimitiveBuilder01.sol";
+import "./UnsignedDataBuilder01.sol";
 
-contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01 {
+contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBuilder01 {
 
   address public immutable primitives;
 

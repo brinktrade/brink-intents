@@ -45,4 +45,13 @@ contract PrimitiveBuilder01 {
     );
   }
 
+  function unsignedMarketSwapData (
+    address recipient,
+    IdsProof memory tokenInIdsProof,
+    IdsProof memory tokenOutIdsProof,
+    Call memory fillCall
+  ) external pure returns (bytes memory) {
+    return abi.encode(recipient, tokenInIdsProof, tokenOutIdsProof, fillCall);
+  }
+
 }
