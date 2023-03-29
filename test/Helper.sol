@@ -14,6 +14,7 @@ import "../src/PriceCurves/FlatPriceCurve.sol";
 import "../src/PriceCurves/LinearPriceCurve.sol";
 import "../src/PriceCurves/QuadraticPriceCurve.sol";
 import "../src/Primitives/Primitives01.sol";
+import "../src/StrategyBuilder/StrategyBuilder01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
 import "../src/Utils/LimitSwapIO.sol";
@@ -31,6 +32,7 @@ contract Helper is Test, Constants {
   LinearPriceCurve public linearPriceCurve;
   QuadraticPriceCurve public quadraticPriceCurve;
   Primitives01 public primitives;
+  StrategyBuilder01 public strategyBuilder;
   StrategyTarget01 public strategyTarget;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
   ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
@@ -174,6 +176,11 @@ contract Helper is Test, Constants {
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
     limitSwapIO = LimitSwapIO(deployContract('out/LimitSwapIO.sol/LimitSwapIO.json'));
+
+    strategyBuilder = new StrategyBuilder01(
+      address(strategyTarget),
+      address(primitives)
+    );
   }
 
   function deployContract (string memory path) public returns (address deployedContract) {
