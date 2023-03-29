@@ -16,6 +16,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
   // test for signed metaDelegateCall
   function testAccount_signedMetaDelegateCall () public {
     bytes memory strategyData;
+    bytes32 strategyHash;
     uint expectedRequiredWethOutAmount;
     {
       bytes memory twapAdapterParams = abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000));
@@ -38,8 +39,12 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
           )
         )
       );
-      
-      strategyData = strategyBuilder.strategy(orders);
+      (strategyData, strategyHash) = strategyBuilder.strategy(
+        address(proxy0_account),
+        block.chainid,
+        SignatureType.EIP712,
+        orders
+      );
 
       expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
     }
@@ -50,10 +55,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     // price movement to avoid revert
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, proxy0_signerAddress, expectedRequiredWethOutAmount, new uint[](0));
 
-    bytes32 msgHash = strategyBuilder.messageHash_metaDelegateCall(
-      strategyData, address(proxy0_account), block.chainid
-    );
-    bytes memory signature = signMessageHash(proxy0_signerPrivateKey, msgHash);
+    bytes memory signature = signMessageHash(proxy0_signerPrivateKey, strategyHash);
 
     bytes memory unsignedData = strategyBuilder.unsignedData(
       0, // orderIndex

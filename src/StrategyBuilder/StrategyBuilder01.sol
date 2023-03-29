@@ -8,6 +8,13 @@ import "./OrderBuilder01.sol";
 import "./PrimitiveBuilder01.sol";
 import "./UnsignedDataBuilder01.sol";
 
+error InvalidSignatureType();
+
+enum SignatureType {
+  EIP712,
+  EIP1271
+}
+
 contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBuilder01 {
 
   address public immutable strategyTarget;
@@ -19,12 +26,34 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBu
   }
 
   function strategy (
+    address account,
+    uint chainId,
+    SignatureType signatureType,
     Order[] memory orders
-  ) public view returns (bytes memory data) {
-    data = strategy(orders, new Call[](0), new Call[](0));
+  ) public view returns (bytes memory data, bytes32 messageHash) {
+    data = strategyData(orders);
+    messageHash = _messageHash(signatureType, data, account, chainId);
   }
 
   function strategy (
+    address account,
+    uint chainId,
+    SignatureType signatureType,
+    Order[] memory orders,
+    Call[] memory beforeCalls,
+    Call[] memory afterCalls
+  ) public view returns (bytes memory data, bytes32 messageHash) {
+    data = strategyData(orders, beforeCalls, afterCalls);
+    messageHash = _messageHash(signatureType, data, account, chainId);
+  }
+
+  function strategyData (
+    Order[] memory orders
+  ) public view returns (bytes memory data) {
+    data = strategyData(orders, new Call[](0), new Call[](0));
+  }
+
+  function strategyData (
     Order[] memory orders,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
@@ -52,7 +81,7 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBu
     );
   }
 
-  function messageHash_metaDelegateCall (
+  function messageHashEIP712 (
     bytes memory data,
     address account,
     uint chainId
@@ -75,6 +104,29 @@ contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBu
       )),
       dataHash
     ));
+  }
+
+  function messageHashEIP1271 (
+    bytes memory data,
+    address account,
+    uint chainId
+  ) public view returns (bytes32 messageHash) {
+    revert("messageHashEIP1271: NOT IMPLEMENTED");
+  }
+
+  function _messageHash (
+    SignatureType signatureType,
+    bytes memory data,
+    address account,
+    uint chainId
+  ) internal view returns (bytes32 messageHash) {
+    if (signatureType == SignatureType.EIP712) {
+      messageHash = messageHashEIP712(data, account, chainId);
+    } else if (signatureType == SignatureType.EIP1271) {
+      messageHash = messageHashEIP1271(data, account, chainId);
+    } else {
+      revert InvalidSignatureType();
+    }
   }
 
 }
