@@ -16,6 +16,7 @@ import "../src/PriceCurves/QuadraticPriceCurve.sol";
 import "../src/Primitives/Primitives01.sol";
 import "../src/StrategyBuilder/StrategyBuilder01.sol";
 import "../src/StrategyBuilder/OrderBuilder01.sol";
+import "../src/StrategyBuilder/OrdersBuilder01.sol";
 import "../src/StrategyBuilder/PrimitiveBuilder01.sol";
 import "../src/StrategyBuilder/UnsignedDataBuilder01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
@@ -37,6 +38,7 @@ contract Helper is Test, Constants {
   Primitives01 public primitives;
   StrategyBuilder01 public strategyBuilder;
   OrderBuilder01 public orderBuilder;
+  OrdersBuilder01 public ordersBuilder;
   PrimitiveBuilder01 public primitiveBuilder;
   UnsignedDataBuilder01 public unsignedDataBuilder;
   StrategyTarget01 public strategyTarget;
@@ -188,6 +190,7 @@ contract Helper is Test, Constants {
       address(primitives)
     );
     orderBuilder = new OrderBuilder01();
+    ordersBuilder = new OrdersBuilder01();
     primitiveBuilder = new PrimitiveBuilder01();
     unsignedDataBuilder = new UnsignedDataBuilder01();
   }
