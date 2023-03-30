@@ -15,6 +15,9 @@ import "../src/PriceCurves/LinearPriceCurve.sol";
 import "../src/PriceCurves/QuadraticPriceCurve.sol";
 import "../src/Primitives/Primitives01.sol";
 import "../src/StrategyBuilder/StrategyBuilder01.sol";
+import "../src/StrategyBuilder/OrderBuilder01.sol";
+import "../src/StrategyBuilder/PrimitiveBuilder01.sol";
+import "../src/StrategyBuilder/UnsignedDataBuilder01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
 import "../src/Utils/LimitSwapIO.sol";
@@ -33,6 +36,9 @@ contract Helper is Test, Constants {
   QuadraticPriceCurve public quadraticPriceCurve;
   Primitives01 public primitives;
   StrategyBuilder01 public strategyBuilder;
+  OrderBuilder01 public orderBuilder;
+  PrimitiveBuilder01 public primitiveBuilder;
+  UnsignedDataBuilder01 public unsignedDataBuilder;
   StrategyTarget01 public strategyTarget;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
   ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
@@ -181,6 +187,9 @@ contract Helper is Test, Constants {
       address(strategyTarget),
       address(primitives)
     );
+    orderBuilder = new OrderBuilder01();
+    primitiveBuilder = new PrimitiveBuilder01();
+    unsignedDataBuilder = new UnsignedDataBuilder01();
   }
 
   function deployContract (string memory path) public returns (address deployedContract) {
