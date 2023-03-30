@@ -2,7 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.13;
 
+import "../Primitives/Primitives01.sol";
+import "../TokenHelper/TokenHelper.sol";
+
 contract UnsignedDataBuilder01 {
+
+  function unsignedMarketSwapData (
+    address recipient,
+    IdsProof memory tokenInIdsProof,
+    IdsProof memory tokenOutIdsProof,
+    Call memory fillCall
+  ) external pure returns (bytes memory) {
+    return abi.encode(recipient, tokenInIdsProof, tokenOutIdsProof, fillCall);
+  }
 
   function unsignedData (
     uint8 orderIndex,

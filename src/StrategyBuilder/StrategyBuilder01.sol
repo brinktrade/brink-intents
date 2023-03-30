@@ -15,7 +15,7 @@ enum SignatureType {
   EIP1271
 }
 
-contract StrategyBuilder01 is PrimitiveBuilder01, OrderBuilder01, UnsignedDataBuilder01 {
+contract StrategyBuilder01 {
 
   address public immutable strategyTarget;
   address public immutable primitives;

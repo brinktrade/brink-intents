@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/StrategyBuilder/StrategyBuilder01.sol";
 import "./Helper.sol";
 
 contract Account_signedMetaDelegateCall is Test, Helper  {
@@ -24,10 +23,10 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
       uint24 feePercent = 10000; // 1%
       uint feeMin = 0; // no minimum fixed fee
 
-      Order[] memory orders = strategyBuilder.orders(
-        strategyBuilder.order(
-          strategyBuilder.useBit(0, 1),
-          strategyBuilder.marketSwapExactInput(
+      Order[] memory orders = orderBuilder.orders(
+        orderBuilder.order(
+          primitiveBuilder.useBit(0, 1),
+          primitiveBuilder.marketSwapExactInput(
             twapAdapter,
             twapAdapterParams,
             proxy0_signerAddress,
@@ -57,9 +56,9 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
 
     bytes memory signature = signMessageHash(proxy0_signerPrivateKey, strategyHash);
 
-    bytes memory unsignedData = strategyBuilder.unsignedData(
+    bytes memory unsignedData = unsignedDataBuilder.unsignedData(
       0, // orderIndex
-      strategyBuilder.unsignedMarketSwapData(
+      unsignedDataBuilder.unsignedMarketSwapData(
         address(filler),
         EMPTY_IDS_PROOF,
         EMPTY_IDS_PROOF,
