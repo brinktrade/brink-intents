@@ -32,7 +32,7 @@ contract StrategyBuilder01 {
     Order[] memory orders
   ) public view returns (bytes memory data, bytes32 messageHash) {
     data = strategyData(orders);
-    messageHash = _messageHash(signatureType, data, account, chainId);
+    messageHash = getMessageHash(signatureType, data, account, chainId);
   }
 
   function strategy (
@@ -44,7 +44,7 @@ contract StrategyBuilder01 {
     Call[] memory afterCalls
   ) public view returns (bytes memory data, bytes32 messageHash) {
     data = strategyData(orders, beforeCalls, afterCalls);
-    messageHash = _messageHash(signatureType, data, account, chainId);
+    messageHash = getMessageHash(signatureType, data, account, chainId);
   }
 
   function strategyData (
@@ -81,7 +81,7 @@ contract StrategyBuilder01 {
     );
   }
 
-  function messageHashEIP712 (
+  function getMessageHashEIP712 (
     bytes memory data,
     address account,
     uint chainId
@@ -106,24 +106,24 @@ contract StrategyBuilder01 {
     ));
   }
 
-  function messageHashEIP1271 (
+  function getMessageHashEIP1271 (
     bytes memory data,
     address account,
     uint chainId
   ) public view returns (bytes32 messageHash) {
-    revert("messageHashEIP1271: NOT IMPLEMENTED");
+    revert("getMessageHashEIP1271: NOT IMPLEMENTED");
   }
 
-  function _messageHash (
+  function getMessageHash (
     SignatureType signatureType,
     bytes memory data,
     address account,
     uint chainId
-  ) internal view returns (bytes32 messageHash) {
+  ) public view returns (bytes32 messageHash) {
     if (signatureType == SignatureType.EIP712) {
-      messageHash = messageHashEIP712(data, account, chainId);
+      messageHash = getMessageHashEIP712(data, account, chainId);
     } else if (signatureType == SignatureType.EIP1271) {
-      messageHash = messageHashEIP1271(data, account, chainId);
+      messageHash = getMessageHashEIP1271(data, account, chainId);
     } else {
       revert InvalidSignatureType();
     }
