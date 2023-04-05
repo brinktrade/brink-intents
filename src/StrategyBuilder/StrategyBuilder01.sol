@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import "../TokenHelper/TokenHelper.sol";
 
 import "../StrategyTarget01.sol";
-import "./OrderBuilder01.sol";
 import "./PrimitiveBuilder01.sol";
 import "./UnsignedDataBuilder01.sol";
 
@@ -29,7 +28,7 @@ contract StrategyBuilder01 {
     address account,
     uint chainId,
     SignatureType signatureType,
-    Order[] memory orders
+    bytes[][] memory orders
   ) public view returns (bytes memory data, bytes32 messageHash) {
     data = strategyData(orders);
     messageHash = getMessageHash(signatureType, data, account, chainId);
@@ -39,7 +38,7 @@ contract StrategyBuilder01 {
     address account,
     uint chainId,
     SignatureType signatureType,
-    Order[] memory orders,
+    bytes[][] memory orders,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data, bytes32 messageHash) {
@@ -48,20 +47,30 @@ contract StrategyBuilder01 {
   }
 
   function strategyData (
-    Order[] memory orders
+    bytes[][] memory orders
   ) public view returns (bytes memory data) {
     data = strategyData(orders, new Call[](0), new Call[](0));
   }
 
   function strategyData (
-    Order[] memory orders,
+    bytes[][] memory orders,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data) {
+    // build array of Order structs from bytes input
+    Order[] memory orderStructs = new Order[](orders.length);
+    for (uint8 i = 0; i < orders.length; i++) {
+      Primitive[] memory primitives = new Primitive[](orders[i].length);
+      for (uint8 j = 0; j < orders[i].length; j++) {
+        primitives[j] = abi.decode(orders[i][j], (Primitive));
+      }
+      orderStructs[i] = Order(primitives);
+    }
+
     // encode strategy data without using Strategy struct
     bytes memory strategyData = abi.encode(
       primitives,
-      orders,
+      orderStructs,
       beforeCalls,
       afterCalls
     );

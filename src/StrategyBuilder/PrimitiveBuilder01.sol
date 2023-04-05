@@ -7,15 +7,15 @@ import "../StrategyTarget01.sol";
 
 contract PrimitiveBuilder01 {
 
-  function useBit (uint bitmapIndex, uint bit) external pure returns (Primitive memory) {
-    return Primitive(
+  function useBit (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
       abi.encodeWithSelector(
         Primitives01.useBit.selector,
         bitmapIndex,
         bit
       ),
       false
-    );
+    ));
   }
   
   function marketSwapExactInput(
@@ -27,8 +27,8 @@ contract PrimitiveBuilder01 {
     uint tokenInAmount,
     uint24 feePercent,
     uint feeMinTokenOut
-  ) external pure returns (Primitive memory) {
-    return Primitive(
+  ) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
       abi.encodeWithSelector(
         Primitives01.marketSwapExactInput.selector,
         priceOracle,
@@ -42,7 +42,7 @@ contract PrimitiveBuilder01 {
         new bytes(0)
       ),
       true
-    );
+    ));
   }
 
 }
