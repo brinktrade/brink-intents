@@ -23,26 +23,27 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
       uint24 feePercent = 10000; // 1%
       uint feeMin = 0; // no minimum fixed fee
 
-      Order[] memory orders = ordersBuilder.orders(
-        orderBuilder.order(
-          primitiveBuilder.useBit(0, 1),
-          primitiveBuilder.marketSwapExactInput(
-            twapAdapter,
-            twapAdapterParams,
-            proxy0_signerAddress,
-            USDC_Token,
-            WETH_Token,
-            usdcInAmount,
-            feePercent,
-            feeMin
-          )
-        )
+      // build orders bytes data
+      bytes[][] memory ordersData = new bytes[][](1);
+      ordersData[0] = new bytes[](2);
+      ordersData[0][0] = primitiveBuilder.useBit(0, 1);
+      ordersData[0][1] = primitiveBuilder.marketSwapExactInput(
+        twapAdapter,
+        twapAdapterParams,
+        proxy0_signerAddress,
+        USDC_Token,
+        WETH_Token,
+        usdcInAmount,
+        feePercent,
+        feeMin
       );
+
+      // send orders bytes data to strategy builder
       (strategyData, strategyHash) = strategyBuilder.strategy(
         address(proxy0_account),
         block.chainid,
         SignatureType.EIP712,
-        orders
+        ordersData
       );
 
       expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
