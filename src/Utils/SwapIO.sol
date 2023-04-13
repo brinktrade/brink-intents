@@ -11,7 +11,7 @@ struct FillStateParams {
   bool sign;
 }
 
-contract LimitSwapIO {
+contract SwapIO {
   using Math for uint;
 
   uint256 internal constant Q96 = 0x1000000000000000000000000;
@@ -83,6 +83,51 @@ contract LimitSwapIO {
     int8 i = fillStateParams.sign ? int8(1) : -1;
     int j = fillStateParams.sign ? int(0) : int(Q96);
     filledPercentX96 = uint((fillStateX96 + int128(fillStateParams.startX96)) * i + j);
+  }
+
+  // given exact input, price, and fee info, return output and fee amounts
+  function marketSwapExactInput_getOutput (
+    uint input,
+    uint priceX96,
+    uint24 feePercent,
+    uint feeMin
+  ) public pure returns (
+    uint output,
+    uint fee,
+    uint outputWithFee
+  ) {
+    output = calcSwapAmount(priceX96, input);
+    fee = calcFee(output, feePercent, feeMin);
+    outputWithFee = output - fee;
+  }
+
+  // given exact output, price, and fee info, return input and fee amounts
+  function marketSwapExactOutput_getInput (
+    uint output,
+    uint priceX96,
+    uint24 feePercent,
+    uint feeMin
+  ) public pure returns (
+    uint input,
+    uint fee,
+    uint inputWithFee
+  ) {
+    input = calcSwapAmount(priceX96, output);
+    fee = calcFee(input, feePercent, feeMin);
+    inputWithFee = input + fee;
+  }
+
+  // given price and amount0, return amount1
+  function calcSwapAmount (uint priceX96, uint amount0) public pure returns (uint amount1) {
+    amount1 = priceX96 * amount0 / Q96;
+  }
+
+  // given amount, fee %, and fee minimum, return the fee
+  function calcFee (uint amount, uint24 feePercent, uint feeMin) public pure returns (uint fee) {
+    fee = amount.mulDiv(feePercent, 10**6);
+    if (fee < feeMin) {
+      fee = feeMin;
+    }
   }
 
 }

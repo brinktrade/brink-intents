@@ -19,7 +19,7 @@ import "../src/StrategyBuilder/PrimitiveBuilder01.sol";
 import "../src/StrategyBuilder/UnsignedDataBuilder01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
-import "../src/Utils/LimitSwapIO.sol";
+import "../src/Utils/SwapIO.sol";
 import "./Mocks/MockPriceOracle.sol";
 import "./Mocks/MockPrimitiveInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
@@ -40,7 +40,7 @@ contract Helper is Test, Constants {
   StrategyTarget01 public strategyTarget;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
   ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
-  LimitSwapIO public limitSwapIO;
+  SwapIO public swapIO;
   MockPriceOracle public mockPriceOracle;
   MockPrimitiveInternals public primitiveInternals;
   MockTokenHelperInternals public tokenHelper;
@@ -179,7 +179,7 @@ contract Helper is Test, Constants {
     strategyTarget = StrategyTarget01(deployContract('out/StrategyTarget01.sol/StrategyTarget01.json'));
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
-    limitSwapIO = LimitSwapIO(deployContract('out/LimitSwapIO.sol/LimitSwapIO.json'));
+    swapIO = SwapIO(deployContract('out/SwapIO.sol/SwapIO.json'));
 
     strategyBuilder = new StrategyBuilder01(
       address(strategyTarget),

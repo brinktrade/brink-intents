@@ -46,7 +46,8 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
         ordersData
       );
 
-      expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
+      uint usdc_eth_priceX96 = twapAdapter.getUint256(twapAdapterParams);
+      (,,expectedRequiredWethOutAmount) = swapIO.marketSwapExactInput_getOutput(usdcInAmount, usdc_eth_priceX96, feePercent, feeMin);
     }
 
     int intWethOutAmount = int(expectedRequiredWethOutAmount);

@@ -20,7 +20,8 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
     uint24 feePercent = 10000; // 1%
     uint feeMin = 0; // no minimum fixed fee
 
-    uint expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
+    uint usdc_eth_priceX96 = twapAdapter.getUint256(twapAdapterParams);
+    (,,uint expectedRequiredWethOutAmount) = swapIO.marketSwapExactInput_getOutput(usdcInAmount, usdc_eth_priceX96, feePercent, feeMin);
     int intWethOutAmount = int(expectedRequiredWethOutAmount);
     
     // fill with exact expectedRequiredWethOutAmount. for a real market swap, filler could provide an additional amount as buffer for

@@ -6,7 +6,7 @@ import "./Helper.sol";
 
 import "openzeppelin/utils/math/Math.sol";
 
-contract LimitSwapIO_getFilledAmount is Test, Helper  {
+contract SwapIO_getFilledAmount is Test, Helper  {
 
   using Math for uint;
 
