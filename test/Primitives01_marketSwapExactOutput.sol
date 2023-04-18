@@ -23,7 +23,8 @@ contract Primitives01_marketSwapExactOutput is Test, Helper  {
 
     // since the oracle is used to calculate outputToken (WETH) -> inputToken (USDC), and the pool used for TWAP is USDC-WETH (USDC address hex is < WETH address hex),
     // we need to use the TwapInverseAdapter here
-    uint expectedRequiredUsdcInAmount = primitives.getSwapAmountWithFee(twapInverseAdapter, twapAdapterParams, wethOutAmount, int24(feePercent), int(feeMin));
+    uint eth_usdc_priceX96 = twapInverseAdapter.getUint256(twapAdapterParams);
+    (,,uint expectedRequiredUsdcInAmount) = swapIO.marketSwapExactOutput_getInput(wethOutAmount, eth_usdc_priceX96, feePercent, feeMin);
     int intUsdcInAmount = int(expectedRequiredUsdcInAmount);
     
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, wethOutAmount, new uint[](0));

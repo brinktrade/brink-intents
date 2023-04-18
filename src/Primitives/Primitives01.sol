@@ -10,7 +10,7 @@ import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
 import "../Libraries/Bit.sol";
 import "../TokenHelper/TokenHelper.sol";
-import "../Utils/LimitSwapIO.sol";
+import "../Utils/SwapIO.sol";
 
 error NftIdAlreadyOwned();
 error NotEnoughNftReceived();
@@ -52,7 +52,7 @@ struct UnsignedStakeProofData {
   bytes stakerSignature;
 }
 
-contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
+contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
   using Math for uint256;
   using SignedMath for int256;
 
@@ -150,13 +150,15 @@ contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
     uint feeMinTokenOut,
     UnsignedMarketSwapData memory data
   ) public {
+    uint tokenOutAmount = getSwapAmount(priceOracle, priceOracleParams, tokenInAmount);
+    tokenOutAmount = tokenOutAmount - calcFee(tokenOutAmount, feePercent, feeMinTokenOut);
     _fillSwap(
       tokenIn,
       tokenOut,
       owner,
       data.recipient,
       tokenInAmount,
-      getSwapAmountWithFee(priceOracle, priceOracleParams, tokenInAmount, -int24(feePercent), int(feeMinTokenOut)),
+      tokenOutAmount,
       data.tokenInIdsProof,
       data.tokenOutIdsProof,
       data.fillCall
@@ -175,12 +177,14 @@ contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
     uint feeMinTokenIn,
     UnsignedMarketSwapData memory data
   ) public {
+    uint tokenInAmount = getSwapAmount(priceOracle, priceOracleParams, tokenOutAmount);
+    tokenInAmount = tokenInAmount + calcFee(tokenInAmount, feePercent, feeMinTokenIn);
     _fillSwap(
       tokenIn,
       tokenOut,
       owner,
       data.recipient,
-      getSwapAmountWithFee(priceOracle, priceOracleParams, tokenOutAmount, int24(feePercent), int(feeMinTokenIn)),
+      tokenInAmount,
       tokenOutAmount,
       data.tokenInIdsProof,
       data.tokenOutIdsProof,
@@ -348,16 +352,7 @@ contract Primitives01 is TokenHelper, StrategyBase, LimitSwapIO {
 
   function getSwapAmount (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount) public view returns (uint token1Amount) {
     uint priceX96 = priceOracle.getUint256(priceOracleParams);
-    token1Amount = priceX96 * token0Amount / Q96;
-  }
-
-  function getSwapAmountWithFee (IUint256Oracle priceOracle, bytes memory priceOracleParams, uint token0Amount, int24 feePercent, int feeMin) public view returns (uint token1Amount) {
-    token1Amount = getSwapAmount(priceOracle, priceOracleParams, token0Amount);
-    int feeAmount = int(token1Amount.mulDiv(int(feePercent).abs(), 10**6)) * _sign(feePercent);
-    if (feeAmount.abs() < feeMin.abs()) {
-      feeAmount = feeMin;
-    }
-    token1Amount = uint(int(token1Amount) + feeAmount);
+    token1Amount = calcSwapAmount(priceX96, token0Amount);
   }
 
   function getFillStateX96 (uint64 fillStateId) public view returns (int fillState) {

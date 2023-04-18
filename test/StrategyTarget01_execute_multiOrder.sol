@@ -24,7 +24,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     uint24 feePercent = 10000; // 1%
     uint feeMin = 0; // no minimum fixed fee
 
-    uint expectedRequiredWethOutAmount = primitives.getSwapAmountWithFee(twapAdapter, twapAdapterParams, usdcInAmount, -int24(feePercent), int(feeMin));
+    uint usdc_eth_priceX96 = twapAdapter.getUint256(twapAdapterParams);
+    (,,uint expectedRequiredWethOutAmount) = swapIO.marketSwapExactInput_getOutput(usdcInAmount, usdc_eth_priceX96, feePercent, feeMin);
     int intWethOutAmount = int(expectedRequiredWethOutAmount);
 
     // order0: bit 0|1, market swap 1450 USDC -> WETH
