@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "forge-std/console.sol";
 import "./StrategyBase.sol";
+import "./Libraries/ProxyReentrancyGuard.sol";
 
 error BadOrderIndex();
 error UnsignedCallRequired();
@@ -32,7 +33,7 @@ struct UnsignedData {
   bytes[] calls;
 }
 
-contract StrategyTarget01 is StrategyBase {
+contract StrategyTarget01 is StrategyBase, ProxyReentrancyGuard {
 
   /// @dev Execute an order within a signed array of orders
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
@@ -41,7 +42,7 @@ contract StrategyTarget01 is StrategyBase {
   function execute(
     Strategy calldata strategy,
     UnsignedData calldata unsignedData
-  ) external {
+  ) external nonReentrant {
     if (unsignedData.orderIndex >= strategy.orders.length) {
       revert BadOrderIndex();
     }
