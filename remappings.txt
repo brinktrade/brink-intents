@@ -1,3 +1,2 @@
-openzeppelin/=lib/openzeppelin-contracts/contracts
-brink-core/=lib/brink-core/contracts
-uniswap-v3-core/=lib/v3-core/contracts
+@openzeppelin/=node_modules/@openzeppelin
+@uniswap/=node_modules/@uniswap

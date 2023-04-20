@@ -2,8 +2,8 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "uniswap-v3-core/Interfaces/IUniswapV3Pool.sol";
-import "openzeppelin/utils/Strings.sol";
+import "@uniswap/v3-core/contracts/Interfaces/IUniswapV3Pool.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Interfaces/IAccount.sol";
 import "./Interfaces/IAccountFactory.sol";
 import "../src/StrategyTarget01.sol";
