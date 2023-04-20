@@ -40,7 +40,7 @@ error InvalidMerkleProof();
 
 contract TokenHelper {
 
-  ITokenStatusOracle private constant TOKEN_STATUS_ORACLE = ITokenStatusOracle(0x5847B8b11846Af977709b16b4a2d45B8e6B86248);
+  ITokenStatusOracle private constant TOKEN_STATUS_ORACLE = ITokenStatusOracle(0xF90299260BFE07dF65066f74649f1262fe9861De);
 
   function transferFrom (address tokenAddress, TokenStandard tokenStandard, address from, address to, uint amount, uint[] memory ids) internal {
     if (tokenStandard == TokenStandard.ERC20) {
