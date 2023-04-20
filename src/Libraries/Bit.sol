@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity ^0.8.13;
+pragma solidity =0.8.17;
 
 /// @title Bit replay protection library
 /// @notice Handles storage and loads for replay protection bits

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity =0.8.17;
 
 abstract contract Constants {
   uint public MAX_UINT = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
