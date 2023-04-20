@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.7.6;
 
-import "uniswap-v3-core/interfaces/IUniswapV3Pool.sol";
-import "uniswap-v3-core/libraries/TickMath.sol";
-import "uniswap-v3-core/libraries/FixedPoint96.sol";
-import "uniswap-v3-core/libraries/FullMath.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "@uniswap/v3-core/contracts/libraries/TickMath.sol";
+import "@uniswap/v3-core/contracts/libraries/FixedPoint96.sol";
+import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 import "../../Interfaces/ITwapAdapter.sol";
 
 abstract contract TwapLogic is ITwapAdapter {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.7.6;
 
-import 'uniswap-v3-core/libraries/FixedPoint96.sol';
+import "@uniswap/v3-core/contracts/libraries/FixedPoint96.sol";
 import "./TwapLogic.sol";
 
 contract TwapInverseAdapter is TwapLogic {
