@@ -3,8 +3,6 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 
-import "forge-std/console.sol";
-
 contract CurveMath {
   using SignedMath for int256;
 
