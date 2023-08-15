@@ -30,6 +30,8 @@ contract Helper is Test, Constants {
 
   ITwapAdapter public twapAdapter;
   ITwapAdapter public twapInverseAdapter;
+  ITwapAdapter public twapAdapter02;
+  ITwapAdapter public twapInverseAdapter02;
   FlatPriceCurve public flatPriceCurve;
   LinearPriceCurve public linearPriceCurve;
   QuadraticPriceCurve public quadraticPriceCurve;
@@ -52,11 +54,17 @@ contract Helper is Test, Constants {
   uint256 public constant Q96 = 0x1000000000000000000000000;
 
   // TWAP prices are in fixed point X96 (2**96)
+  // decimal price = TWAP_PRICE / 2**96 / 10**(token1.decimals - token0.decimals)
 
   // TWAP price for interval 1000s - 0s: ~0.000645 USDC/ETH
   uint256 public MAGIC_TWAP_PRICE_USDC_ETH_1000_0 = 51128994256875305254096266510654458404;
   // inverse ~1549.574 ETH/USDC
   uint256 public MAGIC_TWAP_PRICE_ETH_USDC_1000_0 = 122769904368744749859;
+
+  // TWAP price for interval 1000s - 0s: ~0.000645 DAI/ETH
+  uint256 public MAGIC_TWAP_PRICE_DAI_ETH_1000_0 = 51134242346236127515186565;
+  // inverse ~1549.415 ETH/DAI
+  uint256 public MAGIC_TWAP_PRICE_ETH_DAI_1000_0 = 122757304056324276463700552731386;
   
   
   // TWAP price for interval 2000s - 1000s: ~0.000646 USDC/ETH
@@ -83,6 +91,7 @@ contract Helper is Test, Constants {
   IERC1155 public THE_MEMES_ERC1155 = IERC1155(THE_MEMES);
 
   IUniswapV3Pool USDC_ETH_FEE500_UNISWAP_V3_POOL = IUniswapV3Pool(0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640);
+  IUniswapV3Pool DAI_ETH_FEE3000_UNISWAP_V3_POOL = IUniswapV3Pool(0xC2e9F25Be6257c210d7Adf0D4Cd6E3E881ba25f8);
 
   address public USDC_WHALE = 0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1;
   address public ETH_WHALE = 0x00000000219ab540356cBB839Cbe05303d7705Fa;
@@ -172,6 +181,8 @@ contract Helper is Test, Constants {
   function setupDeployedContracts () public {
     twapAdapter = ITwapAdapter(deployContract('out/TwapAdapter.sol/TwapAdapter.json'));
     twapInverseAdapter = ITwapAdapter(deployContract('out/TwapInverseAdapter.sol/TwapInverseAdapter.json'));
+    twapAdapter02 = ITwapAdapter(deployContract('out/TwapAdapter02.sol/TwapAdapter02.json'));
+    twapInverseAdapter02 = ITwapAdapter(deployContract('out/TwapInverseAdapter02.sol/TwapInverseAdapter02.json'));
     flatPriceCurve = FlatPriceCurve(deployContract('out/FlatPriceCurve.sol/FlatPriceCurve.json'));
     linearPriceCurve = LinearPriceCurve(deployContract('out/LinearPriceCurve.sol/LinearPriceCurve.json'));
     quadraticPriceCurve = QuadraticPriceCurve(deployContract('out/QuadraticPriceCurve.sol/QuadraticPriceCurve.json'));
