@@ -18,6 +18,8 @@ string.concat(
 "module.exports = {\n",
 "  TWAP_ADAPTER: '", addressToString(address(twapAdapter)), "',\n",
 "  TWAP_INVERSE_ADAPTER: '", addressToString(address(twapInverseAdapter)), "',\n",
+"  TWAP_ADAPTER_02: '", addressToString(address(twapAdapter02)), "',\n",
+"  TWAP_INVERSE_ADAPTER_02: '", addressToString(address(twapInverseAdapter02)), "',\n",
 "  FLAT_PRICE_CURVE: '", addressToString(address(flatPriceCurve)), "',\n",
 "  LINEAR_PRICE_CURVE: '", addressToString(address(linearPriceCurve)), "',\n",
 "  RESERVOIR_FLOOR_PRICE_ORACLE_ADAPTER: '", addressToString(address(reservoirFloorPriceOracleAdapter)), "',\n",
