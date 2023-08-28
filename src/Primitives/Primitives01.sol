@@ -96,8 +96,7 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
 
   }
 
-  // allows a run every n blocks, revert if last run was less than n blocks ago
-  function requireBlocksElapsed (bytes32 id, uint numberOfBlocksElapsed) public {
+  function requireBlocksElapsed (bytes32 id, uint startBlock, uint blocksElapsed) public {
 
   }
 
@@ -118,11 +117,6 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     if(oracleUint256 < upperBound) {
       revert Uint256UpperBoundNotMet(oracleUint256);
     }
-  }
-
-  // requires tx sent by an executor that can prove ownership of one of the executor addresses
-  function requireStake (UnsignedStakeProofData memory data) public {
-
   }
 
   function transfer (
@@ -276,32 +270,6 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
   function requireLimitSwapFilled(bytes32 id) public {
 
   }
-
-  // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
-  // // incentivizes initialization of the auction with initializerFee
-  // function dutchAuction (bytes32 id, Token memory tokenA, Token memory tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) public {
-
-  // }
-
-  // // revert if dutch auction is not started
-  // function requireDutchAuctionNotStarted (bytes32 id) public {
-
-  // }
-
-  // // revert if dutch auction is not open
-  // function requireDutchAuctionOpen (bytes32 id) public {
-
-  // }
-
-  // // revert if dutch auction is not complete
-  // function requireDutchAuctionComplete (bytes32 id) public {
-
-  // }
-
-  // // execute a dutch auction buy order
-  // function dutchAuctionBuy (bytes32 id, uint inputAmount) public {
-
-  // }
 
   // create a seaport listing
   function createSeaportListing (bytes32 id) public {
