@@ -91,15 +91,6 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     }
   }
 
-  // increment on each successful run, revert when maxRuns exceeded
-  function maxRuns (bytes32 id, uint numberOfRuns) public {
-
-  }
-
-  function requireBlocksElapsed (bytes32 id, uint startBlock, uint blocksElapsed) public {
-
-  }
-
   // Require a lower bound uint256 returned from an oracle. Revert if oracle returns 0.
   function requireUint256LowerBound (IUint256Oracle uint256Oracle, bytes memory params, uint lowerBound) public view {
     uint256 oracleUint256 = uint256Oracle.getUint256(params);
@@ -260,21 +251,7 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
       data.fillCall
     );
   }
-
-  // revert if limit swap is not open
-  function requireLimitSwapOpen(bytes32 id) public {
-
-  }
-
-  // revert if limit swap is not filled
-  function requireLimitSwapFilled(bytes32 id) public {
-
-  }
-
-  // create a seaport listing
-  function createSeaportListing (bytes32 id) public {
-
-  }
+  
 
   function _checkUnsignedTransferData (Token memory token, uint amount, UnsignedTransferData memory unsignedData) private pure {
     if (token.idsMerkleRoot != bytes32(0) && unsignedData.idsProof.ids.length != amount) {
