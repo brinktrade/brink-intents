@@ -45,4 +45,29 @@ contract PrimitiveBuilder01 {
     ));
   }
 
+  function limitSwapExactInput(
+    address owner,
+    Token memory tokenIn,
+    Token memory tokenOut,
+    uint tokenInAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams
+  ) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.limitSwapExactInput.selector,
+        owner,
+        tokenIn,
+        tokenOut,
+        tokenInAmount,
+        priceCurve,
+        priceCurveParams,
+        fillStateParams,
+        new bytes(0)
+      ),
+      true
+    ));
+  }
+
 }
