@@ -7,12 +7,78 @@ import "../StrategyTarget01.sol";
 
 contract PrimitiveBuilder01 {
 
+  function requireBitNotUsed (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.requireBitNotUsed.selector,
+        bitmapIndex,
+        bit
+      ),
+      false
+    ));
+  }
+
+  function requireBitUsed (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.requireBitUsed.selector,
+        bitmapIndex,
+        bit
+      ),
+      false
+    ));
+  }
+
   function useBit (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
     return abi.encode(Primitive(
       abi.encodeWithSelector(
         Primitives01.useBit.selector,
         bitmapIndex,
         bit
+      ),
+      false
+    ));
+  }
+
+  function requireBlockMined (uint blockNumber) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.requireBlockMined.selector,
+        blockNumber
+      ),
+      false
+    ));
+  }
+
+  function requireBlockNotMined (uint blockNumber) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.requireBlockNotMined.selector,
+        blockNumber
+      ),
+      false
+    ));
+  }
+
+  function requireUint256LowerBound (IUint256Oracle uint256Oracle, bytes memory params, uint lowerBound) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.requireUint256LowerBound.selector,
+        uint256Oracle,
+        params,
+        lowerBound
+      ),
+      false
+    ));
+  }
+
+  function requireUint256UpperBound (IUint256Oracle uint256Oracle, bytes memory params, uint upperBound) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.requireUint256UpperBound.selector,
+        uint256Oracle,
+        params,
+        upperBound
       ),
       false
     ));
