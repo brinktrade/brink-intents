@@ -26,6 +26,8 @@ error BitUsed();
 error BitNotUsed();
 error SwapIdsAreEqual();
 error InvalidSwapIdsLength();
+error MaxBlockIntervals();
+error BlockIntervalNotReady();
 
 struct UnsignedTransferData {
   address recipient;
@@ -89,6 +91,32 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     if (blockNumber <= block.number) {
       revert BlockMined();
     }
+  }
+
+  /**
+    * @dev Allow execution on a block interval
+    * @param id A unique id for the block interval. This id is used to store the block interval state. Use a random id to avoid collisions.
+    * @param initialStart The initial start block number. Setting this to 0 will allow the first execution to occur immediately.
+    * @param intervalMinSize The minimum size of the block interval. This is a minimum because the actual interval can be longer if execution is delayed.
+    * @param maxIntervals The maximum number of intervals that can be executed. Set this to 0 for unlimited executions.
+    */
+  function blockInterval (uint64 id, uint128 initialStart, uint128 intervalMinSize, uint16 maxIntervals) public {
+    (uint128 start, uint16 counter) = getBlockIntervalState(id);
+    if (start == 0) {
+      start = initialStart;
+    }
+
+    if (maxIntervals > 0 && counter >= maxIntervals) {
+      revert MaxBlockIntervals();
+    }
+
+    uint128 blockNum = uint128(block.number);
+
+    if (blockNum < start + intervalMinSize) {
+      revert BlockIntervalNotReady();
+    }
+
+    _setBlockIntervalState(id, blockNum + intervalMinSize, counter + 1);
   }
 
   // Require a lower bound uint256 returned from an oracle. Revert if oracle returns 0.
@@ -302,6 +330,13 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     assembly { fillState := sload(position) } 
   }
 
+  function getBlockIntervalState (uint64 id) public view returns (uint128 start, uint16 counter) {
+    bytes32 position = keccak256(abi.encode(id, "blockInterval"));
+    bytes memory state;
+    assembly { state := sload(position) }
+    (start, counter) = abi.decode(state, (uint128, uint16));
+  }
+
   function _setFilledAmount (FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) internal {
     _setFilledPercentX96(fillStateParams, filledAmount.mulDiv(Q96, totalAmount) + 1);
   }
@@ -323,5 +358,11 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
 
   function _sign (int n) internal pure returns (int8 sign) {
     return n >= 0 ? int8(1) : -1;
+  }
+
+  function _setBlockIntervalState (uint64 id, uint128 start, uint16 counter) internal {
+    bytes32 position = keccak256(abi.encode(id, "blockInterval"));
+    bytes memory state = abi.encode(start, counter);
+    assembly { sstore(position, state) }
   }
 }
