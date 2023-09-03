@@ -27,7 +27,7 @@ error BitNotUsed();
 error SwapIdsAreEqual();
 error InvalidSwapIdsLength();
 error MaxBlockIntervals();
-error BlockIntervalNotReady();
+error BlockIntervalTooShort();
 
 struct UnsignedTransferData {
   address recipient;
@@ -113,10 +113,10 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     uint128 blockNum = uint128(block.number);
 
     if (blockNum < start + intervalMinSize) {
-      revert BlockIntervalNotReady();
+      revert BlockIntervalTooShort();
     }
 
-    _setBlockIntervalState(id, blockNum + intervalMinSize, counter + 1);
+    _setBlockIntervalState(id, blockNum, counter + 1);
   }
 
   // Require a lower bound uint256 returned from an oracle. Revert if oracle returns 0.
@@ -332,9 +332,10 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
 
   function getBlockIntervalState (uint64 id) public view returns (uint128 start, uint16 counter) {
     bytes32 position = keccak256(abi.encode(id, "blockInterval"));
-    bytes memory state;
-    assembly { state := sload(position) }
-    (start, counter) = abi.decode(state, (uint128, uint16));
+    bytes32 slot;
+    assembly { slot := sload(position) }
+    start = uint128(uint256(slot));
+    counter = uint16(uint256(slot >> 128)); 
   }
 
   function _setFilledAmount (FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) internal {
@@ -362,7 +363,7 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
 
   function _setBlockIntervalState (uint64 id, uint128 start, uint16 counter) internal {
     bytes32 position = keccak256(abi.encode(id, "blockInterval"));
-    bytes memory state = abi.encode(start, counter);
-    assembly { sstore(position, state) }
+    bytes32 slot = bytes32(uint256(start)) | (bytes32(uint256(counter)) << 128);
+    assembly { sstore(position, slot) }
   }
 }
