@@ -26,6 +26,8 @@ error BitUsed();
 error BitNotUsed();
 error SwapIdsAreEqual();
 error InvalidSwapIdsLength();
+error MaxBlockIntervals();
+error BlockIntervalTooShort();
 
 struct UnsignedTransferData {
   address recipient;
@@ -91,14 +93,30 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     }
   }
 
-  // increment on each successful run, revert when maxRuns exceeded
-  function maxRuns (bytes32 id, uint numberOfRuns) public {
+  /**
+    * @dev Allow execution on a block interval
+    * @param id A unique id for the block interval. This id is used to store the block interval state. Use a random id to avoid collisions.
+    * @param initialStart The initial start block number. Setting this to 0 will allow the first execution to occur immediately.
+    * @param intervalMinSize The minimum size of the block interval. This is a minimum because the actual interval can be longer if execution is delayed.
+    * @param maxIntervals The maximum number of intervals that can be executed. Set this to 0 for unlimited executions.
+    */
+  function blockInterval (uint64 id, uint128 initialStart, uint128 intervalMinSize, uint16 maxIntervals) public {
+    (uint128 start, uint16 counter) = getBlockIntervalState(id);
+    if (start == 0) {
+      start = initialStart;
+    }
 
-  }
+    if (maxIntervals > 0 && counter >= maxIntervals) {
+      revert MaxBlockIntervals();
+    }
 
-  // allows a run every n blocks, revert if last run was less than n blocks ago
-  function requireBlocksElapsed (bytes32 id, uint numberOfBlocksElapsed) public {
+    uint128 blockNum = uint128(block.number);
 
+    if (blockNum < start + intervalMinSize) {
+      revert BlockIntervalTooShort();
+    }
+
+    _setBlockIntervalState(id, blockNum, counter + 1);
   }
 
   // Require a lower bound uint256 returned from an oracle. Revert if oracle returns 0.
@@ -120,11 +138,6 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     }
   }
 
-  // requires tx sent by an executor that can prove ownership of one of the executor addresses
-  function requireStake (UnsignedStakeProofData memory data) public {
-
-  }
-
   function transfer (
     Token memory token,
     address owner,
@@ -132,9 +145,7 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     uint amount,
     UnsignedTransferData memory data
   ) public {
-    _checkUnsignedTransferData(token, amount, data);
-    address _recipient = recipient != address(0) ? recipient : data.recipient;
-    // transferFrom(token, owner, _recipient, amount, data.id, data.idsProof);
+    revert("NOT IMPLEMENTED");
   }
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
@@ -266,47 +277,7 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
       data.fillCall
     );
   }
-
-  // revert if limit swap is not open
-  function requireLimitSwapOpen(bytes32 id) public {
-
-  }
-
-  // revert if limit swap is not filled
-  function requireLimitSwapFilled(bytes32 id) public {
-
-  }
-
-  // // auction tokenA in a dutch auction where price decreases until tokenA is swapped for tokenB.
-  // // incentivizes initialization of the auction with initializerFee
-  // function dutchAuction (bytes32 id, Token memory tokenA, Token memory tokenB, uint startPrice, uint endPrice, uint duration, address initializer, uint initializerReward) public {
-
-  // }
-
-  // // revert if dutch auction is not started
-  // function requireDutchAuctionNotStarted (bytes32 id) public {
-
-  // }
-
-  // // revert if dutch auction is not open
-  // function requireDutchAuctionOpen (bytes32 id) public {
-
-  // }
-
-  // // revert if dutch auction is not complete
-  // function requireDutchAuctionComplete (bytes32 id) public {
-
-  // }
-
-  // // execute a dutch auction buy order
-  // function dutchAuctionBuy (bytes32 id, uint inputAmount) public {
-
-  // }
-
-  // create a seaport listing
-  function createSeaportListing (bytes32 id) public {
-
-  }
+  
 
   function _checkUnsignedTransferData (Token memory token, uint amount, UnsignedTransferData memory unsignedData) private pure {
     if (token.idsMerkleRoot != bytes32(0) && unsignedData.idsProof.ids.length != amount) {
@@ -359,6 +330,14 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
     assembly { fillState := sload(position) } 
   }
 
+  function getBlockIntervalState (uint64 id) public view returns (uint128 start, uint16 counter) {
+    bytes32 position = keccak256(abi.encode(id, "blockInterval"));
+    bytes32 slot;
+    assembly { slot := sload(position) }
+    start = uint128(uint256(slot));
+    counter = uint16(uint256(slot >> 128)); 
+  }
+
   function _setFilledAmount (FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) internal {
     _setFilledPercentX96(fillStateParams, filledAmount.mulDiv(Q96, totalAmount) + 1);
   }
@@ -380,5 +359,11 @@ contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
 
   function _sign (int n) internal pure returns (int8 sign) {
     return n >= 0 ? int8(1) : -1;
+  }
+
+  function _setBlockIntervalState (uint64 id, uint128 start, uint16 counter) internal {
+    bytes32 position = keccak256(abi.encode(id, "blockInterval"));
+    bytes32 slot = bytes32(uint256(start)) | (bytes32(uint256(counter)) << 128);
+    assembly { sstore(position, slot) }
   }
 }
