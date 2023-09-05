@@ -60,6 +60,19 @@ contract PrimitiveBuilder01 {
     ));
   }
 
+  function blockInterval (uint64 id, uint128 initialStart, uint128 intervalMinSize, uint16 maxIntervals) external pure returns (bytes memory) {
+    return abi.encode(Primitive(
+      abi.encodeWithSelector(
+        Primitives01.blockInterval.selector,
+        id,
+        initialStart,
+        intervalMinSize,
+        maxIntervals
+      ),
+      false
+    ));
+  }
+
   function requireUint256LowerBound (IUint256Oracle uint256Oracle, bytes memory params, uint lowerBound) external pure returns (bytes memory) {
     return abi.encode(Primitive(
       abi.encodeWithSelector(
