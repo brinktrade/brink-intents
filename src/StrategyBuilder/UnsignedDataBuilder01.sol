@@ -16,6 +16,16 @@ contract UnsignedDataBuilder01 {
     return abi.encode(recipient, tokenInIdsProof, tokenOutIdsProof, fillCall);
   }
 
+  function unsignedLimitSwapData (
+    address recipient,
+    uint amount,
+    IdsProof memory tokenInIdsProof,
+    IdsProof memory tokenOutIdsProof,
+    Call memory fillCall
+  ) external pure returns (bytes memory) {
+    return abi.encode(recipient, amount, tokenInIdsProof, tokenOutIdsProof, fillCall);
+  }
+
   function unsignedData (
     uint8 orderIndex,
     bytes memory unsignedCall1
