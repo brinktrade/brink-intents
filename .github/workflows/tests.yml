@@ -21,6 +21,10 @@ jobs:
       uses: foundry-rs/foundry-toolchain@v1.0.10
     - name: Install dependencies
       run: yarn install
+    - name: Debug package version
+      run: cat node_modules/@uniswap/v3-core/package.json | grep version
+    - name: List files
+      run: ls -la node_modules/@uniswap/v3-core/contracts/Interfaces/
     - name: Run tests
       run: yarn test
       env:
