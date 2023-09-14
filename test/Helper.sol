@@ -2,7 +2,7 @@
 pragma solidity =0.8.17;
 
 import "forge-std/Test.sol";
-import "@uniswap/v3-core/contracts/Interfaces/IUniswapV3Pool.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Interfaces/IAccount.sol";
 import "./Interfaces/IAccountFactory.sol";
