@@ -1,0 +1,27 @@
+name: Node.js CI
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: foundry-toolchain
+      uses: foundry-rs/foundry-toolchain@v1.0.10
+    - name: Install dependencies
+      run: yarn install
+    - name: Run tests
+      run: yarn test
+      env:
+        MAINNET_RPC_URL: https://eth.drpc.org
