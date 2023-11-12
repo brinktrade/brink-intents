@@ -6,22 +6,22 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Interfaces/IAccount.sol";
 import "./Interfaces/IAccountFactory.sol";
-import "../src/StrategyTarget01.sol";
+import "../src/IntentTarget01.sol";
 import "../src/Interfaces/IDeployer.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
 import "../src/TokenHelper/TokenHelper.sol";
 import "../src/PriceCurves/FlatPriceCurve.sol";
 import "../src/PriceCurves/LinearPriceCurve.sol";
 import "../src/PriceCurves/QuadraticPriceCurve.sol";
-import "../src/Primitives/Primitives01.sol";
-import "../src/StrategyBuilder/StrategyBuilder01.sol";
-import "../src/StrategyBuilder/PrimitiveBuilder01.sol";
-import "../src/StrategyBuilder/UnsignedDataBuilder01.sol";
+import "../src/Segments/Segments01.sol";
+import "../src/IntentBuilder/IntentBuilder01.sol";
+import "../src/IntentBuilder/SegmentBuilder01.sol";
+import "../src/IntentBuilder/UnsignedDataBuilder01.sol";
 import "../src/Oracles/Reservoir/ReservoirFloorPriceOracleAdapter.sol";
 import "../src/Oracles/Reservoir/ReservoirTokenStatusOracleAdapter.sol";
 import "../src/Utils/SwapIO.sol";
 import "./Mocks/MockPriceOracle.sol";
-import "./Mocks/MockPrimitiveInternals.sol";
+import "./Mocks/MockSegmentInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
 import "./Utils/Filler.sol";
 import "./Utils/Constants.sol";
@@ -35,16 +35,16 @@ contract Helper is Test, Constants {
   FlatPriceCurve public flatPriceCurve;
   LinearPriceCurve public linearPriceCurve;
   QuadraticPriceCurve public quadraticPriceCurve;
-  Primitives01 public primitives;
-  StrategyBuilder01 public strategyBuilder;
-  PrimitiveBuilder01 public primitiveBuilder;
+  Segments01 public segments;
+  IntentBuilder01 public intentBuilder;
+  SegmentBuilder01 public segmentBuilder;
   UnsignedDataBuilder01 public unsignedDataBuilder;
-  StrategyTarget01 public strategyTarget;
+  IntentTarget01 public intentTarget;
   ReservoirFloorPriceOracleAdapter public reservoirFloorPriceOracleAdapter;
   ReservoirTokenStatusOracleAdapter public reservoirTokenStatusOracleAdapter;
   SwapIO public swapIO;
   MockPriceOracle public mockPriceOracle;
-  MockPrimitiveInternals public primitiveInternals;
+  MockSegmentInternals public segmentInternals;
   MockTokenHelperInternals public tokenHelper;
   Filler public filler;
   IDeployer public deployer = IDeployer(0x6b24634B517a63Ed0fa2a39977286e13e7E35E25);
@@ -186,17 +186,17 @@ contract Helper is Test, Constants {
     flatPriceCurve = FlatPriceCurve(deployContract('out/FlatPriceCurve.sol/FlatPriceCurve.json'));
     linearPriceCurve = LinearPriceCurve(deployContract('out/LinearPriceCurve.sol/LinearPriceCurve.json'));
     quadraticPriceCurve = QuadraticPriceCurve(deployContract('out/QuadraticPriceCurve.sol/QuadraticPriceCurve.json'));
-    primitives = Primitives01(deployContract('out/Primitives01.sol/Primitives01.json'));
-    strategyTarget = StrategyTarget01(deployContract('out/StrategyTarget01.sol/StrategyTarget01.json'));
+    segments = Segments01(deployContract('out/Segments01.sol/Segments01.json'));
+    intentTarget = IntentTarget01(deployContract('out/IntentTarget01.sol/IntentTarget01.json'));
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
     swapIO = SwapIO(deployContract('out/SwapIO.sol/SwapIO.json'));
 
-    strategyBuilder = new StrategyBuilder01(
-      address(strategyTarget),
-      address(primitives)
+    intentBuilder = new IntentBuilder01(
+      address(intentTarget),
+      address(segments)
     );
-    primitiveBuilder = new PrimitiveBuilder01();
+    segmentBuilder = new SegmentBuilder01();
     unsignedDataBuilder = new UnsignedDataBuilder01();
   }
 
@@ -208,7 +208,7 @@ contract Helper is Test, Constants {
 
   function setupTestContracts () public {
     mockPriceOracle = new MockPriceOracle();
-    primitiveInternals = new MockPrimitiveInternals();
+    segmentInternals = new MockSegmentInternals();
     tokenHelper = new MockTokenHelperInternals();
   }
 
@@ -302,12 +302,12 @@ contract Helper is Test, Constants {
 
   function limitSwap_loadFilledAmount (address account, FillStateParams memory fillStateParams, uint total) public returns (uint filledAmount) {
     int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
-    filledAmount = primitives.getFilledAmount(fillStateParams, fillStateX96, total);
+    filledAmount = segments.getFilledAmount(fillStateParams, fillStateX96, total);
   }
 
   function limitSwap_loadUnfilledAmount (address account, FillStateParams memory fillStateParams, uint total) public returns (uint unfilledAmount) {
     int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
-    unfilledAmount = primitives.getUnfilledAmount(fillStateParams, fillStateX96, total);
+    unfilledAmount = segments.getUnfilledAmount(fillStateParams, fillStateX96, total);
   }
 
   function limitSwapExactInput_loadOutput (
@@ -319,8 +319,8 @@ contract Helper is Test, Constants {
     FillStateParams memory fillStateParams
   ) public returns (uint output) {
     int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
-    uint filledInput = primitives.getFilledAmount(fillStateParams, fillStateX96, tokenInAmount);
-    output = primitives.limitSwapExactInput_getOutput(
+    uint filledInput = segments.getFilledAmount(fillStateParams, fillStateX96, tokenInAmount);
+    output = segments.limitSwapExactInput_getOutput(
       input,
       filledInput,
       tokenInAmount,
@@ -360,8 +360,8 @@ contract Helper is Test, Constants {
     FillStateParams memory fillStateParams
   ) public returns (uint input) {
     int fillStateX96 = limitSwap_loadFillStateX96(account, fillStateParams);
-    uint filledOutput = primitives.getFilledAmount(fillStateParams, fillStateX96, tokenOutAmount);
-    input = primitives.limitSwapExactOutput_getInput(
+    uint filledOutput = segments.getFilledAmount(fillStateParams, fillStateX96, tokenOutAmount);
+    input = segments.limitSwapExactOutput_getInput(
       output,
       filledOutput,
       tokenOutAmount,

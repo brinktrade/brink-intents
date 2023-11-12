@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_marketSwapExactInput is Test, Helper  {
+contract Segments01_marketSwapExactInput is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -14,7 +14,7 @@ contract Primitives01_marketSwapExactInput is Test, Helper  {
 
   function testMarketSwapExactInput () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitives), 1450_000000);
+    USDC_ERC20.approve(address(segments), 1450_000000);
 
     bytes memory twapAdapterParams = abi.encode(address(USDC_ETH_FEE500_UNISWAP_V3_POOL), uint32(1000));
     uint usdcInAmount = 1450_000000;
@@ -32,7 +32,7 @@ contract Primitives01_marketSwapExactInput is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitives.marketSwapExactInput(
+    segments.marketSwapExactInput(
       twapAdapter,
       twapAdapterParams,
       TRADER_1,

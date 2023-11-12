@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
+contract IntentTarget01_execute_invertedNftOrders is Test, Helper  {
 
   /*
     tests for an inverted NFT market making (aka "range order"):
@@ -30,7 +30,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     setupTrader1();
   }
 
-  function createInvertedNftStrategy () public returns (Strategy memory strategy) {      
+  function createInvertedNftIntent () public returns (Intent memory intent) {      
     nftBuyCurveParams;
     nftSellCurveParams;
     nftBuyFillStateParams = DEFAULT_FILL_STATE_PARAMS;
@@ -71,10 +71,10 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       }
 
       // setup the "buy" NFT order
-      Primitive[] memory primitives_order0 = new Primitive[](1);
-      primitives_order0[0] = Primitive(
+      Segment[] memory segments_order0 = new Segment[](1);
+      segments_order0[0] = Segment(
         abi.encodeWithSelector(
-          Primitives01.limitSwapExactOutput.selector,
+          Segments01.limitSwapExactOutput.selector,
           TRADER_1,
           WETH_Token,
           DOODLES_Token,
@@ -88,10 +88,10 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       );
 
       // setup the "sell" NFT order
-      Primitive[] memory primitives_order1 = new Primitive[](1);
-      primitives_order1[0] = Primitive(
+      Segment[] memory segments_order1 = new Segment[](1);
+      segments_order1[0] = Segment(
         abi.encodeWithSelector(
-          Primitives01.limitSwapExactInput.selector,
+          Segments01.limitSwapExactInput.selector,
           TRADER_1,
           DOODLES_Token,
           WETH_Token,
@@ -105,28 +105,28 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
       );
 
       Order[] memory orders = new Order[](2);
-      orders[0] = Order(primitives_order0);
-      orders[1] = Order(primitives_order1);
+      orders[0] = Order(segments_order0);
+      orders[1] = Order(segments_order1);
 
-      strategy = Strategy(
-        address(primitives),
+      intent = Intent(
+        address(segments),
         orders,
         new bytes[](0),
         new bytes[](0)
       );
     }
 
-    // approve max ETH needed for the strategy, and approvalAll DOODLES
+    // approve max ETH needed for the intent, and approvalAll DOODLES
     vm.prank(TRADER_1);
-    WETH_ERC20.approve(address(strategyTarget), ethTotal);
+    WETH_ERC20.approve(address(intentTarget), ethTotal);
     vm.prank(TRADER_1);
-    DOODLES_ERC721.setApprovalForAll(address(strategyTarget), true);
+    DOODLES_ERC721.setApprovalForAll(address(intentTarget), true);
   }
 
   // sell 1 DOODLE to TRADER_1, then buy the DOODLE from TRADER_1.
   // TRADER_1 should profit exactly 0.05 ETH, and buy/sell prices should go back to the originals
   function testExecute_invertedNftOrders_fill1Buy_then_fill1Sell () public {
-    Strategy memory strategy = createInvertedNftStrategy();
+    Intent memory intent = createInvertedNftIntent();
 
     uint TRADER_1_initialBalance = WETH_ERC20.balanceOf(TRADER_1);
 
@@ -154,8 +154,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         0, // the "buy" NFT order (limitSwapExactOutput)
         unsignedFillCalls
@@ -186,8 +186,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
     );
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         1, // the "sell" NFT order (limitSwapExactInput)
         unsignedFillCalls
@@ -215,7 +215,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
   // TRADER_1 should pay exactly 3.8 ETH (1.1 ETH + 1.0 ETH + 0.9 ETH + 0.8 ETH) and receive 4 DOODLES
   // buy cost should go to zero (no more buys), sell cost should go to min of 0.85 ETH
   function testExecute_invertedNftOrders_fillAllBuys () public {
-    Strategy memory strategy = createInvertedNftStrategy();
+    Intent memory intent = createInvertedNftIntent();
     
     // fill all NFT "buy" orders for TRADER_1
     bytes[] memory unsignedFillCalls = new bytes[](1);
@@ -244,8 +244,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         0, // the "buy" NFT order (limitSwapExactOutput)
         unsignedFillCalls
@@ -268,7 +268,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
   // TRADER_1 should pay exactly 2.6 ETH (1.25 ETH + 1.35 ETH) and receive 2 DOODLES
   // sell cost should go to 0 (no more sells), buy cost should go to max of 1.3 ETH
   function testExecute_invertedNftOrders_fillAllSells () public {
-    Strategy memory strategy = createInvertedNftStrategy();
+    Intent memory intent = createInvertedNftIntent();
     
     // fill all NFT "sell" orders for TRADER_1
     bytes[] memory unsignedFillCalls = new bytes[](1);
@@ -298,8 +298,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         1, // the "sell" NFT order (limitSwapExactInput)
         unsignedFillCalls
@@ -319,7 +319,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
   }
 
   function testExecute_invertedNftOrders_fillAllSells_then_fillAllBuys_then_sellBackToOriginal () public {
-    Strategy memory strategy = createInvertedNftStrategy();
+    Intent memory intent = createInvertedNftIntent();
 
     uint TRADER_1_initialBalance = WETH_ERC20.balanceOf(TRADER_1);
     
@@ -351,8 +351,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         1, // the "sell" NFT order (limitSwapExactInput)
         unsignedFillCalls
@@ -395,8 +395,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         0, // the "buy" NFT order (limitSwapExactOutput)
         unsignedFillCalls
@@ -437,8 +437,8 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         1, // the "sell" NFT order (limitSwapExactInput)
         unsignedFillCalls
@@ -464,7 +464,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
   function buyCost (uint nftAmount) public returns (uint cost) {
     cost = limitSwapExactOutput_loadInput(
-      address(strategyTarget),
+      address(intentTarget),
       nftAmount,
       nftTotal,
       linearPriceCurve,
@@ -475,7 +475,7 @@ contract StrategyTarget01_execute_invertedNftOrders is Test, Helper  {
 
   function sellCost (uint nftAmount) public returns (uint cost) {
     cost = limitSwapExactInput_loadOutput(
-      address(strategyTarget),
+      address(intentTarget),
       nftAmount,
       nftTotal,
       linearPriceCurve,

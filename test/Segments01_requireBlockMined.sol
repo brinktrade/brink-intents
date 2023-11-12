@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_requireBlockMined is Test, Helper  {
+contract Segments01_requireBlockMined is Test, Helper  {
 
   function setUp () public {
     setupAll();
@@ -13,17 +13,17 @@ contract Primitives01_requireBlockMined is Test, Helper  {
   function testBlockIsNotMined () public {
     // when block is ahead of current block, revert with `BlockNotMined()`
     vm.expectRevert(BlockNotMined.selector);
-    primitives.requireBlockMined(BLOCK_JAN_25_2023 + 1);
+    segments.requireBlockMined(BLOCK_JAN_25_2023 + 1);
   }
 
   function testBlockIsMining () public view {
     // when block is equal to current block, don't revert
-    primitives.requireBlockMined(BLOCK_JAN_25_2023);
+    segments.requireBlockMined(BLOCK_JAN_25_2023);
   }
 
   function testBlockIsMined () public view {
     // when block is behind current block, don't revert
-    primitives.requireBlockMined(BLOCK_JAN_25_2023 - 1);
+    segments.requireBlockMined(BLOCK_JAN_25_2023 - 1);
   }
 
 }

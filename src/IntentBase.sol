@@ -6,4 +6,4 @@ struct Call {
   bytes data;
 }
 
-abstract contract StrategyBase { }
+abstract contract IntentBase { }

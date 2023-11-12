@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
-import "../Primitives/Primitives01.sol";
+import "../Segments/Segments01.sol";
 import "../TokenHelper/TokenHelper.sol";
-import "../StrategyTarget01.sol";
+import "../IntentTarget01.sol";
 
-contract PrimitiveBuilder01 {
+contract SegmentBuilder01 {
 
   function requireBitNotUsed (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.requireBitNotUsed.selector,
+        Segments01.requireBitNotUsed.selector,
         bitmapIndex,
         bit
       ),
@@ -19,9 +19,9 @@ contract PrimitiveBuilder01 {
   }
 
   function requireBitUsed (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.requireBitUsed.selector,
+        Segments01.requireBitUsed.selector,
         bitmapIndex,
         bit
       ),
@@ -30,9 +30,9 @@ contract PrimitiveBuilder01 {
   }
 
   function useBit (uint bitmapIndex, uint bit) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.useBit.selector,
+        Segments01.useBit.selector,
         bitmapIndex,
         bit
       ),
@@ -41,9 +41,9 @@ contract PrimitiveBuilder01 {
   }
 
   function requireBlockMined (uint blockNumber) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.requireBlockMined.selector,
+        Segments01.requireBlockMined.selector,
         blockNumber
       ),
       false
@@ -51,9 +51,9 @@ contract PrimitiveBuilder01 {
   }
 
   function requireBlockNotMined (uint blockNumber) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.requireBlockNotMined.selector,
+        Segments01.requireBlockNotMined.selector,
         blockNumber
       ),
       false
@@ -61,9 +61,9 @@ contract PrimitiveBuilder01 {
   }
 
   function blockInterval (uint64 id, uint128 initialStart, uint128 intervalMinSize, uint16 maxIntervals) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.blockInterval.selector,
+        Segments01.blockInterval.selector,
         id,
         initialStart,
         intervalMinSize,
@@ -74,9 +74,9 @@ contract PrimitiveBuilder01 {
   }
 
   function requireUint256LowerBound (IUint256Oracle uint256Oracle, bytes memory params, uint lowerBound) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.requireUint256LowerBound.selector,
+        Segments01.requireUint256LowerBound.selector,
         uint256Oracle,
         params,
         lowerBound
@@ -86,9 +86,9 @@ contract PrimitiveBuilder01 {
   }
 
   function requireUint256UpperBound (IUint256Oracle uint256Oracle, bytes memory params, uint upperBound) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.requireUint256UpperBound.selector,
+        Segments01.requireUint256UpperBound.selector,
         uint256Oracle,
         params,
         upperBound
@@ -107,9 +107,9 @@ contract PrimitiveBuilder01 {
     uint24 feePercent,
     uint feeMinTokenOut
   ) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.marketSwapExactInput.selector,
+        Segments01.marketSwapExactInput.selector,
         priceOracle,
         priceOracleParams,
         owner,
@@ -133,9 +133,9 @@ contract PrimitiveBuilder01 {
     bytes memory priceCurveParams,
     FillStateParams memory fillStateParams
   ) external pure returns (bytes memory) {
-    return abi.encode(Primitive(
+    return abi.encode(Segment(
       abi.encodeWithSelector(
-        Primitives01.limitSwapExactInput.selector,
+        Segments01.limitSwapExactInput.selector,
         owner,
         tokenIn,
         tokenOut,

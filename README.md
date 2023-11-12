@@ -1,1 +1,1 @@
-# brink-strategies
+# brink-intents

@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_fillSwap is Test, Helper  {
+contract Segments01_fillSwap is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -15,14 +15,14 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc20 swap
   function testFillSwap_erc20 () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 1450_000000);
+    USDC_ERC20.approve(address(segmentInternals), 1450_000000);
 
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, 1_000000000000000000, new uint[](0));
 
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       WETH_Token,
       TRADER_1,
@@ -46,7 +46,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc721 (any id) to erc20 swap
   function testFillSwap_erc721_anyIds_in () public {
     vm.prank(TRADER_1);
-    DOODLES_ERC721.setApprovalForAll(address(primitiveInternals), true);
+    DOODLES_ERC721.setApprovalForAll(address(segmentInternals), true);
 
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, USDC, TokenStandard.ERC20, TRADER_1, 500_000000, new uint[](0));
 
@@ -59,7 +59,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       DOODLES_Token,
       USDC_Token,
       TRADER_1,
@@ -87,7 +87,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc721 (any id) swap
   function testFillSwap_erc721_anyIds_out () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](2);
     ids[0] = 5268;
@@ -100,7 +100,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       DOODLES_Token,
       TRADER_1,
@@ -128,7 +128,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc721 (merkle root ids) to erc20 swap
   function testFillSwap_erc721_merkleIds_in () public {
     vm.prank(TRADER_1);
-    DOODLES_ERC721.setApprovalForAll(address(primitiveInternals), true);
+    DOODLES_ERC721.setApprovalForAll(address(segmentInternals), true);
 
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, USDC, TokenStandard.ERC20, TRADER_1, 500_000000, new uint[](0));
 
@@ -137,7 +137,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       DOODLES_Token_5268_4631_3643,
       USDC_Token,
       TRADER_1,
@@ -163,7 +163,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc721 (merkle root ids) swap
   function testFillSwap_erc721_merkleIds_out () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](2);
     ids[0] = 5268;
@@ -175,7 +175,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       DOODLES_Token_5268_4631_3643,
       TRADER_1,
@@ -203,7 +203,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc1155 (specific id)
   function testFillSwap_erc1155_specificId () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](1);
     ids[0] = 14;
@@ -215,7 +215,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       THE_MEMES_GMGM_Token, // accept only id=14
       TRADER_1,
@@ -239,7 +239,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc1155 (any id)
   function testFillSwap_erc1155_anyId () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     // fill with +1 of id=8 and +1 of id=14
     uint[] memory ids = new uint[](2);
@@ -253,7 +253,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       THE_MEMES_Token,
       TRADER_1,
@@ -279,7 +279,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc1155 (merkle root ids)
   function testFillSwap_erc1155_merkleRootIds () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](1);
     ids[0] = 8;
@@ -290,7 +290,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       THE_MEMES_Token_8_14_64,
       TRADER_1,
@@ -317,7 +317,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     idsIn.ids[0] = 1111;
 
     vm.expectRevert(InvalidMerkleProof.selector);
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       DOODLES_Token_5268_4631_3643,
       USDC_Token,
       TRADER_1,
@@ -336,7 +336,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     idsOut.ids[0] = 1111;
 
     vm.expectRevert(InvalidMerkleProof.selector);
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       DOODLES_Token_5268_4631_3643,
       TRADER_1,
@@ -352,7 +352,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // NftIdAlreadyOwned() error
   function testFillSwap_NftIdAlreadyOwned () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](2);
     ids[0] = 3643; // already owned by TRADER_1
@@ -362,7 +362,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     outIds.ids = ids;
 
     vm.expectRevert(NftIdAlreadyOwned.selector);
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       DOODLES_Token,
       TRADER_1,
@@ -378,12 +378,12 @@ contract Primitives01_fillSwap is Test, Helper  {
   // NotEnoughTokenReceived() error for ERC20
   function testFillSwap_NotEnoughTokenReceived_erc20 () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 1450_000000);
+    USDC_ERC20.approve(address(segmentInternals), 1450_000000);
 
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, 1_000000000000000000, new uint[](0));
 
     vm.expectRevert(abi.encodeWithSelector(NotEnoughTokenReceived.selector, 1_000000000000000000));
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       WETH_Token,
       TRADER_1,
@@ -399,7 +399,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // NotEnoughTokenReceived() error for ERC721
   function testFillSwap_NotEnoughTokenReceived_erc721 () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](2);
     ids[0] = 5268;
@@ -413,7 +413,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(TRADER_1);
 
     vm.expectRevert(abi.encodeWithSelector(NotEnoughTokenReceived.selector, 2));
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       DOODLES_Token,
       TRADER_1,
@@ -429,7 +429,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // NotEnoughTokenReceived() error for ERC1155
   function testFillSwap_NotEnoughTokenReceived_erc1155 () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     uint[] memory ids = new uint[](2);
     ids[0] = 8;
@@ -440,7 +440,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     outIds.ids = ids;
 
     vm.expectRevert(abi.encodeWithSelector(NotEnoughTokenReceived.selector, 2));
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       THE_MEMES_Token,
       TRADER_1,
@@ -456,7 +456,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc721 (any id) swap, filler provides duplicate ids
   function testFillSwap_duplicateIdsInFillCall_erc721 () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     // fill with 5268
     uint[] memory fillIds = new uint[](1);
@@ -470,7 +470,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     outIds.ids[1] = 5268;
 
     vm.expectRevert(DuplicateIds.selector);
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       DOODLES_Token,
       TRADER_1,
@@ -486,7 +486,7 @@ contract Primitives01_fillSwap is Test, Helper  {
   // erc20 to erc1155 (any id), filler provides duplicate ids
   function testFillSwap_duplicateIdsInFillCall_erc1155 () public {
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitiveInternals), 500_000000);
+    USDC_ERC20.approve(address(segmentInternals), 500_000000);
 
     // fill with 1 of id=8
     uint[] memory ids = new uint[](2);
@@ -503,7 +503,7 @@ contract Primitives01_fillSwap is Test, Helper  {
     startBalances(TRADER_1);
 
     vm.expectRevert(DuplicateIds.selector);
-    primitiveInternals.fillSwap(
+    segmentInternals.fillSwap(
       USDC_Token,
       THE_MEMES_Token,
       TRADER_1,

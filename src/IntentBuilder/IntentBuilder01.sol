@@ -3,8 +3,8 @@ pragma solidity =0.8.17;
 
 import "../TokenHelper/TokenHelper.sol";
 
-import "../StrategyTarget01.sol";
-import "./PrimitiveBuilder01.sol";
+import "../IntentTarget01.sol";
+import "./SegmentBuilder01.sol";
 import "./UnsignedDataBuilder01.sol";
 
 error InvalidSignatureType();
@@ -14,27 +14,27 @@ enum SignatureType {
   EIP1271
 }
 
-contract StrategyBuilder01 {
+contract IntentBuilder01 {
 
-  address public immutable strategyTarget;
-  address public immutable primitives;
+  address public immutable intentTarget;
+  address public immutable segments;
 
-  constructor (address _strategyTarget, address _primitives) {
-    strategyTarget = _strategyTarget;
-    primitives = _primitives;
+  constructor (address _intentTarget, address _segments) {
+    intentTarget = _intentTarget;
+    segments = _segments;
   }
 
-  function strategy (
+  function intent (
     address account,
     uint chainId,
     SignatureType signatureType,
     bytes[][] memory orders
   ) public view returns (bytes memory data, bytes32 messageHash) {
-    data = strategyData(orders);
+    data = intentData(orders);
     messageHash = getMessageHash(signatureType, data, account, chainId);
   }
 
-  function strategy (
+  function intent (
     address account,
     uint chainId,
     SignatureType signatureType,
@@ -42,17 +42,17 @@ contract StrategyBuilder01 {
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data, bytes32 messageHash) {
-    data = strategyData(orders, beforeCalls, afterCalls);
+    data = intentData(orders, beforeCalls, afterCalls);
     messageHash = getMessageHash(signatureType, data, account, chainId);
   }
 
-  function strategyData (
+  function intentData (
     bytes[][] memory orders
   ) public view returns (bytes memory data) {
-    data = strategyData(orders, new Call[](0), new Call[](0));
+    data = intentData(orders, new Call[](0), new Call[](0));
   }
 
-  function strategyData (
+  function intentData (
     bytes[][] memory orders,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
@@ -60,33 +60,33 @@ contract StrategyBuilder01 {
     // build array of Order structs from bytes input
     Order[] memory orderStructs = new Order[](orders.length);
     for (uint8 i = 0; i < orders.length; i++) {
-      Primitive[] memory primitives = new Primitive[](orders[i].length);
+      Segment[] memory segments = new Segment[](orders[i].length);
       for (uint8 j = 0; j < orders[i].length; j++) {
-        primitives[j] = abi.decode(orders[i][j], (Primitive));
+        segments[j] = abi.decode(orders[i][j], (Segment));
       }
-      orderStructs[i] = Order(primitives);
+      orderStructs[i] = Order(segments);
     }
 
-    // encode strategy data without using Strategy struct
-    bytes memory strategyData = abi.encode(
-      primitives,
+    // encode intent data without using Intent struct
+    bytes memory intentData = abi.encode(
+      segments,
       orderStructs,
       beforeCalls,
       afterCalls
     );
 
-    // create a memory pointer to the encoded strategy data, which starts after 64 bytes (after the two pointers)
-    bytes32 strategyPtr = 0x0000000000000000000000000000000000000000000000000000000000000040;
+    // create a memory pointer to the encoded intent data, which starts after 64 bytes (after the two pointers)
+    bytes32 intentPtr = 0x0000000000000000000000000000000000000000000000000000000000000040;
 
     // create a memory pointer to where unsigned data will be appended,
-    // which will be after 64 bytes (for the two pointers) plus the length of the encoded strategy
-    bytes32 unsignedDataPtr = bytes32(strategyData.length + 0x40); 
+    // which will be after 64 bytes (for the two pointers) plus the length of the encoded intent
+    bytes32 unsignedDataPtr = bytes32(intentData.length + 0x40); 
 
     data = bytes.concat(
-      StrategyTarget01.execute.selector, // bytes4: fn selector
-      strategyPtr,        // bytes32: memory pointer to strategy data
+      IntentTarget01.execute.selector, // bytes4: fn selector
+      intentPtr,        // bytes32: memory pointer to intent data
       unsignedDataPtr,    // bytes32: memory pointer to unsigned data
-      strategyData        // bytes: encoded strategy
+      intentData        // bytes: encoded intent
     );
   }
 
@@ -98,7 +98,7 @@ contract StrategyBuilder01 {
     bytes32 dataHash = keccak256(
       abi.encode(
         keccak256("MetaDelegateCall(address to,bytes data)"), // META_DELEGATE_CALL_TYPEHASH
-        strategyTarget,
+        intentTarget,
         keccak256(data)
       )
     );

@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract StrategyTarget01_execute_multiOrder is Test, Helper  {
+contract IntentTarget01_execute_multiOrder is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -29,14 +29,14 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     int intWethOutAmount = int(expectedRequiredWethOutAmount);
 
     // order0: bit 0|1, market swap 1450 USDC -> WETH
-    Primitive[] memory primitives_order0 = new Primitive[](2);
-    primitives_order0[0] = Primitive(
-      abi.encodeWithSelector(Primitives01.useBit.selector, 0, 2**0),
+    Segment[] memory segments_order0 = new Segment[](2);
+    segments_order0[0] = Segment(
+      abi.encodeWithSelector(Segments01.useBit.selector, 0, 2**0),
       false
     );
-    primitives_order0[1] = Primitive(
+    segments_order0[1] = Segment(
       abi.encodeWithSelector(
-        Primitives01.marketSwapExactInput.selector,
+        Segments01.marketSwapExactInput.selector,
         twapAdapter,
         twapAdapterParams,
         TRADER_1,
@@ -51,14 +51,14 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     );
 
     // order1: require bit 0|1 used, limit swap 0.5 WETH -> 1 Doodle
-    Primitive[] memory primitives_order1 = new Primitive[](2);
-    primitives_order1[0] = Primitive(
-      abi.encodeWithSelector(Primitives01.requireBitUsed.selector, 0, 2**0),
+    Segment[] memory segments_order1 = new Segment[](2);
+    segments_order1[0] = Segment(
+      abi.encodeWithSelector(Segments01.requireBitUsed.selector, 0, 2**0),
       false
     );
-    primitives_order1[1] = Primitive(
+    segments_order1[1] = Segment(
       abi.encodeWithSelector(
-        Primitives01.limitSwapExactInput.selector,
+        Segments01.limitSwapExactInput.selector,
         TRADER_1,
         WETH_Token,
         DOODLES_Token,
@@ -72,8 +72,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     );
 
     Order[] memory orders = new Order[](2);
-    orders[0] = Order(primitives_order0);
-    orders[1] = Order(primitives_order1);
+    orders[0] = Order(segments_order0);
+    orders[1] = Order(segments_order1);
 
     bytes[] memory unsignedCalls_fillOrder0 = new bytes[](1);
     unsignedCalls_fillOrder0[0] = abi.encode(
@@ -103,8 +103,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
       )
     );
 
-    Strategy memory strategy = Strategy(
-      address(primitives),
+    Intent memory intent = Intent(
+      address(segments),
       orders,
       new bytes[](0),
       new bytes[](0)
@@ -112,15 +112,15 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
 
     // approve for both orders
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(strategyTarget), 1450_000000);
+    USDC_ERC20.approve(address(intentTarget), 1450_000000);
     vm.prank(TRADER_1);
-    WETH_ERC20.approve(address(strategyTarget), 5*10**17);
+    WETH_ERC20.approve(address(intentTarget), 5*10**17);
 
 
     // should revert if we try to execute order 1 before order 0
     vm.expectRevert(BitNotUsed.selector);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         1, // order1
         unsignedCalls_fillOrder1
@@ -130,8 +130,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     // track balances and execute the USDC->WETH order
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         0, // order0
         unsignedCalls_fillOrder0
@@ -147,8 +147,8 @@ contract StrategyTarget01_execute_multiOrder is Test, Helper  {
     // track balances and execute the WETH->DOODLES order
     startBalances(address(filler));
     startBalances(TRADER_1);
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       UnsignedData(
         1, // order1
         unsignedCalls_fillOrder1

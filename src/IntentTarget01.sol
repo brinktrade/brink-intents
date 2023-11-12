@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
-import "./StrategyBase.sol";
+import "./IntentBase.sol";
 import "./Libraries/ProxyReentrancyGuard.sol";
 
 error BadOrderIndex();
 error UnsignedCallRequired();
 
-/// @param primitiveTarget Contract address where primitive functions will be executed
+/// @param segmentTarget Contract address where segment functions will be executed
 /// @param orders Array of allowed orders
-/// @param beforeCalls Array of primitive calls to execute before order execution
-/// @param afterCalls Array of primitive calls to execute after order execution
-struct Strategy {
-  address primitiveTarget;
+/// @param beforeCalls Array of segment calls to execute before order execution
+/// @param afterCalls Array of segment calls to execute after order execution
+struct Intent {
+  address segmentTarget;
   Order[] orders;
   bytes[] beforeCalls;
   bytes[] afterCalls;
 }
 
 struct Order {
-  Primitive[] primitives;
+  Segment[] segments;
 }
 
-struct Primitive {
+struct Segment {
   bytes data;
   bool requiresUnsignedCall;
 }
@@ -32,32 +32,32 @@ struct UnsignedData {
   bytes[] calls;
 }
 
-contract StrategyTarget01 is StrategyBase, ProxyReentrancyGuard {
+contract IntentTarget01 is IntentBase, ProxyReentrancyGuard {
 
   /// @dev Execute an order within a signed array of orders
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
-  /// @param strategy Strategy signed by owner [signed]
+  /// @param intent Intent signed by owner [signed]
   /// @param unsignedData Unsigned calldata [unsigned]
   function execute(
-    Strategy calldata strategy,
+    Intent calldata intent,
     UnsignedData calldata unsignedData
   ) external nonReentrant {
-    if (unsignedData.orderIndex >= strategy.orders.length) {
+    if (unsignedData.orderIndex >= intent.orders.length) {
       revert BadOrderIndex();
     }
 
-    _delegateCallsWithRevert(strategy.primitiveTarget, strategy.beforeCalls);
+    _delegateCallsWithRevert(intent.segmentTarget, intent.beforeCalls);
 
     uint8 nextUnsignedCall = 0;
-    for (uint8 i = 0; i < strategy.orders[unsignedData.orderIndex].primitives.length; i++) {
-      Primitive calldata primitive = strategy.orders[unsignedData.orderIndex].primitives[i];
-      bytes memory primitiveCallData;
-      if (primitive.requiresUnsignedCall) {
+    for (uint8 i = 0; i < intent.orders[unsignedData.orderIndex].segments.length; i++) {
+      Segment calldata segment = intent.orders[unsignedData.orderIndex].segments[i];
+      bytes memory segmentCallData;
+      if (segment.requiresUnsignedCall) {
         if (nextUnsignedCall >= unsignedData.calls.length) {
           revert UnsignedCallRequired();
         }
 
-        bytes memory signedData = primitive.data;
+        bytes memory signedData = segment.data;
 
         // change length of signedData to ignore the last bytes32
         assembly {
@@ -65,18 +65,18 @@ contract StrategyTarget01 is StrategyBase, ProxyReentrancyGuard {
         }
 
         // concat signed and unsigned call bytes
-        primitiveCallData = bytes.concat(signedData, unsignedData.calls[nextUnsignedCall]);
+        segmentCallData = bytes.concat(signedData, unsignedData.calls[nextUnsignedCall]);
         nextUnsignedCall++;
       } else {
-        primitiveCallData = primitive.data;
+        segmentCallData = segment.data;
       }
       _delegateCallWithRevert(Call({
-        targetContract: strategy.primitiveTarget,
-        data: primitiveCallData
+        targetContract: intent.segmentTarget,
+        data: segmentCallData
       }));
     }
 
-    _delegateCallsWithRevert(strategy.primitiveTarget, strategy.afterCalls);
+    _delegateCallsWithRevert(intent.segmentTarget, intent.afterCalls);
   }
 
   function _delegateCallsWithRevert (address targetContract, bytes[] calldata calls) internal {
