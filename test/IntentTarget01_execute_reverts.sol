@@ -10,8 +10,8 @@ contract IntentTarget01_execute_reverts is Test, Helper  {
     setupAll();
   }
 
-  // when given an intent index that is out of bounds, should revert with BadintentIndex
-  function testExecute_BadintentIndex () public {
+  // when given an intent index that is out of bounds, should revert with BadIntentIndex
+  function testExecute_BadIntentIndex () public {
     Segment[] memory segments_intent0 = new Segment[](1);
     segments_intent0[0] = Segment(new bytes(0), false);
     Intent[] memory intents = new Intent[](1);
@@ -23,7 +23,7 @@ contract IntentTarget01_execute_reverts is Test, Helper  {
       new bytes[](0)
     );
 
-    vm.expectRevert(BadintentIndex.selector);
+    vm.expectRevert(BadIntentIndex.selector);
     intentTarget.execute(
       declaration,
       UnsignedData(
