@@ -4,18 +4,18 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract IntentTarget01_execute_multiOrder is Test, Helper  {
+contract IntentTarget01_execute_multiIntent is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
   }
 
   /*
-    test for a multi part order:
-      order_0: market order for 1450 USDC -> WETH
-      order_1: if order_0 executed, limit buy 1 WETH -> 1 Doodle
+    test for a multi part intent:
+      intent_0: market intent for 1450 USDC -> WETH
+      intent_1: if intent_0 executed, limit buy 1 WETH -> 1 Doodle
   */
-  function testExecute_multiOrder () public {
+  function testExecute_multiIntent () public {
     setupFiller();
     setupTrader1();
 
@@ -28,13 +28,13 @@ contract IntentTarget01_execute_multiOrder is Test, Helper  {
     (,,uint expectedRequiredWethOutAmount) = swapIO.marketSwapExactInput_getOutput(usdcInAmount, usdc_eth_priceX96, feePercent, feeMin);
     int intWethOutAmount = int(expectedRequiredWethOutAmount);
 
-    // order0: bit 0|1, market swap 1450 USDC -> WETH
-    Segment[] memory segments_order0 = new Segment[](2);
-    segments_order0[0] = Segment(
+    // intent0: bit 0|1, market swap 1450 USDC -> WETH
+    Segment[] memory segments_intent0 = new Segment[](2);
+    segments_intent0[0] = Segment(
       abi.encodeWithSelector(Segments01.useBit.selector, 0, 2**0),
       false
     );
-    segments_order0[1] = Segment(
+    segments_intent0[1] = Segment(
       abi.encodeWithSelector(
         Segments01.marketSwapExactInput.selector,
         twapAdapter,
@@ -50,13 +50,13 @@ contract IntentTarget01_execute_multiOrder is Test, Helper  {
       true
     );
 
-    // order1: require bit 0|1 used, limit swap 0.5 WETH -> 1 Doodle
-    Segment[] memory segments_order1 = new Segment[](2);
-    segments_order1[0] = Segment(
+    // intent1: require bit 0|1 used, limit swap 0.5 WETH -> 1 Doodle
+    Segment[] memory segments_intent1 = new Segment[](2);
+    segments_intent1[0] = Segment(
       abi.encodeWithSelector(Segments01.requireBitUsed.selector, 0, 2**0),
       false
     );
-    segments_order1[1] = Segment(
+    segments_intent1[1] = Segment(
       abi.encodeWithSelector(
         Segments01.limitSwapExactInput.selector,
         TRADER_1,
@@ -71,12 +71,12 @@ contract IntentTarget01_execute_multiOrder is Test, Helper  {
       true
     );
 
-    Order[] memory orders = new Order[](2);
-    orders[0] = Order(segments_order0);
-    orders[1] = Order(segments_order1);
+    Intent[] memory intents = new Intent[](2);
+    intents[0] = Intent(segments_intent0);
+    intents[1] = Intent(segments_intent1);
 
-    bytes[] memory unsignedCalls_fillOrder0 = new bytes[](1);
-    unsignedCalls_fillOrder0[0] = abi.encode(
+    bytes[] memory unsignedCalls_fillIntent0 = new bytes[](1);
+    unsignedCalls_fillIntent0[0] = abi.encode(
       address(filler),
       EMPTY_IDS_PROOF,
       EMPTY_IDS_PROOF,
@@ -91,8 +91,8 @@ contract IntentTarget01_execute_multiOrder is Test, Helper  {
     IdsProof memory doodleIdsProof = EMPTY_IDS_PROOF;
     doodleIdsProof.ids = new uint[](1);
     doodleIdsProof.ids[0] = 5268;
-    bytes[] memory unsignedCalls_fillOrder1 = new bytes[](1);
-    unsignedCalls_fillOrder1[0] = abi.encode(
+    bytes[] memory unsignedCalls_fillIntent1 = new bytes[](1);
+    unsignedCalls_fillIntent1[0] = abi.encode(
       address(filler),
       5*10**17,
       EMPTY_IDS_PROOF,
@@ -103,38 +103,38 @@ contract IntentTarget01_execute_multiOrder is Test, Helper  {
       )
     );
 
-    Intent memory intent = Intent(
+    Declaration memory declaration = Declaration(
       address(segments),
-      orders,
+      intents,
       new bytes[](0),
       new bytes[](0)
     );
 
-    // approve for both orders
+    // approve for both intents
     vm.prank(TRADER_1);
     USDC_ERC20.approve(address(intentTarget), 1450_000000);
     vm.prank(TRADER_1);
     WETH_ERC20.approve(address(intentTarget), 5*10**17);
 
 
-    // should revert if we try to execute order 1 before order 0
+    // should revert if we try to execute intent 1 before intent 0
     vm.expectRevert(BitNotUsed.selector);
     intentTarget.execute(
-      intent,
+      declaration,
       UnsignedData(
-        1, // order1
-        unsignedCalls_fillOrder1
+        1, // intent1
+        unsignedCalls_fillIntent1
       )
     );
 
-    // track balances and execute the USDC->WETH order
+    // track balances and execute the USDC->WETH intent
     startBalances(address(filler));
     startBalances(TRADER_1);
     intentTarget.execute(
-      intent,
+      declaration,
       UnsignedData(
-        0, // order0
-        unsignedCalls_fillOrder0
+        0, // intent0
+        unsignedCalls_fillIntent0
       )
     );
     endBalances(address(filler));
@@ -144,14 +144,14 @@ contract IntentTarget01_execute_multiOrder is Test, Helper  {
     assertEq(diffBalance(WETH, TRADER_1), intWethOutAmount);
     assertEq(diffBalance(WETH, address(filler)), -intWethOutAmount);
 
-    // track balances and execute the WETH->DOODLES order
+    // track balances and execute the WETH->DOODLES intent
     startBalances(address(filler));
     startBalances(TRADER_1);
     intentTarget.execute(
-      intent,
+      declaration,
       UnsignedData(
-        1, // order1
-        unsignedCalls_fillOrder1
+        1, // intent1
+        unsignedCalls_fillIntent1
       )
     );
     endBalances(address(filler));

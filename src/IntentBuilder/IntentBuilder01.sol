@@ -17,60 +17,60 @@ enum SignatureType {
 contract IntentBuilder01 {
 
   address public immutable intentTarget;
-  address public immutable segments;
+  address public immutable segmentsContract;
 
-  constructor (address _intentTarget, address _segments) {
+  constructor (address _intentTarget, address _segmentsContract) {
     intentTarget = _intentTarget;
-    segments = _segments;
+    segmentsContract = _segmentsContract;
   }
 
-  function intent (
+  function declaration (
     address account,
     uint chainId,
     SignatureType signatureType,
-    bytes[][] memory orders
+    bytes[][] memory intents
   ) public view returns (bytes memory data, bytes32 messageHash) {
-    data = intentData(orders);
+    data = declarationData(intents);
     messageHash = getMessageHash(signatureType, data, account, chainId);
   }
 
-  function intent (
+  function declaration (
     address account,
     uint chainId,
     SignatureType signatureType,
-    bytes[][] memory orders,
+    bytes[][] memory intents,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data, bytes32 messageHash) {
-    data = intentData(orders, beforeCalls, afterCalls);
+    data = declarationData(intents, beforeCalls, afterCalls);
     messageHash = getMessageHash(signatureType, data, account, chainId);
   }
 
-  function intentData (
-    bytes[][] memory orders
+  function declarationData (
+    bytes[][] memory intents
   ) public view returns (bytes memory data) {
-    data = intentData(orders, new Call[](0), new Call[](0));
+    data = declarationData(intents, new Call[](0), new Call[](0));
   }
 
-  function intentData (
-    bytes[][] memory orders,
+  function declarationData (
+    bytes[][] memory intents,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data) {
-    // build array of Order structs from bytes input
-    Order[] memory orderStructs = new Order[](orders.length);
-    for (uint8 i = 0; i < orders.length; i++) {
-      Segment[] memory segments = new Segment[](orders[i].length);
-      for (uint8 j = 0; j < orders[i].length; j++) {
-        segments[j] = abi.decode(orders[i][j], (Segment));
+    // build array of Intent structs from bytes input
+    Intent[] memory intentStructs = new Intent[](intents.length);
+    for (uint8 i = 0; i < intents.length; i++) {
+      Segment[] memory segments = new Segment[](intents[i].length);
+      for (uint8 j = 0; j < intents[i].length; j++) {
+        segments[j] = abi.decode(intents[i][j], (Segment));
       }
-      orderStructs[i] = Order(segments);
+      intentStructs[i] = Intent(segments);
     }
 
-    // encode intent data without using Intent struct
-    bytes memory intentData = abi.encode(
-      segments,
-      orderStructs,
+    // encode intents data without using Intent struct
+    bytes memory intentsData = abi.encode(
+      segmentsContract,
+      intentStructs,
       beforeCalls,
       afterCalls
     );
@@ -80,13 +80,13 @@ contract IntentBuilder01 {
 
     // create a memory pointer to where unsigned data will be appended,
     // which will be after 64 bytes (for the two pointers) plus the length of the encoded intent
-    bytes32 unsignedDataPtr = bytes32(intentData.length + 0x40); 
+    bytes32 unsignedDataPtr = bytes32(intentsData.length + 0x40); 
 
     data = bytes.concat(
       IntentTarget01.execute.selector, // bytes4: fn selector
       intentPtr,        // bytes32: memory pointer to intent data
       unsignedDataPtr,    // bytes32: memory pointer to unsigned data
-      intentData        // bytes: encoded intent
+      intentsData        // bytes: encoded intent
     );
   }
 

@@ -23,11 +23,11 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
       uint24 feePercent = 10000; // 1%
       uint feeMin = 0; // no minimum fixed fee
 
-      // build orders bytes data
-      bytes[][] memory ordersData = new bytes[][](1);
-      ordersData[0] = new bytes[](2);
-      ordersData[0][0] = segmentBuilder.useBit(0, 1);
-      ordersData[0][1] = segmentBuilder.marketSwapExactInput(
+      // build intents bytes data
+      bytes[][] memory intentsData = new bytes[][](1);
+      intentsData[0] = new bytes[](2);
+      intentsData[0][0] = segmentBuilder.useBit(0, 1);
+      intentsData[0][1] = segmentBuilder.marketSwapExactInput(
         twapAdapter,
         twapAdapterParams,
         proxy0_signerAddress,
@@ -38,12 +38,12 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
         feeMin
       );
 
-      // send orders bytes data to intent builder
-      (intentData, intentHash) = intentBuilder.intent(
+      // send declaration bytes data to intent builder
+      (intentData, intentHash) = intentBuilder.declaration(
         address(proxy0_account),
         block.chainid,
         SignatureType.EIP712,
-        ordersData
+        intentsData
       );
 
       uint usdc_eth_priceX96 = twapAdapter.getUint256(twapAdapterParams);
@@ -59,7 +59,7 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
     bytes memory signature = signMessageHash(proxy0_signerPrivateKey, intentHash);
 
     bytes memory unsignedData = unsignedDataBuilder.unsignedData(
-      0, // orderIndex
+      0, // intentIndex
       unsignedDataBuilder.unsignedMarketSwapData(
         address(filler),
         EMPTY_IDS_PROOF,
