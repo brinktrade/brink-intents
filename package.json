@@ -1,5 +1,5 @@
 {
-  "name": "@brinkninja/strategies",
+  "name": "@brinkninja/intents",
   "version": "0.3.6",
   "dependencies": { },
   "scripts": {
@@ -9,7 +9,7 @@
     "exports-gen": "node ./generateExports.js",
     "merkle-gen": "node ./merkle/generate.js"
   },
-  "description": "V2 verifier smart contracts for Brink",
+  "description": "Brink intents smart contracts",
   "author": "brink.trade",
   "license": "GPL-3.0-or-later",
   "devDependencies": {

@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract StrategyTarget01_execute_singleOrder is Test, Helper  {
+contract IntentTarget01_execute_singleOrder is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -28,18 +28,18 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
     // price movement to avoid revert
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, expectedRequiredWethOutAmount, new uint[](0));
 
-    Primitive[] memory primitives_order0 = new Primitive[](2);
+    Segment[] memory segments_order0 = new Segment[](2);
     
-    // useBit primitive
-    primitives_order0[0] = Primitive(
-      abi.encodeWithSelector(Primitives01.useBit.selector, 0, 1),
+    // useBit segment
+    segments_order0[0] = Segment(
+      abi.encodeWithSelector(Segments01.useBit.selector, 0, 1),
       false
     );
 
-    // marketSwapExactInput primitive
-    primitives_order0[1] = Primitive(
+    // marketSwapExactInput segment
+    segments_order0[1] = Segment(
       abi.encodeWithSelector(
-        Primitives01.marketSwapExactInput.selector,
+        Segments01.marketSwapExactInput.selector,
         twapAdapter,
         twapAdapterParams,
         TRADER_1,
@@ -54,7 +54,7 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
     );
 
     Order[] memory orders = new Order[](1);
-    orders[0] = Order(primitives_order0);
+    orders[0] = Order(segments_order0);
 
     bytes[] memory unsignedCalls = new bytes[](1);
 
@@ -67,8 +67,8 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
       Call(address(filler), fillCall)
     );
 
-    Strategy memory strategy = Strategy(
-      address(primitives),
+    Intent memory intent = Intent(
+      address(segments),
       orders,
       new bytes[](0),
       new bytes[](0)
@@ -80,10 +80,10 @@ contract StrategyTarget01_execute_singleOrder is Test, Helper  {
     startBalances(TRADER_1);
 
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(strategyTarget), 1450_000000);
+    USDC_ERC20.approve(address(intentTarget), 1450_000000);
 
-    strategyTarget.execute(
-      strategy,
+    intentTarget.execute(
+      intent,
       unsignedData
     );
 

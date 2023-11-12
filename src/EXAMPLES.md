@@ -1,14 +1,14 @@
 # EXAMPLES
 
-OrderExecutionTarget01 allows for the execution of signed orders composed from low-level primitives. Users can build and sign custom
-strategies with these primitives. Strategy execution is offloaded to MEV bots who earn arbitrage profits by crossing signed
+OrderExecutionTarget01 allows for the execution of signed orders composed from low-level segments. Users can build and sign custom
+intents with these segments. Intent execution is offloaded to MEV bots who earn arbitrage profits by crossing signed
 order liquidity with on-chain market liquidity. This allows users to automate execution of simple limit and stop-loss swap orders, or to
-automate complex market making strategies involving multi-order execution.
+automate complex market making intents involving multi-order execution.
 
 
 ## Limit Order
 
-  A simple limit swap of TokenA to TokenB. This is one order composed of 3 primitives
+  A simple limit swap of TokenA to TokenB. This is one order composed of 3 segments
 
   Order_0:
     requireBlockNotMined(<blockNumber>)
@@ -18,7 +18,7 @@ automate complex market making strategies involving multi-order execution.
 
 ## Stop-loss Order
 
-  A simple stop-loss order for a TokenA -> TokenB swap when a price lower bound is met. This is one order composed of 4 primitives
+  A simple stop-loss order for a TokenA -> TokenB swap when a price lower bound is met. This is one order composed of 4 segments
 
   Order_0:
     requireBlockNotMined(<blockNumber>)
@@ -99,10 +99,10 @@ automate complex market making strategies involving multi-order execution.
     )
 
 
-## Flip Strategy
+## Flip Intent
 
-  A strategy composed of two limit orders. It allows an A->B swap at a lower bound. When this swap fills, it enables a B->A swap at an upper
-  bound. In other words, this strategy attempts to buy B at a low price and sell B at a high price, to capture profit in A.
+  A intent composed of two limit orders. It allows an A->B swap at a lower bound. When this swap fills, it enables a B->A swap at an upper
+  bound. In other words, this intent attempts to buy B at a low price and sell B at a high price, to capture profit in A.
 
   beforeCalls:
     requireBlockNotMined(<blockNumber>)
@@ -124,7 +124,7 @@ automate complex market making strategies involving multi-order execution.
 
 ## Classic Bracket Order
 
-  Similar to the "Flip Strategy" above, but adds a stop-loss.
+  Similar to the "Flip Intent" above, but adds a stop-loss.
   - Order_0 is a limit swap for 1,200 A -> 1 B. Once filled, it enabled Order_1 and Order_2.
   - Order_1 attempts to capture 100 A in profit by swapping for 1 B -> 1,300 A.
   - Order_2 is a stop-loss for B. It attempts to cap losses at 150 A. It will swap 1 B -> 1,050 A when price is 1,100 or less, which provides an
@@ -188,10 +188,10 @@ automate complex market making strategies involving multi-order execution.
 
 ## Market Making Range
 
-  Similar to the "Flip Strategy", but continuously executes in either direction (A->B and B->A). We called this a "ping-pong order". It's a
+  Similar to the "Flip Intent", but continuously executes in either direction (A->B and B->A). We called this a "ping-pong order". It's a
   market making position that attempts to capture spread between A and B bid/ask as profit.
 
-  The strategy can be canceled by setting bit 1 USED
+  The intent can be canceled by setting bit 1 USED
 
   Each time Order_1 executes, it captures 5.00 A in profit.
 
@@ -219,7 +219,7 @@ automate complex market making strategies involving multi-order execution.
 ## Market Making Range + Stop-Loss bounds
 
   Same as "Market Making Range" above, but adds two stop-loss orders for A and B, to cap losses when price moves away from the spread range
-  in either direction. If either stop-loss executes, the strategy is canceled.
+  in either direction. If either stop-loss executes, the intent is canceled.
 
   Order_2 is a stop-loss for B->A @ 1 A = 1,100 B, valid when the A->B swap (Order_0) has filled last, so user is holding B
   Order_3 is a stop-loss for A->B @ 1 A = 1,300 B, valid when the B->A swap (Order_1) has filled last, so user is holding A
@@ -284,7 +284,7 @@ automate complex market making strategies involving multi-order execution.
 
 ## Token Cost Averaging
 
-  Sell A for B at market price, every n blocks. It's a DCA (dollar cost averaging) strategy.
+  Sell A for B at market price, every n blocks. It's a DCA (dollar cost averaging) intent.
 
   the order below:
     - can be canceled by setting bit 1 USED

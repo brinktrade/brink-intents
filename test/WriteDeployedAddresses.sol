@@ -24,8 +24,8 @@ string.concat(
 "  LINEAR_PRICE_CURVE: '", addressToString(address(linearPriceCurve)), "',\n",
 "  RESERVOIR_FLOOR_PRICE_ORACLE_ADAPTER: '", addressToString(address(reservoirFloorPriceOracleAdapter)), "',\n",
 "  RESERVOIR_TOKEN_STATUS_ORACLE_ADAPTER: '", addressToString(address(reservoirTokenStatusOracleAdapter)), "',\n",
-"  PRIMITIVES_01: '", addressToString(address(primitives)), "',\n",
-"  STRATEGY_TARGET_01: '", addressToString(address(strategyTarget)), "'\n",
+"  SEGMENTS_01: '", addressToString(address(segments)), "',\n",
+"  INTENT_TARGET_01: '", addressToString(address(intentTarget)), "'\n",
 "}\n"
 )
     );

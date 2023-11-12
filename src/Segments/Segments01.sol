@@ -3,7 +3,7 @@ pragma solidity =0.8.17;
 
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
-import "../StrategyBase.sol";
+import "../IntentBase.sol";
 import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
@@ -53,7 +53,7 @@ struct UnsignedStakeProofData {
   bytes stakerSignature;
 }
 
-contract Primitives01 is TokenHelper, StrategyBase, SwapIO {
+contract Segments01 is TokenHelper, IntentBase, SwapIO {
   using Math for uint256;
   using SignedMath for int256;
 

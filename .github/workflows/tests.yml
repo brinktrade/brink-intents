@@ -6,7 +6,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    strategy:
+    intent:
       matrix:
         node-version: [18.x]
 

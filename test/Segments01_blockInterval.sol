@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_testBlockInterval is Test, Helper  {
+contract Segments01_testBlockInterval is Test, Helper  {
 
   function setUp () public {
     setupAll();
@@ -17,9 +17,9 @@ contract Primitives01_testBlockInterval is Test, Helper  {
     uint128 intervalMinSize = 100;
     uint16 maxIntervals = 0;
 
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
 
-    (uint128 start, uint16 counter) = primitives.getBlockIntervalState(id);
+    (uint128 start, uint16 counter) = segments.getBlockIntervalState(id);
     assertEq(uint(start), block.number);
     assertEq(counter, 1);
   }
@@ -31,11 +31,11 @@ contract Primitives01_testBlockInterval is Test, Helper  {
     uint128 intervalMinSize = 100;
     uint16 maxIntervals = 2;
 
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
     vm.roll(block.number + 100);
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
 
-    (uint128 start, uint16 counter) = primitives.getBlockIntervalState(id);
+    (uint128 start, uint16 counter) = segments.getBlockIntervalState(id);
     assertEq(uint(start), block.number);
     assertEq(counter, 2);
   }
@@ -47,16 +47,16 @@ contract Primitives01_testBlockInterval is Test, Helper  {
     uint128 intervalMinSize = 100;
     uint16 maxIntervals = 2;
 
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
     vm.roll(block.number + 100);
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
     vm.roll(block.number + 250);
 
     // run a 3rd time when maxIntervals is 2
     vm.expectRevert(MaxBlockIntervals.selector);
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
 
-    (uint128 start, uint16 counter) = primitives.getBlockIntervalState(id);
+    (uint128 start, uint16 counter) = segments.getBlockIntervalState(id);
     assertEq(uint(start), block.number - 250);
     assertEq(counter, 2);
   }
@@ -70,15 +70,15 @@ contract Primitives01_testBlockInterval is Test, Helper  {
 
     // revert when interval too short
     vm.expectRevert(BlockIntervalTooShort.selector);
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
-    (uint128 start, uint16 counter) = primitives.getBlockIntervalState(id);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    (uint128 start, uint16 counter) = segments.getBlockIntervalState(id);
     assertEq(uint(start), 0);
     assertEq(counter, 0);
 
     // succeed when interval is long enough
     vm.roll(block.number + 1);
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
-    (start, counter) = primitives.getBlockIntervalState(id);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    (start, counter) = segments.getBlockIntervalState(id);
     assertEq(uint(start), block.number);
     assertEq(counter, 1);
   }
@@ -91,8 +91,8 @@ contract Primitives01_testBlockInterval is Test, Helper  {
     uint16 maxIntervals = 0;
 
     // initial run
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
-    (uint128 start, uint16 counter) = primitives.getBlockIntervalState(id);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    (uint128 start, uint16 counter) = segments.getBlockIntervalState(id);
     uint blockNum = block.number;
     assertEq(uint(start), blockNum);
     assertEq(counter, 1);
@@ -100,8 +100,8 @@ contract Primitives01_testBlockInterval is Test, Helper  {
     // revert when interval too short
     vm.roll(block.number + 99);
     vm.expectRevert(BlockIntervalTooShort.selector);
-    primitives.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
-    (start, counter) = primitives.getBlockIntervalState(id);
+    segments.blockInterval(id, initialStart, intervalMinSize, maxIntervals);
+    (start, counter) = segments.getBlockIntervalState(id);
     assertEq(uint(start), blockNum);
     assertEq(counter, 1);
   }

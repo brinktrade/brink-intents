@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract Primitives01_limitSwapExactInput is Test, Helper  {
+contract Segments01_limitSwapExactInput is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
@@ -16,16 +16,16 @@ contract Primitives01_limitSwapExactInput is Test, Helper  {
     uint usdcInputAmount = 1450_000000;
 
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitives), usdcInputAmount);
+    USDC_ERC20.approve(address(segments), usdcInputAmount);
 
     uint wethOutputAmount = usdcInputAmount * MAGIC_TWAP_PRICE_USDC_ETH_1000_0 / Q96;
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, wethOutputAmount, new uint[](0));
 
-    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), 0);
+    assertEq(limitSwap_loadFilledAmount(address(segments), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
-    primitives.limitSwapExactInput(
+    segments.limitSwapExactInput(
       TRADER_1,
       USDC_Token,
       WETH_Token,
@@ -45,7 +45,7 @@ contract Primitives01_limitSwapExactInput is Test, Helper  {
     endBalances(address(filler));
     endBalances(TRADER_1);
 
-    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), usdcInputAmount);
+    assertEq(limitSwap_loadFilledAmount(address(segments), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), usdcInputAmount);
     
     assertEq(diffBalance(USDC, TRADER_1), -int(usdcInputAmount));
     assertEq(diffBalance(USDC, address(filler)), int(usdcInputAmount));
@@ -57,17 +57,17 @@ contract Primitives01_limitSwapExactInput is Test, Helper  {
     uint usdcInputAmount = 1450_000000;
 
     vm.prank(TRADER_1);
-    USDC_ERC20.approve(address(primitives), usdcInputAmount);
+    USDC_ERC20.approve(address(segments), usdcInputAmount);
 
     uint wethOutputAmount = usdcInputAmount * MAGIC_TWAP_PRICE_USDC_ETH_1000_0 / Q96;
     bytes memory fillCall50Percent = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, wethOutputAmount / 2, new uint[](0));
 
-    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), 0);
+    assertEq(limitSwap_loadFilledAmount(address(segments), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), 0);
     startBalances(address(filler));
     startBalances(TRADER_1);
 
     // fill 50%
-    primitives.limitSwapExactInput(
+    segments.limitSwapExactInput(
       TRADER_1,
       USDC_Token,
       WETH_Token,
@@ -87,7 +87,7 @@ contract Primitives01_limitSwapExactInput is Test, Helper  {
     endBalances(address(filler));
     endBalances(TRADER_1);
 
-    assertEq(limitSwap_loadFilledAmount(address(primitives), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), usdcInputAmount / 2);
+    assertEq(limitSwap_loadFilledAmount(address(segments), DEFAULT_FILL_STATE_PARAMS, usdcInputAmount), usdcInputAmount / 2);
     
     assertEq(diffBalance(USDC, TRADER_1), -int(usdcInputAmount / 2));
     assertEq(diffBalance(USDC, address(filler)), int(usdcInputAmount / 2));
