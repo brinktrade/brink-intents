@@ -4,21 +4,21 @@ pragma solidity =0.8.17;
 import "./IntentBase.sol";
 import "./Libraries/ProxyReentrancyGuard.sol";
 
-error BadOrderIndex();
+error BadintentIndex();
 error UnsignedCallRequired();
 
 /// @param segmentTarget Contract address where segment functions will be executed
-/// @param orders Array of allowed orders
-/// @param beforeCalls Array of segment calls to execute before order execution
-/// @param afterCalls Array of segment calls to execute after order execution
-struct Intent {
+/// @param intents Array of allowed intents
+/// @param beforeCalls Array of segment calls to execute before intent execution
+/// @param afterCalls Array of segment calls to execute after intent execution
+struct Declaration {
   address segmentTarget;
-  Order[] orders;
+  Intent[] intents;
   bytes[] beforeCalls;
   bytes[] afterCalls;
 }
 
-struct Order {
+struct Intent {
   Segment[] segments;
 }
 
@@ -28,29 +28,29 @@ struct Segment {
 }
 
 struct UnsignedData {
-  uint8 orderIndex;
+  uint8 intentIndex;
   bytes[] calls;
 }
 
 contract IntentTarget01 is IntentBase, ProxyReentrancyGuard {
 
-  /// @dev Execute an order within a signed array of orders
+  /// @dev Execute a signed declaration of intents
   /// @notice This should be executed by metaDelegateCall() or metaDelegateCall_EIP1271() with the following signed and unsigned params
-  /// @param intent Intent signed by owner [signed]
+  /// @param declaration Declaration of intents signed by owner [signed]
   /// @param unsignedData Unsigned calldata [unsigned]
   function execute(
-    Intent calldata intent,
+    Declaration calldata declaration,
     UnsignedData calldata unsignedData
   ) external nonReentrant {
-    if (unsignedData.orderIndex >= intent.orders.length) {
-      revert BadOrderIndex();
+    if (unsignedData.intentIndex >= declaration.intents.length) {
+      revert BadintentIndex();
     }
 
-    _delegateCallsWithRevert(intent.segmentTarget, intent.beforeCalls);
+    _delegateCallsWithRevert(declaration.segmentTarget, declaration.beforeCalls);
 
     uint8 nextUnsignedCall = 0;
-    for (uint8 i = 0; i < intent.orders[unsignedData.orderIndex].segments.length; i++) {
-      Segment calldata segment = intent.orders[unsignedData.orderIndex].segments[i];
+    for (uint8 i = 0; i < declaration.intents[unsignedData.intentIndex].segments.length; i++) {
+      Segment calldata segment = declaration.intents[unsignedData.intentIndex].segments[i];
       bytes memory segmentCallData;
       if (segment.requiresUnsignedCall) {
         if (nextUnsignedCall >= unsignedData.calls.length) {
@@ -71,12 +71,12 @@ contract IntentTarget01 is IntentBase, ProxyReentrancyGuard {
         segmentCallData = segment.data;
       }
       _delegateCallWithRevert(Call({
-        targetContract: intent.segmentTarget,
+        targetContract: declaration.segmentTarget,
         data: segmentCallData
       }));
     }
 
-    _delegateCallsWithRevert(intent.segmentTarget, intent.afterCalls);
+    _delegateCallsWithRevert(declaration.segmentTarget, declaration.afterCalls);
   }
 
   function _delegateCallsWithRevert (address targetContract, bytes[] calldata calls) internal {

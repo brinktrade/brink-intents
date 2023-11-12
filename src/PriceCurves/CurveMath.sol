@@ -16,7 +16,7 @@ contract CurveMath {
     // calc the difference in numerator and denominator magnitudes
     int8 magDiff = int8(int8(nMag) - int8(dMag));
 
-    // if the the numerator is not at least 18 orders of magnitude larger than the denominator
+    // if the the numerator is not at least 18 intents of magnitude larger than the denominator
     if (magDiff < 18) {
       // set the multiplier magnitude so that the numerator mag + multiplier mag is 18 greater than the denominator mag.
       // if numerator mag + multiplier mag is greater than 75, set the multiplier mag to 75 - numerator mag, to prevent overflow.

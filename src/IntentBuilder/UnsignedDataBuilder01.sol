@@ -27,27 +27,27 @@ contract UnsignedDataBuilder01 {
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1
   ) public pure returns (bytes memory) {
     bytes[] memory unsignedCalls = new bytes[](1);
     unsignedCalls[0] = unsignedCall1;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2
   ) public pure returns (bytes memory) {
     bytes[] memory unsignedCalls = new bytes[](2);
     unsignedCalls[0] = unsignedCall1;
     unsignedCalls[1] = unsignedCall2;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3
@@ -56,11 +56,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[0] = unsignedCall1;
     unsignedCalls[1] = unsignedCall2;
     unsignedCalls[2] = unsignedCall3;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -71,11 +71,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[1] = unsignedCall2;
     unsignedCalls[2] = unsignedCall3;
     unsignedCalls[3] = unsignedCall4;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -88,11 +88,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[2] = unsignedCall3;
     unsignedCalls[3] = unsignedCall4;
     unsignedCalls[4] = unsignedCall5;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -107,11 +107,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[3] = unsignedCall4;
     unsignedCalls[4] = unsignedCall5;
     unsignedCalls[5] = unsignedCall6;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -128,11 +128,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[4] = unsignedCall5;
     unsignedCalls[5] = unsignedCall6;
     unsignedCalls[6] = unsignedCall7;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -151,11 +151,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[5] = unsignedCall6;
     unsignedCalls[6] = unsignedCall7;
     unsignedCalls[7] = unsignedCall8;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -176,11 +176,11 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[6] = unsignedCall7;
     unsignedCalls[7] = unsignedCall8;
     unsignedCalls[8] = unsignedCall9;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
   function unsignedData (
-    uint8 orderIndex,
+    uint8 intentIndex,
     bytes memory unsignedCall1,
     bytes memory unsignedCall2,
     bytes memory unsignedCall3,
@@ -203,7 +203,7 @@ contract UnsignedDataBuilder01 {
     unsignedCalls[7] = unsignedCall8;
     unsignedCalls[8] = unsignedCall9;
     unsignedCalls[9] = unsignedCall10;
-    return abi.encode(orderIndex, unsignedCalls);
+    return abi.encode(intentIndex, unsignedCalls);
   }
 
 }

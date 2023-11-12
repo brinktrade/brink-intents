@@ -4,14 +4,14 @@ pragma solidity =0.8.17;
 import "forge-std/Test.sol";
 import "./Helper.sol";
 
-contract IntentTarget01_execute_singleOrder is Test, Helper  {
+contract IntentTarget01_execute_singleIntent is Test, Helper  {
 
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
   }
 
-  // test for a simple useBit + marketSwapExactInput order
-  function testExecute_singleOrder () public {
+  // test for a simple useBit + marketSwapExactInput intent
+  function testExecute_singleIntent () public {
     setupFiller();
     setupTrader1();
 
@@ -28,16 +28,16 @@ contract IntentTarget01_execute_singleOrder is Test, Helper  {
     // price movement to avoid revert
     bytes memory fillCall = abi.encodeWithSelector(filler.fill.selector, WETH, TokenStandard.ERC20, TRADER_1, expectedRequiredWethOutAmount, new uint[](0));
 
-    Segment[] memory segments_order0 = new Segment[](2);
+    Segment[] memory segments_intent0 = new Segment[](2);
     
     // useBit segment
-    segments_order0[0] = Segment(
+    segments_intent0[0] = Segment(
       abi.encodeWithSelector(Segments01.useBit.selector, 0, 1),
       false
     );
 
     // marketSwapExactInput segment
-    segments_order0[1] = Segment(
+    segments_intent0[1] = Segment(
       abi.encodeWithSelector(
         Segments01.marketSwapExactInput.selector,
         twapAdapter,
@@ -53,8 +53,8 @@ contract IntentTarget01_execute_singleOrder is Test, Helper  {
       true
     );
 
-    Order[] memory orders = new Order[](1);
-    orders[0] = Order(segments_order0);
+    Intent[] memory intents = new Intent[](1);
+    intents[0] = Intent(segments_intent0);
 
     bytes[] memory unsignedCalls = new bytes[](1);
 
@@ -67,9 +67,9 @@ contract IntentTarget01_execute_singleOrder is Test, Helper  {
       Call(address(filler), fillCall)
     );
 
-    Intent memory intent = Intent(
+    Declaration memory declaration = Declaration(
       address(segments),
-      orders,
+      intents,
       new bytes[](0),
       new bytes[](0)
     );
@@ -83,7 +83,7 @@ contract IntentTarget01_execute_singleOrder is Test, Helper  {
     USDC_ERC20.approve(address(intentTarget), 1450_000000);
 
     intentTarget.execute(
-      intent,
+      declaration,
       unsignedData
     );
 
