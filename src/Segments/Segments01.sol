@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity =0.8.17;
 
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "../IntentBase.sol";
 import "../Interfaces/ICallExecutor.sol";
+import "../Interfaces/ISolverValidator.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
 import "../Libraries/Bit.sol";
@@ -28,10 +30,20 @@ error SwapIdsAreEqual();
 error InvalidSwapIdsLength();
 error MaxBlockIntervals();
 error BlockIntervalTooShort();
+error InvalidSolver(address solver);
 
 struct UnsignedTransferData {
   address recipient;
   IdsProof idsProof;
+}
+
+struct UnsignedSwapData {
+  address recipient;
+  uint amount;
+  IdsProof tokenInIdsProof;
+  IdsProof tokenOutIdsProof;
+  Call fillCall;
+  bytes signature;
 }
 
 struct UnsignedMarketSwapData {
@@ -146,6 +158,49 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
     UnsignedTransferData memory data
   ) public {
     revert("NOT IMPLEMENTED");
+  }
+
+  // fill all or part of a swap for tokenIn -> tokenOut
+  function swap (
+    address owner,
+    Token memory tokenIn,
+    Token memory tokenOut,
+    uint tokenInAmount,
+    IPriceCurve priceCurve,
+    bytes memory priceCurveParams,
+    FillStateParams memory fillStateParams,
+    ISolverValidator solverValidator,
+    UnsignedSwapData memory data
+  ) public {
+    address solver = recoverSwapDataSigner(data);
+    if (!solverValidator.isValidSolver(solver)) {
+      revert InvalidSolver(solver);
+    }
+
+    int fillStateX96 = getFillStateX96(fillStateParams.id);
+    uint filledInput = getFilledAmount(fillStateParams, fillStateX96, tokenInAmount);
+
+    uint tokenOutAmountRequired = limitSwapExactInput_getOutput(
+      data.amount,
+      filledInput,
+      tokenInAmount,
+      priceCurve,
+      priceCurveParams
+    );
+
+    _setFilledAmount(fillStateParams, filledInput + data.amount, tokenInAmount);
+
+    _fillSwap(
+      tokenIn,
+      tokenOut,
+      owner,
+      data.recipient,
+      data.amount,
+      tokenOutAmountRequired,
+      data.tokenInIdsProof,
+      data.tokenOutIdsProof,
+      data.fillCall
+    );
   }
 
   // given an exact tokenIn amount, fill a tokenIn -> tokenOut swap at market price, as determined by priceOracle
@@ -336,6 +391,21 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
     assembly { slot := sload(position) }
     start = uint128(uint256(slot));
     counter = uint16(uint256(slot >> 128)); 
+  }
+
+  function unsignedSwapDataHash (
+    address recipient,
+    uint amount,
+    IdsProof memory tokenInIdsProof,
+    IdsProof memory tokenOutIdsProof,
+    Call memory fillCall
+  ) public pure returns (bytes32 dataHash) {
+    dataHash = keccak256(abi.encode(recipient, amount, tokenInIdsProof, tokenOutIdsProof, fillCall));
+  }
+
+  function recoverSwapDataSigner (UnsignedSwapData memory data) public pure returns (address signer) {
+    bytes32 dataHash = unsignedSwapDataHash(data.recipient, data.amount, data.tokenInIdsProof, data.tokenOutIdsProof, data.fillCall);
+    signer = ECDSA.recover(ECDSA.toEthSignedMessageHash(dataHash), data.signature);
   }
 
   function _setFilledAmount (FillStateParams memory fillStateParams, uint filledAmount, uint totalAmount) internal {
