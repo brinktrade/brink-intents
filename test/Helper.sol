@@ -2,6 +2,7 @@
 pragma solidity =0.8.17;
 
 import "forge-std/Test.sol";
+import "forge-std/Vm.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Interfaces/IAccount.sol";
@@ -9,11 +10,13 @@ import "./Interfaces/IAccountFactory.sol";
 import "../src/IntentTarget01.sol";
 import "../src/Interfaces/IDeployer.sol";
 import "../src/Interfaces/ITwapAdapter.sol";
+import "../src/Interfaces/ISolverValidator.sol";
 import "../src/TokenHelper/TokenHelper.sol";
 import "../src/PriceCurves/FlatPriceCurve.sol";
 import "../src/PriceCurves/LinearPriceCurve.sol";
 import "../src/PriceCurves/QuadraticPriceCurve.sol";
 import "../src/Segments/Segments01.sol";
+import "../src/SolverValidator/SolverValidator01.sol";
 import "../src/IntentBuilder/IntentBuilder01.sol";
 import "../src/IntentBuilder/SegmentBuilder01.sol";
 import "../src/IntentBuilder/UnsignedDataBuilder01.sol";
@@ -25,6 +28,8 @@ import "./Mocks/MockSegmentInternals.sol";
 import "./Mocks/MockTokenHelperInternals.sol";
 import "./Utils/Filler.sol";
 import "./Utils/Constants.sol";
+
+string constant DEFAULT_SEED = 'maximum salt fold talent blanket moon mirror deer that purse dirt vapor sadness embark purpose';
 
 contract Helper is Test, Constants {
 
@@ -49,6 +54,7 @@ contract Helper is Test, Constants {
   Filler public filler;
   IDeployer public deployer = IDeployer(0x6b24634B517a63Ed0fa2a39977286e13e7E35E25);
   IAccountFactory public accountFactory = IAccountFactory(0xe925f84cA9Dd5b3844fC424861D7bDf9485761B6);
+  ISolverValidator public solverValidator01;
 
   // 2**96
   uint256 public constant Q96 = 0x1000000000000000000000000;
@@ -155,6 +161,8 @@ contract Helper is Test, Constants {
   bytes32 public proxy0_signerPrivateKey;
   IAccount public proxy0_account;
 
+  address solverValidatorAdmin = 0x0AfB7C8cf2b639675a20Fda58Adf3307d40e8E8A;
+
   function setupAll () public {
     // setup with default fork
     setupAll(BLOCK_JAN_25_2023);
@@ -191,6 +199,7 @@ contract Helper is Test, Constants {
     reservoirFloorPriceOracleAdapter = ReservoirFloorPriceOracleAdapter(deployContract('out/ReservoirFloorPriceOracleAdapter.sol/ReservoirFloorPriceOracleAdapter.json'));
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
     swapIO = SwapIO(deployContract('out/SwapIO.sol/SwapIO.json'));
+    solverValidator01 = ISolverValidator(deployContract('out/SolverValidator01.sol/SolverValidator01.json'));
 
     intentBuilder = new IntentBuilder01(
       address(intentTarget),
@@ -604,6 +613,29 @@ contract Helper is Test, Constants {
     proofFlags[1] = true;
 
     idsProof = IdsProof(ids, proof, proofFlags, new uint[](0), new uint[](0), new bytes[](0));
+  }
+
+  function createWallet (uint32 accountIndex) public returns (VmSafe.Wallet memory wallet) {
+    wallet = vm.createWallet(vm.deriveKey(DEFAULT_SEED, accountIndex));
+  }
+
+  function getEIP191MessageHash (bytes32 messageHash) public pure returns (bytes32) {
+    return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", messageHash));
+  }
+
+  function signEIP191 (
+    VmSafe.Wallet memory wallet,
+    bytes32 messageHash
+  ) public returns (bytes memory signature) {
+    signature = sign(wallet, getEIP191MessageHash(messageHash));
+  }
+
+  function sign (
+    VmSafe.Wallet memory wallet,
+    bytes32 messageHash
+  ) public returns (bytes memory signature) {
+    (uint8 v, bytes32 r, bytes32 s) = vm.sign(wallet, messageHash);
+    signature = abi.encodePacked(r, s, v);
   }
 
 }

@@ -4,7 +4,7 @@ pragma solidity =0.8.17;
 import "./IntentBase.sol";
 import "./Libraries/ProxyReentrancyGuard.sol";
 
-error BadintentIndex();
+error BadIntentIndex();
 error UnsignedCallRequired();
 
 /// @param segmentTarget Contract address where segment functions will be executed
@@ -43,7 +43,7 @@ contract IntentTarget01 is IntentBase, ProxyReentrancyGuard {
     UnsignedData calldata unsignedData
   ) external nonReentrant {
     if (unsignedData.intentIndex >= declaration.intents.length) {
-      revert BadintentIndex();
+      revert BadIntentIndex();
     }
 
     _delegateCallsWithRevert(declaration.segmentTarget, declaration.beforeCalls);
