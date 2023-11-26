@@ -12,6 +12,7 @@ import "../Interfaces/IPriceCurve.sol";
 import "../Interfaces/ISwapAmount.sol";
 import "../Libraries/Bit.sol";
 import "../TokenHelper/TokenHelper.sol";
+import "../Utils/BlockIntervalUtil.sol";
 import "../Utils/SwapIO.sol";
 
 error NftIdAlreadyOwned();
@@ -65,7 +66,7 @@ struct UnsignedStakeProofData {
   bytes stakerSignature;
 }
 
-contract Segments01 is TokenHelper, IntentBase, SwapIO {
+contract Segments01 is TokenHelper, IntentBase, SwapIO, BlockIntervalUtil {
   using Math for uint256;
   using SignedMath for int256;
 
@@ -373,14 +374,6 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
   function getFillStateX96 (uint64 fillStateId) public view returns (int fillState) {
     bytes32 position = keccak256(abi.encode(fillStateId, "fillState"));
     assembly { fillState := sload(position) } 
-  }
-
-  function getBlockIntervalState (uint64 id) public view returns (uint128 start, uint16 counter) {
-    bytes32 position = keccak256(abi.encode(id, "blockInterval"));
-    bytes32 slot;
-    assembly { slot := sload(position) }
-    start = uint128(uint256(slot));
-    counter = uint16(uint256(slot >> 128)); 
   }
 
   function unsignedSwapDataHash (
