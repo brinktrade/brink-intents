@@ -9,6 +9,7 @@ import "../Interfaces/ICallExecutor.sol";
 import "../Interfaces/ISolverValidator.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Interfaces/IPriceCurve.sol";
+import "../Interfaces/ISwapAmount.sol";
 import "../Libraries/Bit.sol";
 import "../TokenHelper/TokenHelper.sol";
 import "../Utils/SwapIO.sol";
@@ -39,7 +40,6 @@ struct UnsignedTransferData {
 
 struct UnsignedSwapData {
   address recipient;
-  uint amount;
   IdsProof tokenInIdsProof;
   IdsProof tokenOutIdsProof;
   Call fillCall;
@@ -160,15 +160,15 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
     revert("NOT IMPLEMENTED");
   }
 
-  // fill all or part of a swap for tokenIn -> tokenOut
+  // fill a swap for tokenIn -> tokenOut. Does not support partial fills.
   function swap (
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
-    uint tokenInAmount,
-    IPriceCurve priceCurve,
-    bytes memory priceCurveParams,
-    FillStateParams memory fillStateParams,
+    ISwapAmount inputAmountContract,
+    ISwapAmount outputAmountContract,
+    bytes memory inputAmountParams,
+    bytes memory outputAmountParams,
     ISolverValidator solverValidator,
     UnsignedSwapData memory data
   ) public {
@@ -177,26 +177,16 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
       revert InvalidSolver(solver);
     }
 
-    int fillStateX96 = getFillStateX96(fillStateParams.id);
-    uint filledInput = getFilledAmount(fillStateParams, fillStateX96, tokenInAmount);
-
-    uint tokenOutAmountRequired = limitSwapExactInput_getOutput(
-      data.amount,
-      filledInput,
-      tokenInAmount,
-      priceCurve,
-      priceCurveParams
-    );
-
-    _setFilledAmount(fillStateParams, filledInput + data.amount, tokenInAmount);
+    uint tokenInAmount = _delegateCallGetSwapAmount(inputAmountContract, inputAmountParams);
+    uint tokenOutAmount = _delegateCallGetSwapAmount(outputAmountContract, outputAmountParams);
 
     _fillSwap(
       tokenIn,
       tokenOut,
       owner,
       data.recipient,
-      data.amount,
-      tokenOutAmountRequired,
+      tokenInAmount,
+      tokenOutAmount,
       data.tokenInIdsProof,
       data.tokenOutIdsProof,
       data.fillCall
@@ -395,16 +385,15 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
 
   function unsignedSwapDataHash (
     address recipient,
-    uint amount,
     IdsProof memory tokenInIdsProof,
     IdsProof memory tokenOutIdsProof,
     Call memory fillCall
   ) public pure returns (bytes32 dataHash) {
-    dataHash = keccak256(abi.encode(recipient, amount, tokenInIdsProof, tokenOutIdsProof, fillCall));
+    dataHash = keccak256(abi.encode(recipient, tokenInIdsProof, tokenOutIdsProof, fillCall));
   }
 
   function recoverSwapDataSigner (UnsignedSwapData memory data) public pure returns (address signer) {
-    bytes32 dataHash = unsignedSwapDataHash(data.recipient, data.amount, data.tokenInIdsProof, data.tokenOutIdsProof, data.fillCall);
+    bytes32 dataHash = unsignedSwapDataHash(data.recipient, data.tokenInIdsProof, data.tokenOutIdsProof, data.fillCall);
     signer = ECDSA.recover(ECDSA.toEthSignedMessageHash(dataHash), data.signature);
   }
 
@@ -435,5 +424,21 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO {
     bytes32 position = keccak256(abi.encode(id, "blockInterval"));
     bytes32 slot = bytes32(uint256(start)) | (bytes32(uint256(counter)) << 128);
     assembly { sstore(position, slot) }
+  }
+
+  function _delegateCallGetSwapAmount (ISwapAmount swapAmountContract, bytes memory params) internal returns (uint amount) {
+    address to = address(swapAmountContract);
+    bytes memory data = abi.encodeWithSignature('getAmount(bytes)', params);
+    assembly {
+      let success := delegatecall(gas(), to, add(data, 0x20), mload(data), 0, 0)
+      returndatacopy(0, 0, returndatasize())
+      switch success
+      case 0 {
+        revert(0, returndatasize())
+      }
+      default {
+        amount := mload(0)
+      }
+    }
   }
 }
