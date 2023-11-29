@@ -49,36 +49,62 @@ contract BlockIntervalDutchAuctionAmount is ISwapAmount, BlockIntervalUtil {
       bytes memory priceX96OracleParams
     ) = abi.decode(params, (uint, uint64, uint128, uint128, uint128, int24, int24, address, bytes));
 
+    // get the previous auction filled block from the block interval state. blockInterval segment sets this when the intent is filled
+    (uint128 previousAuctionFilledBlock,) = getBlockIntervalState(blockIntervalId);
+
+    // get the oracle price. Price is expected to be multiplied by 2**96.
+    uint priceX96 = IUint256Oracle(priceX96Oracle).getUint256(priceX96OracleParams);
+  
+    amount = getAuctionAmount(
+      uint128(block.number),
+      previousAuctionFilledBlock,
+      oppositeTokenAmount,
+      firstAuctionStartBlock,
+      auctionDelayBlocks,
+      auctionDurationBlocks,
+      startPercentE6,
+      endPercentE6,
+      priceX96
+    );
+  }
+
+  // a pure function to compute the auction amount based on input parameters
+  function getAuctionAmount (
+    uint128 blockNumber,
+    uint128 previousAuctionFilledBlock,
+    uint oppositeTokenAmount,
+    uint128 firstAuctionStartBlock,
+    uint128 auctionDelayBlocks,
+    uint128 auctionDurationBlocks,
+    int24 startPercentE6,
+    int24 endPercentE6,
+    uint priceX96
+  ) public pure returns (uint amount) {
     int24 percentE6;
     {
       // get the block when the last blockInterval ended
       uint128 auctionStartBlock;
-      (uint128 prevBlockIntervalEndBlock,) = getBlockIntervalState(blockIntervalId);
-      if (prevBlockIntervalEndBlock == 0) {
-        // if there is no state for blockInterval, this is the first block interval 
+      if (previousAuctionFilledBlock == 0) {
+        // if this is the first block interval, use firstAuctionStartBlock
         auctionStartBlock = firstAuctionStartBlock;
       } else {
-        // if there is state for blockInterval, set auctionStartBlock to the previous interval end + auction delay blocks
-        auctionStartBlock = prevBlockIntervalEndBlock + auctionDelayBlocks;
+        // if a previous auction was filled, set auctionStartBlock to the block when the previous auction was filled + auction delay blocks
+        auctionStartBlock = previousAuctionFilledBlock + auctionDelayBlocks;
       }
       uint128 auctionEndBlock = auctionStartBlock + auctionDurationBlocks;
 
-      uint128 blockNum = uint128(block.number);
-      if (blockNum <= auctionStartBlock) {
+      if (blockNumber <= auctionStartBlock) {
         // if current block is less than or equal to start block, percent is equal to the start percent
         percentE6 = startPercentE6;
-      } else if (blockNum > auctionStartBlock && blockNum < auctionEndBlock) {
+      } else if (blockNumber > auctionStartBlock && blockNumber < auctionEndBlock) {
         // if current block is between start and end block, percent is on a linear range between start and end percent
         // calc percent between startPercentE6 and endPercentE6, based on where current block is relative to start block and end block
-        percentE6 = _calcPercentOnLinearRange(auctionStartBlock, auctionEndBlock, blockNum, startPercentE6, endPercentE6);
-      } else if (blockNum >= auctionEndBlock) {
+        percentE6 = _calcPercentOnLinearRange(auctionStartBlock, auctionEndBlock, blockNumber, startPercentE6, endPercentE6);
+      } else if (blockNumber >= auctionEndBlock) {
         // if current block is greater than auctionEnd
         percentE6 = endPercentE6;
       }
     }
-
-    // get price from oracle
-    uint priceX96 = IUint256Oracle(priceX96Oracle).getUint256(priceX96OracleParams);
 
     // unadjustedAmount is the amount based on oppositeTokenAmount and price, before adjusting by percentE6
     int unadjustedAmount = int(oppositeTokenAmount * priceX96 / Q96);
