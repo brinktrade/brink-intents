@@ -413,12 +413,6 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO, BlockIntervalUtil {
     return n >= 0 ? int8(1) : -1;
   }
 
-  function _setBlockIntervalState (uint64 id, uint128 start, uint16 counter) internal {
-    bytes32 position = keccak256(abi.encode(id, "blockInterval"));
-    bytes32 slot = bytes32(uint256(start)) | (bytes32(uint256(counter)) << 128);
-    assembly { sstore(position, slot) }
-  }
-
   function _delegateCallGetSwapAmount (ISwapAmount swapAmountContract, bytes memory params) internal returns (uint amount) {
     address to = address(swapAmountContract);
     bytes memory data = abi.encodeWithSignature('getAmount(bytes)', params);
