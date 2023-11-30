@@ -100,8 +100,8 @@ contract BlockIntervalDutchAuctionAmount is ISwapAmount, BlockIntervalUtil {
         // if current block is between start and end block, percent is on a linear range between start and end percent
         // calc percent between startPercentE6 and endPercentE6, based on where current block is relative to start block and end block
         percentE6 = _calcPercentOnLinearRange(auctionStartBlock, auctionEndBlock, blockNumber, startPercentE6, endPercentE6);
-      } else if (blockNumber >= auctionEndBlock) {
-        // if current block is greater than auctionEnd
+      } else {
+        // if current block is greater than or equal to auctionEnd
         percentE6 = endPercentE6;
       }
     }
