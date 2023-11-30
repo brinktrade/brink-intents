@@ -404,4 +404,50 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
 
     assertEq(outputAmount, auctionEndOutputAmount);
   }
+
+  // test auctionDurationBlocks set to 0, before auction starts
+  function testBlockIntervalDutchAuctionAmount_getAmount_auctionDurationZero_beforeAuction () public {
+    // get expected output: should be startPercentE6 away from priceOracle reported output amount
+    uint price = twapInverseAdapter02.getUint256(abi.encode(address(DAI_ETH_FEE3000_UNISWAP_V3_POOL), 1000));
+    uint oracleReportedOutputAmount = price * inputAmount / 2**96;
+    uint auctionStartOutputAmount = uint(int(oracleReportedOutputAmount) + int(oracleReportedOutputAmount) * int(startPercentE6) / int(10**6));
+
+    // get actual output amount
+    uint outputAmount = testContract.getAmount(abi.encode(
+      inputAmount,
+      blockIntervalId,
+      firstAuctionStartBlock,
+      auctionDelayBlocks,
+      0,
+      startPercentE6,
+      endPercentE6,
+      priceX96Oracle,
+      priceX96OracleParams
+    ));
+
+    assertEq(outputAmount, auctionStartOutputAmount);
+  }
+
+  // test auctionDurationBlocks set to 0, after auction ends
+  function testBlockIntervalDutchAuctionAmount_getAmount_auctionDurationZero_afterAuction () public {
+    // get expected output: should be endPercentE6 away from priceOracle reported output amount
+    uint price = twapInverseAdapter02.getUint256(abi.encode(address(DAI_ETH_FEE3000_UNISWAP_V3_POOL), 1000));
+    uint oracleReportedOutputAmount = price * inputAmount / 2**96;
+    uint auctionEndOutputAmount = uint(int(oracleReportedOutputAmount) + int(oracleReportedOutputAmount) * int(endPercentE6) / int(10**6));
+
+    // get actual output amount
+    uint outputAmount = testContract.getAmount(abi.encode(
+      inputAmount,
+      blockIntervalId,
+      firstAuctionStartBlock - 1,
+      auctionDelayBlocks,
+      0,
+      startPercentE6,
+      endPercentE6,
+      priceX96Oracle,
+      priceX96OracleParams
+    ));
+
+    assertEq(outputAmount, auctionEndOutputAmount);
+  }
 }
