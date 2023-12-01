@@ -3,11 +3,11 @@ pragma solidity =0.8.17;
 
 import "forge-std/Test.sol";
 import "./Helper.sol";
-import "./Mocks/MockBlockIntervalDutchAuctionAmount.sol";
+import "./Mocks/MockBlockIntervalDutchAuctionAmount01.sol";
 
-contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
+contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
 
-  MockBlockIntervalDutchAuctionAmount testContract;
+  MockBlockIntervalDutchAuctionAmount01 testContract;
   uint inputAmount;
   uint64 blockIntervalId;
   uint128 firstAuctionStartBlock;
@@ -20,7 +20,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
 
   function setUp () public {
     setupAll();
-    testContract = new MockBlockIntervalDutchAuctionAmount();
+    testContract = new MockBlockIntervalDutchAuctionAmount01();
     
     // default auction params:
     inputAmount = 1_000000000000000000;
@@ -35,7 +35,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when the first auction starts
-  function testBlockIntervalDutchAuctionAmount_getAmount_firstAuctionStart () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_firstAuctionStart () public {
     // get expected output: should be startPercentE6 away from priceOracle reported output amount
     uint price = twapInverseAdapter02.getUint256(abi.encode(address(DAI_ETH_FEE3000_UNISWAP_V3_POOL), 1000));
     uint oracleReportedOutputAmount = price * inputAmount / 2**96;
@@ -58,7 +58,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is active
-  function testBlockIntervalDutchAuctionAmount_getAmount_firstAuctionActive () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_firstAuctionActive () public {
     // get expected output: should be at approximately the midpoint between startPercent and endPercent,
     // relative to priceOracle reported output amount
     uint auctionMidwayOutputAmount = 1552515387436826869931; // ~1552.515 DAI
@@ -80,7 +80,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is complete
-  function testBlockIntervalDutchAuctionAmount_getAmount_firstAuctionComplete () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_firstAuctionComplete () public {
     // get expected output: should be endPercentE6 away from priceOracle reported output amount
     uint price = twapInverseAdapter02.getUint256(abi.encode(address(DAI_ETH_FEE3000_UNISWAP_V3_POOL), 1000));
     uint oracleReportedOutputAmount = price * inputAmount / 2**96;
@@ -103,7 +103,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is complete and end percent is -100%. Amount should be 0
-  function testBlockIntervalDutchAuctionAmount_getAmount_firstAuctionComplete_negative100End () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_firstAuctionComplete_negative100End () public {
     // get actual output amount
     uint outputAmount = testContract.getAmount(abi.encode(
       inputAmount,
@@ -121,7 +121,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is complete and end percent is -150%. Amount should be 0 (no overflow)
-  function testBlockIntervalDutchAuctionAmount_getAmount_firstAuctionComplete_negative150End () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_firstAuctionComplete_negative150End () public {
     // get actual output amount
     uint outputAmount = testContract.getAmount(abi.encode(
       inputAmount,
@@ -139,7 +139,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction delay period is active
-  function testBlockIntervalDutchAuctionAmount_getAmount_previousAuctionFilled_auctionDelayActive () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionDelayActive () public {
     // set previous auction filled (block interval state set) so that current forked block is about halfway through the uaction delay period
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks / 2);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17); // set counter to 17, doesn't matter for this case
@@ -166,7 +166,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction has started
-  function testBlockIntervalDutchAuctionAmount_getAmount_previousAuctionFilled_auctionStarted () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionStarted () public {
     // set previous auction filled (block interval state set) so that current forked block is 1 block into the auction
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks + 1);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17);
@@ -195,7 +195,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction has almost ended
-  function testBlockIntervalDutchAuctionAmount_getAmount_previousAuctionFilled_auctionEnding () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionEnding () public {
     // set previous auction filled (block interval state set) so that current forked block is 1 block before the auction ends
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks + auctionDurationBlocks - 1);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17);
@@ -224,7 +224,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction has almost ended
-  function testBlockIntervalDutchAuctionAmount_getAmount_previousAuctionFilled_auctionEnded () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionEnded () public {
     // set previous auction filled (block interval state set) so that current forked block is 10k blocks after the auction ended
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks + auctionDurationBlocks + 10_000);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17);
@@ -252,7 +252,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when price output is a decimal and auction has started
-  function testBlockIntervalDutchAuctionAmount_getAmount_decimalPrice_auctionStart () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_decimalPrice_auctionStart () public {
     uint usdcInputAmount = 1500 * 10**6;
 
     // USDC/ETH TWAP price will be a decimal * 2**96
@@ -277,7 +277,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is active
-  function testBlockIntervalDutchAuctionAmount_getAmount_decimalPrice_auctionActive () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_decimalPrice_auctionActive () public {
     uint usdcInputAmount = 1500 * 10**6;
 
     // get expected output: should be at approximately the midpoint between startPercent and endPercent,
@@ -301,7 +301,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is complete
-  function testBlockIntervalDutchAuctionAmount_getAmount_decimalPrice_auctionComplete () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_decimalPrice_auctionComplete () public {
     uint usdcInputAmount = 1500 * 10**6;
     
     // get expected output: should be endPercentE6 away from priceOracle reported output amount
@@ -326,7 +326,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test input amount (increasing) when the first auction starts
-  function testBlockIntervalDutchAuctionAmount_getAmount_inputIncreasing_auctionStarted () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_inputIncreasing_auctionStarted () public {
     // auction goes from -15% to 15% relative to price oracle
     int24 startPercentE6_inputIncreasing = -150000;
     int24 endPercentE6_inputIncreasing = 150000;
@@ -353,7 +353,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is active
-  function testBlockIntervalDutchAuctionAmount_getAmount_inputIncreasing_auctionActive () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_inputIncreasing_auctionActive () public {
     // auction goes from -15% to 15% relative to price oracle
     int24 startPercentE6_inputIncreasing = -150000;
     int24 endPercentE6_inputIncreasing = 150000;
@@ -379,7 +379,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test output amount when first auction is complete
-  function testBlockIntervalDutchAuctionAmount_getAmount_inputIncreasing_auctionComplete () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_inputIncreasing_auctionComplete () public {
     // auction goes from -15% to 15% relative to price oracle
     int24 startPercentE6_inputIncreasing = -150000;
     int24 endPercentE6_inputIncreasing = 150000;
@@ -406,7 +406,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test auctionDurationBlocks set to 0, before auction starts
-  function testBlockIntervalDutchAuctionAmount_getAmount_auctionDurationZero_beforeAuction () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_auctionDurationZero_beforeAuction () public {
     // get expected output: should be startPercentE6 away from priceOracle reported output amount
     uint price = twapInverseAdapter02.getUint256(abi.encode(address(DAI_ETH_FEE3000_UNISWAP_V3_POOL), 1000));
     uint oracleReportedOutputAmount = price * inputAmount / 2**96;
@@ -429,7 +429,7 @@ contract BlockIntervalDutchAuctionAmount_getAmount is Test, Helper  {
   }
 
   // test auctionDurationBlocks set to 0, after auction ends
-  function testBlockIntervalDutchAuctionAmount_getAmount_auctionDurationZero_afterAuction () public {
+  function testBlockIntervalDutchAuctionAmount01_getAmount_auctionDurationZero_afterAuction () public {
     // get expected output: should be endPercentE6 away from priceOracle reported output amount
     uint price = twapInverseAdapter02.getUint256(abi.encode(address(DAI_ETH_FEE3000_UNISWAP_V3_POOL), 1000));
     uint oracleReportedOutputAmount = price * inputAmount / 2**96;

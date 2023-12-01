@@ -162,7 +162,7 @@ contract Segments01 is TokenHelper, IntentBase, SwapIO, BlockIntervalUtil {
   }
 
   // fill a swap for tokenIn -> tokenOut. Does not support partial fills.
-  function swap (
+  function swap01 (
     address owner,
     Token memory tokenIn,
     Token memory tokenOut,
