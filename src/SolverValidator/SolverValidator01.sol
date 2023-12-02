@@ -6,6 +6,8 @@ import "../Interfaces/ISolverValidator.sol";
 
 contract SolverValidator01 is ISolverValidator, Ownable {
 
+  event SolverValiditySet(address solver, bool valid);
+
   mapping (address => bool) solverValidity;
 
   constructor () {
@@ -19,5 +21,6 @@ contract SolverValidator01 is ISolverValidator, Ownable {
 
   function setSolverValidity (address solver, bool valid) external onlyOwner {
     solverValidity[solver] = valid;
+    emit SolverValiditySet(solver, valid);
   }
 }
