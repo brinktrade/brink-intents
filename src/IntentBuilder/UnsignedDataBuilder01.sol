@@ -7,6 +7,16 @@ import "../TokenHelper/TokenHelper.sol";
 
 contract UnsignedDataBuilder01 {
 
+  function unsignedSwapData (
+    address recipient,
+    IdsProof memory tokenInIdsProof,
+    IdsProof memory tokenOutIdsProof,
+    Call memory fillCall,
+    bytes memory signature
+  ) external pure returns (bytes memory) {
+    return abi.encode(recipient, tokenInIdsProof, tokenOutIdsProof, fillCall, signature);
+  }
+
   function unsignedMarketSwapData (
     address recipient,
     IdsProof memory tokenInIdsProof,

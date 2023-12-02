@@ -3,21 +3,16 @@ pragma solidity =0.8.17;
 
 import "forge-std/Test.sol";
 import "./Helper.sol";
-import "../src/SwapAmounts/FixedSwapAmount.sol";
 
 contract Segments01_swap is Test, Helper  {
 
   VmSafe.Wallet public solverSignerWallet;
   VmSafe.Wallet public invalidSolverSignerWallet;
 
-  FixedSwapAmount fixedSwapAmount;
-
   function setUp () public {
     setupAll(BLOCK_FEB_12_2023);
     setupFiller();
     setupTrader1();
-
-    fixedSwapAmount = new FixedSwapAmount();
 
     solverSignerWallet = createWallet(0);
     invalidSolverSignerWallet = createWallet(1);
@@ -25,7 +20,7 @@ contract Segments01_swap is Test, Helper  {
     solverValidator01.setSolverValidity(solverSignerWallet.addr, true);
   }
 
-  function test_swap_successCase () public {
+  function test_swap01_successCase () public {
     uint usdcInputAmount = 1450_000000;
     uint wethOutputAmount = 1_000000000000000000;
 
@@ -53,12 +48,12 @@ contract Segments01_swap is Test, Helper  {
     );
 
     // execute the swap segment
-    segments.swap(
+    segments.swap01(
       TRADER_1,
       USDC_Token,
       WETH_Token,
-      fixedSwapAmount,
-      fixedSwapAmount,
+      fixedSwapAmount01,
+      fixedSwapAmount01,
       abi.encode(usdcInputAmount),
       abi.encode(wethOutputAmount),
       solverValidator01,
@@ -75,7 +70,7 @@ contract Segments01_swap is Test, Helper  {
   }
 
   // when solution data is signed by an invalid solver
-  function test_swap_invalidSolver () public {
+  function test_swap01_invalidSolver () public {
     uint usdcInputAmount = 1450_000000;
     uint wethOutputAmount = 1_000000000000000000;
 
@@ -104,12 +99,12 @@ contract Segments01_swap is Test, Helper  {
 
     // execute the swap segment and expect InvalidSolver revert
     vm.expectRevert(abi.encodeWithSelector(InvalidSolver.selector, invalidSolverSignerWallet.addr));
-    segments.swap(
+    segments.swap01(
       TRADER_1,
       USDC_Token,
       WETH_Token,
-      fixedSwapAmount,
-      fixedSwapAmount,
+      fixedSwapAmount01,
+      fixedSwapAmount01,
       abi.encode(usdcInputAmount),
       abi.encode(wethOutputAmount),
       solverValidator01,

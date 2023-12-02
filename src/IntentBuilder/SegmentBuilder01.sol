@@ -96,6 +96,33 @@ contract SegmentBuilder01 {
       false
     ));
   }
+
+  function swap01 (
+    address owner,
+    Token memory tokenIn,
+    Token memory tokenOut,
+    ISwapAmount inputAmountContract,
+    ISwapAmount outputAmountContract,
+    bytes memory inputAmountParams,
+    bytes memory outputAmountParams,
+    ISolverValidator solverValidator
+  ) external pure returns (bytes memory) {
+    return abi.encode(Segment(
+      abi.encodeWithSelector(
+        Segments01.swap01.selector,
+        owner,
+        tokenIn,
+        tokenOut,
+        inputAmountContract,
+        outputAmountContract,
+        inputAmountParams,
+        outputAmountParams,
+        solverValidator,
+        new bytes(0)
+      ),
+      true
+    ));
+  }
   
   function marketSwapExactInput(
     IUint256Oracle priceOracle,

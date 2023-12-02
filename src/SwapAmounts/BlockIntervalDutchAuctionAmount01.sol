@@ -5,7 +5,7 @@ import "../Interfaces/ISwapAmount.sol";
 import "../Interfaces/IUint256Oracle.sol";
 import "../Utils/BlockIntervalUtil.sol";
 
-contract BlockIntervalDutchAuctionAmount is ISwapAmount, BlockIntervalUtil {
+contract BlockIntervalDutchAuctionAmount01 is ISwapAmount, BlockIntervalUtil {
 
   uint256 public constant Q96 = 0x1000000000000000000000000;
 
