@@ -17,6 +17,8 @@ import "../src/PriceCurves/LinearPriceCurve.sol";
 import "../src/PriceCurves/QuadraticPriceCurve.sol";
 import "../src/Segments/Segments01.sol";
 import "../src/SolverValidator/SolverValidator01.sol";
+import "../src/SwapAmounts/BlockIntervalDutchAuctionAmount01.sol";
+import "../src/SwapAmounts/FixedSwapAmount01.sol";
 import "../src/IntentBuilder/IntentBuilder01.sol";
 import "../src/IntentBuilder/SegmentBuilder01.sol";
 import "../src/IntentBuilder/UnsignedDataBuilder01.sol";
@@ -55,6 +57,8 @@ contract Helper is Test, Constants {
   IDeployer public deployer = IDeployer(0x6b24634B517a63Ed0fa2a39977286e13e7E35E25);
   IAccountFactory public accountFactory = IAccountFactory(0xe925f84cA9Dd5b3844fC424861D7bDf9485761B6);
   ISolverValidator public solverValidator01;
+  BlockIntervalDutchAuctionAmount01 public blockIntervalDutchAuctionAmount01;
+  FixedSwapAmount01 public fixedSwapAmount01;
 
   // 2**96
   uint256 public constant Q96 = 0x1000000000000000000000000;
@@ -200,6 +204,8 @@ contract Helper is Test, Constants {
     reservoirTokenStatusOracleAdapter = ReservoirTokenStatusOracleAdapter(deployContract('out/ReservoirTokenStatusOracleAdapter.sol/ReservoirTokenStatusOracleAdapter.json'));
     swapIO = SwapIO(deployContract('out/SwapIO.sol/SwapIO.json'));
     solverValidator01 = ISolverValidator(deployContract('out/SolverValidator01.sol/SolverValidator01.json'));
+    fixedSwapAmount01 = FixedSwapAmount01(deployContract('out/FixedSwapAmount01.sol/FixedSwapAmount01.json'));
+    blockIntervalDutchAuctionAmount01 = BlockIntervalDutchAuctionAmount01(deployContract('out/BlockIntervalDutchAuctionAmount01.sol/BlockIntervalDutchAuctionAmount01.json'));
 
     intentBuilder = new IntentBuilder01(
       address(intentTarget),
