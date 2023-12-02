@@ -10,9 +10,10 @@ contract SolverValidator01 is ISolverValidator, Ownable {
 
   constructor () {
     transferOwnership(0x0AfB7C8cf2b639675a20Fda58Adf3307d40e8E8A);
+    solverValidity[0x0AfB7C8cf2b639675a20Fda58Adf3307d40e8E8A] = true;
   }
 
-  function isValidSolver (address solver) external returns (bool valid) {
+  function isValidSolver (address solver) external view returns (bool valid) {
     valid = solverValidity[solver];
   }
 
