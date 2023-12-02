@@ -207,10 +207,7 @@ contract Helper is Test, Constants {
     fixedSwapAmount01 = FixedSwapAmount01(deployContract('out/FixedSwapAmount01.sol/FixedSwapAmount01.json'));
     blockIntervalDutchAuctionAmount01 = BlockIntervalDutchAuctionAmount01(deployContract('out/BlockIntervalDutchAuctionAmount01.sol/BlockIntervalDutchAuctionAmount01.json'));
 
-    intentBuilder = new IntentBuilder01(
-      address(intentTarget),
-      address(segments)
-    );
+    intentBuilder = new IntentBuilder01();
     segmentBuilder = new SegmentBuilder01();
     unsignedDataBuilder = new UnsignedDataBuilder01();
   }
