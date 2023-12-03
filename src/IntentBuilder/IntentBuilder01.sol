@@ -16,22 +16,16 @@ enum SignatureType {
 
 contract IntentBuilder01 {
 
-  address public immutable intentTarget;
-  address public immutable segmentsContract;
-
-  constructor (address _intentTarget, address _segmentsContract) {
-    intentTarget = _intentTarget;
-    segmentsContract = _segmentsContract;
-  }
-
   function declaration (
     address account,
     uint chainId,
     SignatureType signatureType,
-    bytes[][] memory intents
+    bytes[][] memory intents,
+    address segmentsContract,
+    address intentTarget
   ) public view returns (bytes memory data, bytes32 messageHash) {
-    data = declarationData(intents);
-    messageHash = getMessageHash(signatureType, data, account, chainId);
+    data = declarationData(intents, segmentsContract);
+    messageHash = getMessageHash(signatureType, data, account, chainId, intentTarget);
   }
 
   function declaration (
@@ -39,21 +33,25 @@ contract IntentBuilder01 {
     uint chainId,
     SignatureType signatureType,
     bytes[][] memory intents,
+    address segmentsContract,
+    address intentTarget,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data, bytes32 messageHash) {
-    data = declarationData(intents, beforeCalls, afterCalls);
-    messageHash = getMessageHash(signatureType, data, account, chainId);
-  }
-
-  function declarationData (
-    bytes[][] memory intents
-  ) public view returns (bytes memory data) {
-    data = declarationData(intents, new Call[](0), new Call[](0));
+    data = declarationData(intents, segmentsContract, beforeCalls, afterCalls);
+    messageHash = getMessageHash(signatureType, data, account, chainId, intentTarget);
   }
 
   function declarationData (
     bytes[][] memory intents,
+    address segmentsContract
+  ) public view returns (bytes memory data) {
+    data = declarationData(intents, segmentsContract, new Call[](0), new Call[](0));
+  }
+
+  function declarationData (
+    bytes[][] memory intents,
+    address segmentsContract,
     Call[] memory beforeCalls,
     Call[] memory afterCalls
   ) public view returns (bytes memory data) {
@@ -93,7 +91,8 @@ contract IntentBuilder01 {
   function getMessageHashEIP712 (
     bytes memory data,
     address account,
-    uint chainId
+    uint chainId,
+    address intentTarget
   ) public view returns (bytes32 messageHash) {
     bytes32 dataHash = keccak256(
       abi.encode(
@@ -118,7 +117,8 @@ contract IntentBuilder01 {
   function getMessageHashEIP1271 (
     bytes memory data,
     address account,
-    uint chainId
+    uint chainId,
+    address intentTarget
   ) public view returns (bytes32 messageHash) {
     revert("getMessageHashEIP1271: NOT IMPLEMENTED");
   }
@@ -127,12 +127,13 @@ contract IntentBuilder01 {
     SignatureType signatureType,
     bytes memory data,
     address account,
-    uint chainId
+    uint chainId,
+    address intentTarget
   ) public view returns (bytes32 messageHash) {
     if (signatureType == SignatureType.EIP712) {
-      messageHash = getMessageHashEIP712(data, account, chainId);
+      messageHash = getMessageHashEIP712(data, account, chainId, intentTarget);
     } else if (signatureType == SignatureType.EIP1271) {
-      messageHash = getMessageHashEIP1271(data, account, chainId);
+      messageHash = getMessageHashEIP1271(data, account, chainId, intentTarget);
     } else {
       revert InvalidSignatureType();
     }

@@ -43,7 +43,9 @@ contract Account_signedMetaDelegateCall is Test, Helper  {
         address(proxy0_account),
         block.chainid,
         SignatureType.EIP712,
-        intentsData
+        intentsData,
+        address(segments),
+        address(intentTarget)
       );
 
       uint usdc_eth_priceX96 = twapAdapter.getUint256(twapAdapterParams);
