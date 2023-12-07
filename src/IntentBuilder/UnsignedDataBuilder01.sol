@@ -36,6 +36,15 @@ contract UnsignedDataBuilder01 {
     return abi.encode(recipient, amount, tokenInIdsProof, tokenOutIdsProof, fillCall);
   }
 
+  function unsignedSwapDataHash (
+    address recipient,
+    IdsProof memory tokenInIdsProof,
+    IdsProof memory tokenOutIdsProof,
+    Call memory fillCall
+  ) public pure returns (bytes32 dataHash) {
+    dataHash = keccak256(abi.encode(recipient, tokenInIdsProof, tokenOutIdsProof, fillCall));
+  }
+
   function unsignedData (
     uint8 intentIndex,
     bytes memory unsignedCall1
