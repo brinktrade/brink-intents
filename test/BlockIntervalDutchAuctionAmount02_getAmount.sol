@@ -3,11 +3,11 @@ pragma solidity =0.8.17;
 
 import "forge-std/Test.sol";
 import "./Helper.sol";
-import "./Mocks/MockBlockIntervalDutchAuctionAmount01.sol";
+import "./Mocks/MockBlockIntervalDutchAuctionAmount02.sol";
 
-contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
+contract BlockIntervalDutchAuctionAmount02_getAmount is Test, Helper  {
 
-  MockBlockIntervalDutchAuctionAmount01 testContract;
+  MockBlockIntervalDutchAuctionAmount02 testContract;
   uint inputAmount;
   uint64 blockIntervalId;
   uint128 firstAuctionStartBlock;
@@ -20,7 +20,7 @@ contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
 
   function setUp () public {
     setupAll();
-    testContract = new MockBlockIntervalDutchAuctionAmount01();
+    testContract = new MockBlockIntervalDutchAuctionAmount02();
     
     // default auction params:
     inputAmount = 1_000000000000000000;
@@ -35,7 +35,7 @@ contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction delay period is active
-  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionDelayActive () public {
+  function testBlockIntervalDutchAuctionAmount02_getAmount_previousAuctionFilled_auctionDelayActive () public {
     // set previous auction filled (block interval state set) so that current forked block is about halfway through the uaction delay period
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks / 2);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17); // set counter to 17, doesn't matter for this case
@@ -62,7 +62,7 @@ contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction has started
-  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionStarted () public {
+  function testBlockIntervalDutchAuctionAmount02_getAmount_previousAuctionFilled_auctionStarted () public {
     // set previous auction filled (block interval state set) so that current forked block is 1 block into the auction
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks + 1);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17);
@@ -91,7 +91,7 @@ contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction has almost ended
-  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionEnding () public {
+  function testBlockIntervalDutchAuctionAmount02_getAmount_previousAuctionFilled_auctionEnding () public {
     // set previous auction filled (block interval state set) so that current forked block is 1 block before the auction ends
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks + auctionDurationBlocks - 1);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17);
@@ -120,7 +120,7 @@ contract BlockIntervalDutchAuctionAmount01_getAmount is Test, Helper  {
   }
 
   // test output amount when previous auction was filled and auction has almost ended
-  function testBlockIntervalDutchAuctionAmount01_getAmount_previousAuctionFilled_auctionEnded () public {
+  function testBlockIntervalDutchAuctionAmount02_getAmount_previousAuctionFilled_auctionEnded () public {
     // set previous auction filled (block interval state set) so that current forked block is 10k blocks after the auction ended
     uint128 prevAuctionFilledBlock = uint128(BLOCK_JAN_25_2023) - (auctionDelayBlocks + auctionDurationBlocks + 10_000);
     testContract.setBlockIntervalState(blockIntervalId, prevAuctionFilledBlock , 17);
